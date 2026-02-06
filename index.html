@@ -1,0 +1,1068 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Good2Go — Food Safety & Health</title>
+  <style>
+    :root{--bg:#0f1012;--border:rgba(255,255,255,.12);--text:#f4f4f5;--muted:#b6b6c0;--green:#10b981;--yellow:#f59e0b;--red:#ef4444;--blue:#3b82f6;--purple:#8b5cf6}
+    *{box-sizing:border-box}
+    body{
+      margin:0;min-height:100vh;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      background:radial-gradient(1200px 700px at 10% 0%,#1d1f24 0%,var(--bg) 60%);
+      color:var(--text);display:flex;align-items:center;justify-content:center;padding:16px
+    }
+    .app{width:min(600px,100%);max-width:100%}
+    h1{margin:0 0 6px;font-size:24px;font-weight:700;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .tag{font-size:12px;padding:4px 8px;border:1px solid var(--border);border-radius:999px;color:var(--muted)}
+    .subtitle{margin:0 0 14px;font-size:13px;color:var(--muted)}
+    
+    .mode-switch{
+      display:flex;gap:6px;margin-bottom:16px;background:rgba(23,24,27,.75);
+      border:1px solid var(--border);border-radius:14px;padding:6px;backdrop-filter:blur(10px);
+      flex-wrap:wrap
+    }
+    .mode-btn{
+      flex:1;padding:10px 12px;border:none;background:transparent;color:var(--muted);
+      font-size:13px;font-weight:600;border-radius:10px;cursor:pointer;transition:all .2s ease;
+      white-space:nowrap;min-width:100px
+    }
+    .mode-btn:hover{color:var(--text)}
+    .mode-btn.active{background:#f4f4f5;color:#0f1012}
+    
+    .panel{
+      background:rgba(23,24,27,.75);border:1px solid var(--border);border-radius:18px;
+      padding:16px;backdrop-filter:blur(10px);box-shadow:0 20px 60px rgba(0,0,0,.35)
+    }
+    .panel.hidden{display:none}
+    
+    .search-wrap{position:relative;margin-bottom:12px}
+    .search-input{
+      width:100%;padding:14px 40px 14px 14px;background:#121317;border:1px solid var(--border);
+      border-radius:14px;color:var(--text);font-size:15px;outline:none;
+    }
+    .search-input:focus{border-color:rgba(255,255,255,.24)}
+    .search-input::placeholder{color:var(--muted);opacity:.6}
+    .search-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+    .clear-search{
+      position:absolute;right:14px;top:50%;transform:translateY(-50%);
+      background:none;border:none;color:var(--muted);cursor:pointer;padding:4px;
+      font-size:18px;line-height:1;display:none
+    }
+    .clear-search.visible{display:block}
+    .food-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:12px;max-height:300px;overflow-y:auto;padding:2px}
+    .food-grid::-webkit-scrollbar{width:6px}
+    .food-grid::-webkit-scrollbar-track{background:transparent}
+    .food-grid::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+    .food-card{
+      background:#121317;border:2px solid var(--border);border-radius:12px;
+      padding:12px;cursor:pointer;transition:all .15s ease;text-align:center;
+      min-height:70px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px
+    }
+    .food-card:hover{border-color:rgba(255,255,255,.24);background:#16171c}
+    .food-card.selected{border-color:var(--text);background:#1a1b21}
+    .food-card.hidden{display:none}
+    .food-emoji{font-size:24px;line-height:1}
+    .food-name{font-size:13px;font-weight:500;line-height:1.3}
+    
+    label{font-size:12px;color:var(--muted);display:block;margin:8px 0 6px;font-weight:500}
+    select,input[type="date"],input[type="text"]{
+      width:100%;padding:12px;background:#121317;border:1px solid var(--border);
+      border-radius:14px;color:var(--text);font-size:14px;outline:none;
+    }
+    select:focus,input[type="date"]:focus,input[type="text"]:focus{border-color:rgba(255,255,255,.24)}
+    
+    .date-type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+    .date-type-btn{
+      padding:12px 8px;background:#121317;border:2px solid var(--border);border-radius:12px;
+      color:var(--text);font-size:13px;font-weight:600;cursor:pointer;text-align:center;transition:all .15s ease
+    }
+    .date-type-btn:hover{border-color:rgba(255,255,255,.24);background:#16171c}
+    .date-type-btn.selected{border-color:var(--blue);background:rgba(59,130,246,.1);color:var(--blue)}
+    .date-type-label{font-size:11px;color:var(--muted);display:block;margin-top:2px}
+    
+    .info-box{
+      background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);
+      border-radius:12px;padding:10px 12px;margin:10px 0;font-size:12px;color:var(--text);line-height:1.5
+    }
+    .info-box strong{color:var(--blue)}
+    .info-box.purple{background:rgba(139,92,246,.08);border-color:rgba(139,92,246,.2)}
+    .info-box.purple strong{color:var(--purple)}
+    
+    .input-method-switch{
+      display:flex;gap:6px;margin-bottom:14px;background:#121317;border:1px solid var(--border);
+      border-radius:12px;padding:4px
+    }
+    .input-method-btn{
+      flex:1;padding:8px 12px;border:none;background:transparent;color:var(--muted);
+      font-size:12px;font-weight:600;border-radius:8px;cursor:pointer;transition:all .15s ease
+    }
+    .input-method-btn:hover{color:var(--text)}
+    .input-method-btn.active{background:rgba(139,92,246,.15);color:var(--purple)}
+    
+    .input-section{display:none}
+    .input-section.active{display:block}
+    
+    .barcode-manual{display:flex;gap:8px;align-items:flex-end;margin-bottom:12px}
+    .barcode-manual input{flex:1;margin-bottom:0}
+    .barcode-manual .btn-small{
+      padding:12px 20px;background:#f4f4f5;color:#0f1012;border:none;
+      border-radius:14px;font-weight:700;font-size:14px;cursor:pointer;transition:all .15s ease;
+      white-space:nowrap
+    }
+    .barcode-manual .btn-small:hover{background:#fff;transform:translateY(-1px)}
+    .barcode-manual .btn-small:active{transform:translateY(0)}
+    
+    .manual-inputs{display:grid;gap:12px}
+    .row{display:flex;gap:10px;margin-bottom:12px}
+    .col{flex:1}
+    
+    .scan-btn{
+      width:100%;padding:16px;background:linear-gradient(135deg,var(--purple),var(--blue));
+      border:none;border-radius:14px;color:var(--text);font-weight:700;font-size:15px;
+      cursor:pointer;transition:all .2s ease;margin-bottom:12px
+    }
+    .scan-btn:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(139,92,246,.3)}
+    .scan-btn:active{transform:translateY(0)}
+    .scan-btn.scanning{background:var(--red)}
+    
+    .btn{
+      width:100%;margin-top:8px;padding:16px;border-radius:14px;border:none;
+      font-weight:700;background:#f4f4f5;color:#0f1012;cursor:pointer;font-size:16px;
+      transition:all .15s ease
+    }
+    .btn:hover{background:#fff;transform:translateY(-1px)}
+    .btn:active{transform:translateY(0)}
+    
+    #scanner-container{
+      display:none;position:relative;width:100%;max-width:500px;margin:0 auto 12px;
+      border-radius:14px;overflow:hidden;background:#000
+    }
+    #scanner-container.active{display:block}
+    #scanner-video{width:100%;height:auto;display:block}
+    .scanner-overlay{
+      position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+      width:80%;max-width:300px;height:150px;border:3px solid var(--green);
+      border-radius:12px;pointer-events:none;
+      box-shadow:0 0 0 9999px rgba(0,0,0,.5)
+    }
+    .scanner-hint{
+      position:absolute;bottom:20px;left:0;right:0;text-align:center;
+      color:var(--text);font-size:14px;font-weight:600;text-shadow:0 2px 4px rgba(0,0,0,.8)
+    }
+    
+    .product-card{
+      background:#121317;border:2px solid var(--border);border-radius:14px;
+      padding:14px;margin-bottom:12px
+    }
+    .product-header{display:flex;gap:12px;align-items:flex-start;margin-bottom:12px}
+    .product-image{width:70px;height:70px;border-radius:10px;background:#1a1b21;object-fit:contain}
+    .product-info{flex:1;min-width:0}
+    .product-brand{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+    .product-name{font-size:15px;font-weight:700;margin:0 0 4px;line-height:1.3;word-wrap:break-word}
+    .product-category{font-size:12px;color:var(--muted)}
+    
+    .health-score{
+      display:flex;align-items:center;justify-content:space-between;padding:12px;
+      background:rgba(16,185,129,.1);border:2px solid var(--green);border-radius:12px;margin-bottom:12px
+    }
+    .health-score.warning{background:rgba(245,158,11,.1);border-color:var(--yellow)}
+    .health-score.bad{background:rgba(239,68,68,.1);border-color:var(--red)}
+    .score-label{font-size:13px;font-weight:600}
+    .score-value{font-size:32px;font-weight:800;line-height:1}
+    .score-text{font-size:11px;color:var(--muted);margin-top:2px}
+    
+    .issues-list{margin-top:12px}
+    .issue-item{
+      display:flex;align-items:start;gap:8px;padding:8px;background:rgba(239,68,68,.08);
+      border:1px solid rgba(239,68,68,.2);border-radius:10px;margin-bottom:6px;font-size:13px;line-height:1.4
+    }
+    .issue-item.warning{background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.2)}
+    .issue-icon{font-size:16px;line-height:1}
+    
+    .positives-list{margin-top:12px}
+    .positive-item{
+      display:flex;align-items:start;gap:8px;padding:8px;background:rgba(16,185,129,.08);
+      border:1px solid rgba(16,185,129,.2);border-radius:10px;margin-bottom:6px;font-size:13px;line-height:1.4
+    }
+    
+    .nutrition-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}
+    .nutrition-item{
+      background:#1a1b21;padding:10px;border-radius:10px;text-align:center
+    }
+    .nutrition-value{font-size:18px;font-weight:700;margin-bottom:2px}
+    .nutrition-label{font-size:11px;color:var(--muted)}
+    
+    .options{margin-top:12px;font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:12px}
+    .options .opt{display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none;padding:6px 0}
+    .options input[type="checkbox"]{width:16px;height:16px;cursor:pointer;margin:0}
+    .result{
+      margin-top:14px;padding:18px;border-radius:16px;border:2px solid var(--border);
+      background:linear-gradient(180deg,#191a1f 0%,#121317 100%);min-height:110px;
+      transition:all .2s ease
+    }
+    .result.good{border-color:var(--green);background:linear-gradient(180deg,rgba(16,185,129,.12) 0%,#121317 100%)}
+    .result.warning{border-color:var(--yellow);background:linear-gradient(180deg,rgba(245,158,11,.12) 0%,#121317 100%)}
+    .result.bad{border-color:var(--red);background:linear-gradient(180deg,rgba(239,68,68,.12) 0%,#121317 100%)}
+    .headline{font-size:22px;font-weight:800;margin:0 0 8px}
+    .sub{margin:0;font-size:14px;color:var(--muted);line-height:1.6}
+    .time-left{margin-top:10px;font-size:13px;color:var(--text);opacity:.85;padding-top:8px;border-top:1px solid var(--border)}
+    .pop{animation:pop .2s ease-out}
+    .pulse{animation:pulse 1.3s ease-in-out infinite}
+    .shake{animation:shake .3s ease-in-out}
+    @keyframes pop{from{transform:scale(.97);opacity:.8}to{transform:scale(1);opacity:1}}
+    @keyframes pulse{0%,100%{opacity:.88}50%{opacity:1}}
+    @keyframes shake{
+      0%{transform:translateX(0)}20%{transform:translateX(-8px)}
+      40%{transform:translateX(8px)}60%{transform:translateX(-5px)}
+      80%{transform:translateX(5px)}100%{transform:translateX(0)}
+    }
+    .footer{margin-top:12px;font-size:11px;color:var(--muted);line-height:1.5;text-align:center;padding:0 8px}
+    .no-results{text-align:center;padding:30px;color:var(--muted);font-size:14px}
+    .loading{text-align:center;padding:20px;color:var(--muted);font-size:14px}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <h1>Good2Go <span class="tag">Food Safety & Health</span></h1>
+    <p class="subtitle">Check expiry dates & ingredient health</p>
+
+    <div class="mode-switch">
+      <button class="mode-btn active" id="modeLeftover">🍕 Leftovers</button>
+      <button class="mode-btn" id="modePackage">📦 Dates</button>
+      <button class="mode-btn" id="modeScanner">🔍 Scanner</button>
+    </div>
+
+    <!-- LEFTOVER MODE -->
+    <div class="panel" id="panelLeftover">
+      <label>1. What food are you checking?</label>
+      <div class="search-wrap">
+        <input type="text" id="searchFood" class="search-input" placeholder="Search for your food..." autocomplete="off" />
+        <span class="search-icon">🔍</span>
+        <button class="clear-search" id="clearSearch">×</button>
+      </div>
+      
+      <div class="food-grid" id="foodGrid"></div>
+      <div class="no-results" id="noResults" style="display:none">No foods found. Try a different search.</div>
+
+      <div class="row">
+        <div class="col">
+          <label for="date">2. When did you open/cook it?</label>
+          <input type="date" id="date" />
+        </div>
+
+        <div class="col">
+          <label for="storage">3. Where is it stored?</label>
+          <select id="storage">
+            <option value="fridge">🧊 Fridge</option>
+            <option value="freezer">❄️ Freezer</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="options" aria-label="Quick safety checks">
+        <label class="opt"><input type="checkbox" id="leftOut" /> Left out 2+ hours</label>
+        <label class="opt"><input type="checkbox" id="off" /> Looks/smells off</label>
+        <label class="opt"><input type="checkbox" id="cautious" /> Extra cautious</label>
+      </div>
+
+      <button class="btn" id="checkLeftover" type="button">Check Safety</button>
+
+      <div class="result" id="resultLeftover" aria-live="polite">
+        <p class="headline">👋 Ready to check!</p>
+        <p class="sub">Select a food, enter the date, and click "Check Safety"</p>
+      </div>
+    </div>
+
+    <!-- PACKAGE DATE MODE -->
+    <div class="panel hidden" id="panelPackage">
+      <label>1. What type of date is on the package?</label>
+      <div class="date-type-grid">
+        <div class="date-type-btn" data-type="best_by">
+          <div>Best By</div>
+          <span class="date-type-label">Quality date</span>
+        </div>
+        <div class="date-type-btn" data-type="use_by">
+          <div>Use By</div>
+          <span class="date-type-label">Safety date</span>
+        </div>
+        <div class="date-type-btn" data-type="sell_by">
+          <div>Sell By</div>
+          <span class="date-type-label">Store date</span>
+        </div>
+      </div>
+
+      <div class="info-box" id="dateTypeInfo" style="display:none"></div>
+
+      <div class="row">
+        <div class="col">
+          <label for="packageDate">2. What's the date on the package?</label>
+          <input type="date" id="packageDate" />
+        </div>
+
+        <div class="col">
+          <label for="packageCategory">3. What type of food?</label>
+          <select id="packageCategory">
+            <option value="">-- Select category --</option>
+            <option value="dairy">🥛 Dairy (milk, yogurt, cheese)</option>
+            <option value="meat">🥩 Fresh meat & poultry</option>
+            <option value="deli">🥪 Deli meats</option>
+            <option value="eggs">🥚 Eggs</option>
+            <option value="bread">🍞 Bread & baked goods</option>
+            <option value="canned">🥫 Canned goods</option>
+            <option value="dry">📦 Dry goods (pasta, rice)</option>
+            <option value="frozen">❄️ Frozen foods</option>
+            <option value="condiments">🍯 Condiments & sauces</option>
+            <option value="produce">🥕 Fresh produce</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="options">
+        <label class="opt"><input type="checkbox" id="packageOpened" /> Package is opened</label>
+        <label class="opt"><input type="checkbox" id="packageOff" /> Looks/smells off</label>
+      </div>
+
+      <button class="btn" id="checkPackage" type="button">Check Package Date</button>
+
+      <div class="result" id="resultPackage" aria-live="polite">
+        <p class="headline">👋 Ready to check!</p>
+        <p class="sub">Select the date type, enter the package date, and click "Check Package Date"</p>
+      </div>
+    </div>
+
+    <!-- BARCODE SCANNER MODE -->
+    <div class="panel hidden" id="panelScanner">
+      <div class="input-method-switch">
+        <button class="input-method-btn active" id="methodBarcode">📷 Barcode</button>
+        <button class="input-method-btn" id="methodManual">✍️ Manual</button>
+      </div>
+
+      <!-- BARCODE INPUT -->
+      <div class="input-section active" id="sectionBarcode">
+        <div class="info-box purple">
+          <strong>Scan or enter barcode</strong> to look up product information and check ingredient health.
+        </div>
+
+        <div id="scanner-container">
+          <div id="scanner-video"></div>
+          <div class="scanner-overlay"></div>
+          <div class="scanner-hint">Point camera at barcode</div>
+        </div>
+
+        <button class="scan-btn" id="scanBarcode">📷 Start Camera Scanner</button>
+
+        <label for="barcodeInput">Or enter barcode manually</label>
+        <div class="barcode-manual">
+          <input type="text" id="barcodeInput" placeholder="e.g., 737628064502" />
+          <button class="btn-small" id="lookupBarcode">Look Up</button>
+        </div>
+      </div>
+
+      <!-- MANUAL INPUT -->
+      <div class="input-section" id="sectionManual">
+        <div class="info-box purple">
+          <strong>Search by brand and product</strong> to check ingredient health and nutrition.
+        </div>
+
+        <div class="manual-inputs">
+          <div>
+            <label for="brandInput">Brand name</label>
+            <input type="text" id="brandInput" placeholder="e.g., Dannon, Kraft, General Mills" />
+          </div>
+
+          <div>
+            <label for="productInput">Product name</label>
+            <input type="text" id="productInput" placeholder="e.g., Light & Fit Vanilla Yogurt" />
+          </div>
+        </div>
+
+        <button class="btn" id="searchProduct">Search Product</button>
+      </div>
+
+      <!-- RESULTS -->
+      <div id="scannerResults"></div>
+    </div>
+
+    <div class="footer">
+      Based on USDA, FDA & Open Food Facts data. When in doubt, throw it out.
+    </div>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/@ericblade/quagga2@1.8.4/dist/quagga.min.js"></script>
+<script>
+(function(){
+  var FOODS = [
+    {id:"cooked_chicken",emoji:"🍗",name:"Cooked Chicken",fridge:3,freezer:120},
+    {id:"cooked_turkey",emoji:"🦃",name:"Cooked Turkey",fridge:3,freezer:120},
+    {id:"cooked_beef",emoji:"🥩",name:"Cooked Beef",fridge:3,freezer:120},
+    {id:"cooked_pork",emoji:"🥓",name:"Cooked Pork",fridge:3,freezer:120},
+    {id:"pizza",emoji:"🍕",name:"Pizza",fridge:3,freezer:60},
+    {id:"pasta",emoji:"🍝",name:"Cooked Pasta",fridge:3,freezer:120},
+    {id:"rice",emoji:"🍚",name:"Cooked Rice",fridge:3,freezer:180},
+    {id:"soup",emoji:"🍲",name:"Soup/Stew",fridge:3,freezer:180},
+    {id:"deli_meat",emoji:"🥩",name:"Deli Meat",fridge:3,freezer:60},
+    {id:"milk",emoji:"🥛",name:"Milk",fridge:7,freezer:90},
+    {id:"yogurt",emoji:"🍦",name:"Yogurt",fridge:7,freezer:60},
+    {id:"cheese",emoji:"🧀",name:"Cheese",fridge:21,freezer:180},
+    {id:"eggs",emoji:"🥚",name:"Hard-boiled Eggs",fridge:7,freezer:0},
+    {id:"fruit",emoji:"🍎",name:"Cut Fruit",fridge:3,freezer:180},
+    {id:"veggies",emoji:"🥕",name:"Cut Vegetables",fridge:3,freezer:240},
+    {id:"salad",emoji:"🥗",name:"Salad Mix",fridge:3,freezer:0}
+  ];
+
+  var DATE_TYPE_INFO = {
+    best_by: "<strong>Best By</strong> is about quality, not safety. Food may still be safe to eat after this date, though quality (taste, texture) may decline.",
+    use_by: "<strong>Use By</strong> is the last date recommended for peak quality. After this date, food may not be safe to eat, especially for perishable items.",
+    sell_by: "<strong>Sell By</strong> tells stores how long to display the product. You typically have several days after this date to use the product safely."
+  };
+
+  var PACKAGE_GRACE = {
+    dairy: {best_by: 7, use_by: 2, sell_by: 7, opened: 7},
+    meat: {best_by: 2, use_by: 1, sell_by: 3, opened: 2},
+    deli: {best_by: 3, use_by: 1, sell_by: 5, opened: 3},
+    eggs: {best_by: 21, use_by: 14, sell_by: 21, opened: 21},
+    bread: {best_by: 7, use_by: 3, sell_by: 7, opened: 5},
+    canned: {best_by: 365, use_by: 180, sell_by: 365, opened: 3},
+    dry: {best_by: 180, use_by: 90, sell_by: 180, opened: 60},
+    frozen: {best_by: 90, use_by: 60, sell_by: 90, opened: 60},
+    condiments: {best_by: 90, use_by: 60, sell_by: 90, opened: 30},
+    produce: {best_by: 5, use_by: 3, sell_by: 7, opened: 3}
+  };
+
+  var BAD_INGREDIENTS = [
+    {terms: ['high fructose corn syrup', 'hfcs'], penalty: 20, label: 'High fructose corn syrup'},
+    {terms: ['canola oil', 'soybean oil', 'sunflower oil', 'vegetable oil', 'seed oil'], penalty: 15, label: 'Seed oils'},
+    {terms: ['red 40', 'yellow 5', 'yellow 6', 'blue 1', 'red 3'], penalty: 10, label: 'Artificial colors'},
+    {terms: ['aspartame', 'sucralose', 'acesulfame'], penalty: 8, label: 'Artificial sweeteners'},
+    {terms: ['sodium benzoate', 'potassium sorbate'], penalty: 5, label: 'Preservatives'},
+    {terms: ['carrageenan'], penalty: 5, label: 'Carrageenan (inflammatory)'},
+    {terms: ['trans fat', 'partially hydrogenated'], penalty: 25, label: 'Trans fats'},
+    {terms: ['msg', 'monosodium glutamate'], penalty: 7, label: 'MSG'}
+  ];
+
+  var GOOD_INGREDIENTS = [
+    {terms: ['organic'], bonus: 5, label: 'Organic'},
+    {terms: ['whole grain', 'whole wheat'], bonus: 8, label: 'Whole grains'},
+    {terms: ['probiotic', 'live cultures'], bonus: 10, label: 'Probiotics'},
+    {terms: ['non-gmo'], bonus: 3, label: 'Non-GMO'}
+  ];
+
+  var selectedFood = null;
+  var selectedDateType = null;
+  var allCards = [];
+  var isScanning = false;
+  
+  var elModeLeftover = document.getElementById("modeLeftover");
+  var elModePackage = document.getElementById("modePackage");
+  var elModeScanner = document.getElementById("modeScanner");
+  var elPanelLeftover = document.getElementById("panelLeftover");
+  var elPanelPackage = document.getElementById("panelPackage");
+  var elPanelScanner = document.getElementById("panelScanner");
+  
+  var elSearchFood = document.getElementById("searchFood");
+  var elClearSearch = document.getElementById("clearSearch");
+  var elFoodGrid = document.getElementById("foodGrid");
+  var elNoResults = document.getElementById("noResults");
+  var elDate = document.getElementById("date");
+  var elStorage = document.getElementById("storage");
+  var elLeftOut = document.getElementById("leftOut");
+  var elOff = document.getElementById("off");
+  var elCautious = document.getElementById("cautious");
+  var elCheckLeftover = document.getElementById("checkLeftover");
+  var elResultLeftover = document.getElementById("resultLeftover");
+  
+  var elDateTypeInfo = document.getElementById("dateTypeInfo");
+  var elPackageDate = document.getElementById("packageDate");
+  var elPackageCategory = document.getElementById("packageCategory");
+  var elPackageOpened = document.getElementById("packageOpened");
+  var elPackageOff = document.getElementById("packageOff");
+  var elCheckPackage = document.getElementById("checkPackage");
+  var elResultPackage = document.getElementById("resultPackage");
+
+  var elMethodBarcode = document.getElementById("methodBarcode");
+  var elMethodManual = document.getElementById("methodManual");
+  var elSectionBarcode = document.getElementById("sectionBarcode");
+  var elSectionManual = document.getElementById("sectionManual");
+  var elScannerContainer = document.getElementById("scanner-container");
+  var elBarcodeInput = document.getElementById("barcodeInput");
+  var elLookupBarcode = document.getElementById("lookupBarcode");
+  var elScanBarcode = document.getElementById("scanBarcode");
+  var elBrandInput = document.getElementById("brandInput");
+  var elProductInput = document.getElementById("productInput");
+  var elSearchProduct = document.getElementById("searchProduct");
+  var elScannerResults = document.getElementById("scannerResults");
+
+  function setTodayDefault(){
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0');
+    var yyyy = today.getFullYear();
+    var formatted = yyyy + '-' + mm + '-' + dd;
+    elDate.value = formatted;
+    elPackageDate.value = formatted;
+  }
+  setTodayDefault();
+
+  // MODE SWITCHING
+  elModeLeftover.addEventListener("click", function(){
+    stopScanner();
+    elModeLeftover.classList.add("active");
+    elModePackage.classList.remove("active");
+    elModeScanner.classList.remove("active");
+    elPanelLeftover.classList.remove("hidden");
+    elPanelPackage.classList.add("hidden");
+    elPanelScanner.classList.add("hidden");
+  });
+
+  elModePackage.addEventListener("click", function(){
+    stopScanner();
+    elModePackage.classList.add("active");
+    elModeLeftover.classList.remove("active");
+    elModeScanner.classList.remove("active");
+    elPanelPackage.classList.remove("hidden");
+    elPanelLeftover.classList.add("hidden");
+    elPanelScanner.classList.add("hidden");
+  });
+
+  elModeScanner.addEventListener("click", function(){
+    elModeScanner.classList.add("active");
+    elModeLeftover.classList.remove("active");
+    elModePackage.classList.remove("active");
+    elPanelScanner.classList.remove("hidden");
+    elPanelLeftover.classList.add("hidden");
+    elPanelPackage.classList.add("hidden");
+  });
+
+  // SCANNER INPUT METHOD SWITCHING
+  elMethodBarcode.addEventListener("click", function(){
+    stopScanner();
+    elMethodBarcode.classList.add("active");
+    elMethodManual.classList.remove("active");
+    elSectionBarcode.classList.add("active");
+    elSectionManual.classList.remove("active");
+  });
+
+  elMethodManual.addEventListener("click", function(){
+    stopScanner();
+    elMethodManual.classList.add("active");
+    elMethodBarcode.classList.remove("active");
+    elSectionManual.classList.add("active");
+    elSectionBarcode.classList.remove("active");
+  });
+
+  // BARCODE SCANNER
+  function startScanner(){
+    if(isScanning) return;
+    
+    isScanning = true;
+    elScannerContainer.classList.add('active');
+    elScanBarcode.textContent = '🛑 Stop Scanner';
+    elScanBarcode.classList.add('scanning');
+    
+    Quagga.init({
+      inputStream: {
+        name: "Live",
+        type: "LiveStream",
+        target: document.querySelector('#scanner-video'),
+        constraints: {
+          facingMode: "environment"
+        }
+      },
+      decoder: {
+        readers: [
+          "ean_reader",
+          "ean_8_reader",
+          "code_128_reader",
+          "code_39_reader",
+          "upc_reader",
+          "upc_e_reader"
+        ]
+      },
+      locate: true
+    }, function(err){
+      if(err){
+        console.error(err);
+        showError("Camera access denied or not available. Please use manual barcode entry.");
+        stopScanner();
+        return;
+      }
+      Quagga.start();
+    });
+
+    var lastDetectedCode = null;
+    var lastDetectedTime = 0;
+    
+    Quagga.onDetected(function(result){
+      var code = result.codeResult.code;
+      var now = Date.now();
+      
+      // Debounce: only process if different code or 2 seconds have passed
+      if(code !== lastDetectedCode || (now - lastDetectedTime) > 2000){
+        lastDetectedCode = code;
+        lastDetectedTime = now;
+        
+        elBarcodeInput.value = code;
+        stopScanner();
+        lookupProductByBarcode(code);
+      }
+    });
+  }
+
+  function stopScanner(){
+    if(!isScanning) return;
+    
+    isScanning = false;
+    elScannerContainer.classList.remove('active');
+    elScanBarcode.textContent = '📷 Start Camera Scanner';
+    elScanBarcode.classList.remove('scanning');
+    
+    if(typeof Quagga !== 'undefined'){
+      Quagga.stop();
+    }
+  }
+
+  elScanBarcode.addEventListener("click", function(){
+    if(isScanning){
+      stopScanner();
+    } else {
+      startScanner();
+    }
+  });
+
+  // DATE TYPE SELECTION
+  var dateTypeBtns = document.querySelectorAll(".date-type-btn");
+  dateTypeBtns.forEach(function(btn){
+    btn.addEventListener("click", function(){
+      var type = this.getAttribute("data-type");
+      selectedDateType = type;
+      dateTypeBtns.forEach(function(b){ b.classList.remove("selected"); });
+      this.classList.add("selected");
+      elDateTypeInfo.innerHTML = DATE_TYPE_INFO[type];
+      elDateTypeInfo.style.display = "block";
+    });
+  });
+
+  // LEFTOVER MODE FOOD GRID
+  function renderFoodGrid(){
+    elFoodGrid.innerHTML = '';
+    allCards = [];
+    
+    FOODS.forEach(function(food){
+      var card = document.createElement('div');
+      card.className = 'food-card';
+      card.setAttribute('data-id', food.id);
+      card.setAttribute('data-name', food.name.toLowerCase());
+      card.innerHTML = '<div class="food-emoji">' + food.emoji + '</div><div class="food-name">' + food.name + '</div>';
+      
+      card.addEventListener('click', function(){
+        selectFood(food.id);
+      });
+      
+      elFoodGrid.appendChild(card);
+      allCards.push({element: card, food: food});
+    });
+  }
+
+  function selectFood(id){
+    selectedFood = id;
+    allCards.forEach(function(item){
+      if(item.food.id === id){
+        item.element.classList.add('selected');
+      } else {
+        item.element.classList.remove('selected');
+      }
+    });
+  }
+
+  function filterFoods(){
+    var query = elSearchFood.value.toLowerCase().trim();
+    var visibleCount = 0;
+    
+    if(query === ''){
+      elClearSearch.classList.remove('visible');
+      allCards.forEach(function(item){
+        item.element.classList.remove('hidden');
+        visibleCount++;
+      });
+    } else {
+      elClearSearch.classList.add('visible');
+      allCards.forEach(function(item){
+        var name = item.food.name.toLowerCase();
+        if(name.indexOf(query) !== -1){
+          item.element.classList.remove('hidden');
+          visibleCount++;
+        } else {
+          item.element.classList.add('hidden');
+        }
+      });
+    }
+    
+    if(visibleCount === 0){
+      elNoResults.style.display = 'block';
+      elFoodGrid.style.display = 'none';
+    } else {
+      elNoResults.style.display = 'none';
+      elFoodGrid.style.display = 'grid';
+    }
+  }
+
+  elSearchFood.addEventListener('input', filterFoods);
+  
+  elClearSearch.addEventListener('click', function(){
+    elSearchFood.value = '';
+    filterFoods();
+    elSearchFood.focus();
+  });
+
+  renderFoodGrid();
+
+  function renderResult(container, state, headline, sub, timeLeft){
+    var resultEl = container.querySelector('.result');
+    if(!resultEl) resultEl = container;
+    
+    resultEl.className = "result";
+    void resultEl.offsetWidth;
+    
+    if(state === "OK"){
+      resultEl.className = "result good pop";
+      resultEl.querySelector('.headline').textContent = headline || "✅ Good to Go!";
+      resultEl.querySelector('.sub').innerHTML = sub || "Still within recommended storage time.";
+      if(timeLeft){
+        resultEl.querySelector('.sub').innerHTML += '<div class="time-left">' + timeLeft + '</div>';
+      }
+    } else if(state === "TODAY"){
+      resultEl.className = "result warning pulse";
+      resultEl.querySelector('.headline').textContent = headline || "⏰ Eat Today";
+      resultEl.querySelector('.sub').innerHTML = sub || "Best eaten today.";
+    } else {
+      resultEl.className = "result bad shake";
+      resultEl.querySelector('.headline').textContent = headline || "🚫 Don't Risk It";
+      resultEl.querySelector('.sub').innerHTML = sub || "Not safe to eat.";
+    }
+  }
+
+  function getDaysBetween(startDate, endDate){
+    var start = new Date(startDate);
+    var end = new Date(endDate);
+    var diff = end - start;
+    return Math.floor(diff / (1000 * 60 * 60 * 24));
+  }
+
+  // LEFTOVER CHECKER
+  elCheckLeftover.addEventListener("click", function(){
+    var iso = elDate.value;
+    if(!iso){
+      renderResult(elPanelLeftover, "TOSS", "🚫 Missing Date", "Please pick a date so I can calculate.");
+      return;
+    }
+
+    if(!selectedFood){
+      renderResult(elPanelLeftover, "TOSS", "🚫 No Food Selected", "Please select a food from the list above.");
+      return;
+    }
+
+    if(elOff.checked){
+      renderResult(elPanelLeftover, "TOSS", "🚫 Trust Your Senses", "If it looks or smells off, don't eat it!");
+      return;
+    }
+    
+    if(elLeftOut.checked){
+      renderResult(elPanelLeftover, "TOSS", "🚫 Bacteria Growth", "Food left out 2+ hours at room temp should be tossed.");
+      return;
+    }
+
+    var food = FOODS.find(function(f){ return f.id === selectedFood; });
+    if(!food){
+      renderResult(elPanelLeftover, "TOSS", "🚫 Error", "Something went wrong. Try again.");
+      return;
+    }
+
+    var storageType = elStorage.value;
+    var allowed = food[storageType];
+    
+    if(storageType === "freezer" && allowed === 0){
+      renderResult(elPanelLeftover, "TODAY", "⚠️ Don't Freeze", food.name + " shouldn't be frozen. If it's in the fridge, change storage and check again.");
+      return;
+    }
+
+    if(elCautious.checked && allowed > 1){
+      allowed = Math.floor(allowed * 0.75);
+    }
+
+    var today = new Date();
+    var startDate = new Date(iso + "T00:00:00");
+    var daysElapsed = getDaysBetween(startDate, today);
+    var daysRemaining = allowed - daysElapsed;
+
+    if(daysRemaining < 0){
+      renderResult(elPanelLeftover, "TOSS", "🚫 Past Limit", "Your " + food.name.toLowerCase() + " has been in the " + storageType + " for " + daysElapsed + " days. Limit is " + allowed + " days.");
+    } else if(daysRemaining === 0){
+      renderResult(elPanelLeftover, "TODAY", "⏰ Last Day", "Your " + food.name.toLowerCase() + " is at its limit. Eat today or toss.");
+    } else if(daysRemaining === 1){
+      renderResult(elPanelLeftover, "TODAY", "⏰ Almost There", "Your " + food.name.toLowerCase() + " has 1 day left. Use tomorrow at the latest.");
+    } else {
+      var timeMsg = "You have <strong>" + daysRemaining + " days left</strong> to use this " + food.name.toLowerCase() + ".";
+      renderResult(elPanelLeftover, "OK", "✅ Still Good", "Safe to eat.", timeMsg);
+    }
+  });
+
+  // PACKAGE DATE CHECKER
+  elCheckPackage.addEventListener("click", function(){
+    var packageDate = elPackageDate.value;
+    if(!packageDate){
+      renderResult(elPanelPackage, "TOSS", "🚫 Missing Date", "Please enter the date from your package.");
+      return;
+    }
+
+    if(!selectedDateType){
+      renderResult(elPanelPackage, "TOSS", "🚫 Select Date Type", "Please select Best By, Use By, or Sell By.");
+      return;
+    }
+
+    var category = elPackageCategory.value;
+    if(!category){
+      renderResult(elPanelPackage, "TOSS", "🚫 Select Category", "Please select what type of food this is.");
+      return;
+    }
+
+    if(elPackageOff.checked){
+      renderResult(elPanelPackage, "TOSS", "🚫 Trust Your Senses", "If it looks or smells off, don't eat it!");
+      return;
+    }
+
+    var grace = PACKAGE_GRACE[category];
+    if(!grace){
+      renderResult(elPanelPackage, "TOSS", "🚫 Error", "Invalid category selected.");
+      return;
+    }
+
+    var graceDays = grace[selectedDateType];
+    if(elPackageOpened.checked){
+      graceDays = Math.min(graceDays, grace.opened);
+    }
+
+    var today = new Date();
+    var pkgDate = new Date(packageDate + "T00:00:00");
+    var daysSince = getDaysBetween(pkgDate, today);
+    var daysRemaining = graceDays - daysSince;
+
+    var dateLabel = selectedDateType.replace('_', ' ').replace(/\b\w/g, function(l){ return l.toUpperCase(); });
+
+    if(daysRemaining < 0){
+      renderResult(elPanelPackage, "TOSS", "🚫 Past Safe Period", "This item's " + dateLabel + " date was " + Math.abs(daysSince) + " days ago. Recommended to discard.");
+    } else if(daysRemaining === 0){
+      renderResult(elPanelPackage, "TODAY", "⏰ Last Day", "This item should be used today. The " + dateLabel + " date passed recently.");
+    } else if(daysRemaining === 1){
+      renderResult(elPanelPackage, "TODAY", "⏰ Use Soon", "This item has 1 day left past its " + dateLabel + " date. Use tomorrow at the latest.");
+    } else {
+      var timeMsg = "You have <strong>" + daysRemaining + " days left</strong> to safely use this item.";
+      renderResult(elPanelPackage, "OK", "✅ Still Good", "Safe to eat based on " + dateLabel + " guidelines.", timeMsg);
+    }
+  });
+
+  // BARCODE SCANNER FUNCTIONS
+  function analyzeProduct(product){
+    var score = 70;
+    var issues = [];
+    var warnings = [];
+    var positives = [];
+
+    var ingredientsText = (product.ingredients_text || '').toLowerCase();
+    var nutrition = product.nutriments || {};
+
+    // Check for bad ingredients
+    BAD_INGREDIENTS.forEach(function(bad){
+      bad.terms.forEach(function(term){
+        if(ingredientsText.indexOf(term) !== -1){
+          score -= bad.penalty;
+          issues.push({icon: '🚫', text: bad.label});
+        }
+      });
+    });
+
+    // Check for good ingredients
+    GOOD_INGREDIENTS.forEach(function(good){
+      good.terms.forEach(function(term){
+        if(ingredientsText.indexOf(term) !== -1){
+          score += good.bonus;
+          positives.push({icon: '✅', text: good.label});
+        }
+      });
+    });
+
+    // Nutrition checks
+    var sugar = nutrition.sugars_100g || nutrition['sugars'] || 0;
+    if(sugar > 15){
+      score -= 10;
+      warnings.push({icon: '⚠️', text: 'High sugar (' + sugar.toFixed(1) + 'g per 100g)'});
+    }
+
+    var sodium = nutrition.sodium_100g || nutrition['sodium'] || 0;
+    if(sodium > 0.5){
+      score -= 8;
+      warnings.push({icon: '⚠️', text: 'High sodium (' + (sodium * 1000).toFixed(0) + 'mg per 100g)'});
+    }
+
+    var fiber = nutrition.fiber_100g || nutrition['fiber'] || 0;
+    if(fiber > 5){
+      score += 8;
+      positives.push({icon: '✅', text: 'High fiber (' + fiber.toFixed(1) + 'g per 100g)'});
+    }
+
+    score = Math.max(0, Math.min(100, score));
+
+    return {
+      score: score,
+      issues: issues,
+      warnings: warnings,
+      positives: positives,
+      nutrition: {
+        calories: nutrition.energy_100g ? (nutrition.energy_100g / 4.184).toFixed(0) : nutrition['energy-kcal_100g'] || 'N/A',
+        sugar: sugar.toFixed(1),
+        sodium: (sodium * 1000).toFixed(0),
+        fiber: fiber.toFixed(1)
+      }
+    };
+  }
+
+  function renderProductResult(product, analysis){
+    var scoreClass = analysis.score >= 70 ? 'good' : (analysis.score >= 40 ? 'warning' : 'bad');
+    var scoreLabel = analysis.score >= 70 ? 'Good' : (analysis.score >= 40 ? 'Fair' : 'Poor');
+
+    var html = '<div class="product-card pop">';
+    html += '<div class="product-header">';
+    if(product.image_url){
+      html += '<img src="' + product.image_url + '" class="product-image" alt="Product" />';
+    }
+    html += '<div class="product-info">';
+    if(product.brands){
+      html += '<div class="product-brand">' + product.brands + '</div>';
+    }
+    html += '<div class="product-name">' + (product.product_name || 'Unknown Product') + '</div>';
+    if(product.categories){
+      html += '<div class="product-category">' + product.categories.split(',')[0] + '</div>';
+    }
+    html += '</div></div>';
+
+    html += '<div class="health-score ' + scoreClass + '">';
+    html += '<div><div class="score-label">Health Score</div><div class="score-text">' + scoreLabel + '</div></div>';
+    html += '<div class="score-value">' + analysis.score + '</div>';
+    html += '</div>';
+
+    if(analysis.issues.length > 0){
+      html += '<div class="issues-list"><strong style="font-size:13px;display:block;margin-bottom:6px">⚠️ Issues Found:</strong>';
+      analysis.issues.forEach(function(issue){
+        html += '<div class="issue-item"><span class="issue-icon">' + issue.icon + '</span><span>' + issue.text + '</span></div>';
+      });
+      html += '</div>';
+    }
+
+    if(analysis.warnings.length > 0){
+      html += '<div class="issues-list"><strong style="font-size:13px;display:block;margin-bottom:6px">⚠️ Warnings:</strong>';
+      analysis.warnings.forEach(function(warning){
+        html += '<div class="issue-item warning"><span class="issue-icon">' + warning.icon + '</span><span>' + warning.text + '</span></div>';
+      });
+      html += '</div>';
+    }
+
+    if(analysis.positives.length > 0){
+      html += '<div class="positives-list"><strong style="font-size:13px;display:block;margin-bottom:6px;color:var(--green)">✅ Good Stuff:</strong>';
+      analysis.positives.forEach(function(positive){
+        html += '<div class="positive-item"><span class="issue-icon">' + positive.icon + '</span><span>' + positive.text + '</span></div>';
+      });
+      html += '</div>';
+    }
+
+    html += '<div class="nutrition-grid">';
+    html += '<div class="nutrition-item"><div class="nutrition-value">' + analysis.nutrition.calories + '</div><div class="nutrition-label">Calories</div></div>';
+    html += '<div class="nutrition-item"><div class="nutrition-value">' + analysis.nutrition.sugar + 'g</div><div class="nutrition-label">Sugar</div></div>';
+    html += '<div class="nutrition-item"><div class="nutrition-value">' + analysis.nutrition.sodium + 'mg</div><div class="nutrition-label">Sodium</div></div>';
+    html += '<div class="nutrition-item"><div class="nutrition-value">' + analysis.nutrition.fiber + 'g</div><div class="nutrition-label">Fiber</div></div>';
+    html += '</div>';
+
+    html += '</div>';
+    
+    elScannerResults.innerHTML = html;
+  }
+
+  function showError(message){
+    elScannerResults.innerHTML = '<div class="result bad shake"><p class="headline">🚫 Not Found</p><p class="sub">' + message + '</p></div>';
+  }
+
+  function showLoading(){
+    elScannerResults.innerHTML = '<div class="loading">🔍 Looking up product...</div>';
+  }
+
+  function lookupProductByBarcode(barcode){
+    showLoading();
+
+    fetch('https://world.openfoodfacts.org/api/v0/product/' + barcode + '.json')
+      .then(function(response){ return response.json(); })
+      .then(function(data){
+        if(data.status === 1 && data.product){
+          var analysis = analyzeProduct(data.product);
+          renderProductResult(data.product, analysis);
+        } else {
+          showError("Product not found. Try manual search or a different barcode.");
+        }
+      })
+      .catch(function(error){
+        showError("Error looking up product. Please check your connection and try again.");
+        console.error(error);
+      });
+  }
+
+  // BARCODE LOOKUP
+  elLookupBarcode.addEventListener("click", function(){
+    var barcode = elBarcodeInput.value.trim();
+    if(!barcode){
+      showError("Please enter a barcode number.");
+      return;
+    }
+    lookupProductByBarcode(barcode);
+  });
+
+  // MANUAL PRODUCT SEARCH
+  elSearchProduct.addEventListener("click", function(){
+    var brand = elBrandInput.value.trim();
+    var productName = elProductInput.value.trim();
+
+    if(!brand && !productName){
+      showError("Please enter a brand or product name.");
+      return;
+    }
+
+    var searchQuery = (brand + ' ' + productName).trim();
+    showLoading();
+
+    fetch('https://world.openfoodfacts.org/cgi/search.pl?search_terms=' + encodeURIComponent(searchQuery) + '&search_simple=1&action=process&json=1&page_size=5')
+      .then(function(response){ return response.json(); })
+      .then(function(data){
+        if(data.products && data.products.length > 0){
+          var product = data.products[0];
+          var analysis = analyzeProduct(product);
+          renderProductResult(product, analysis);
+        } else {
+          showError("No products found matching '" + searchQuery + "'. Try different search terms.");
+        }
+      })
+      .catch(function(error){
+        showError("Error searching for product. Please check your connection and try again.");
+        console.error(error);
+      });
+  });
+
+  // Allow Enter key to submit
+  elBarcodeInput.addEventListener("keypress", function(e){
+    if(e.key === 'Enter') elLookupBarcode.click();
+  });
+
+  elProductInput.addEventListener("keypress", function(e){
+    if(e.key === 'Enter') elSearchProduct.click();
+  });
+
+})();
+</script>
+</body>
+</html>
