@@ -2,938 +2,1776 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Good2Go — Food Safety & Health</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Good2Go" />
+  <meta name="theme-color" content="#8b5cf6" />
+  <meta name="description" content="Check if your food is safe to eat. Leftovers, package dates, and ingredient scanning." />
+  <title>Good2Go — Food Safety Checker</title>
   <style>
-    :root{--bg:#0f1012;--border:rgba(255,255,255,.12);--text:#f4f4f5;--muted:#b6b6c0;--green:#10b981;--yellow:#f59e0b;--red:#ef4444;--blue:#3b82f6;--purple:#8b5cf6}
-    *{box-sizing:border-box}
+    :root{
+      --bg:#ffffff;
+      --card-bg:#ffffff;
+      --border:#e5e7eb;
+      --text:#111827;
+      --muted:#6b7280;
+      --green:#10b981;
+      --yellow:#f59e0b;
+      --red:#ef4444;
+      --blue:#3b82f6;
+      --purple:#8b5cf6;
+      --primary:#8b5cf6;
+    }
+    
+    @media (prefers-color-scheme: dark) {
+      :root{
+        --bg:#0f1012;
+        --card-bg:#1a1b21;
+        --border:#2d2e33;
+        --text:#f4f4f5;
+        --muted:#9ca3af;
+      }
+    }
+    
+    *{box-sizing:border-box;margin:0;padding:0}
+    
+    /* Prevent zoom on input focus on iOS */
+    @supports (-webkit-touch-callout: none) {
+      input,select,textarea{font-size:16px}
+    }
+    
+    /* Better tap targets for mobile */
+    @media (max-width: 768px) {
+      .food-list-item{min-height:50px;padding:16px}
+      .tab{padding:12px;font-size:14px}
+      .date-type{padding:18px 12px}
+      .btn-primary,.btn-secondary{padding:18px;font-size:17px}
+      input[type="checkbox"]{width:22px;height:22px}
+    }
+    
+    /* Disable hover effects on touch devices */
+    @media (hover: none) {
+      .food-list-item:hover::before{display:none}
+      .food-list-item:hover{
+        transform:none;
+        background:transparent
+      }
+      .tab:hover:not(.active){
+        transform:none;
+        background:transparent
+      }
+      .btn-primary:hover{
+        transform:none;
+        box-shadow:0 2px 8px rgba(139,92,246,.25);
+        animation:none
+      }
+      .btn-primary:hover::before{display:none}
+      .date-type:hover{
+        transform:none;
+        box-shadow:none
+      }
+      .date-type:hover::after{display:none}
+      .option:hover{
+        transform:none;
+        background:transparent
+      }
+    }
+    
+    /* Optimize animations for mobile performance */
+    @media (prefers-reduced-motion: reduce) {
+      *{
+        animation-duration:0.01ms !important;
+        animation-iteration-count:1 !important;
+        transition-duration:0.01ms !important
+      }
+    }
+    
+    /* Safe area for notched phones */
+    @supports (padding: max(0px)) {
+      body{
+        padding-left:max(20px, env(safe-area-inset-left));
+        padding-right:max(20px, env(safe-area-inset-right));
+        padding-bottom:max(20px, env(safe-area-inset-bottom))
+      }
+    }
+    
+    /* Prevent text size adjustments on orientation change */
+    html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+    
+    /* Better scrolling on iOS */
+    .food-list,.scanner-box{-webkit-overflow-scrolling:touch}
+    
+    /* Prevent tap highlight on mobile */
+    *{-webkit-tap-highlight-color:transparent}
+    
+    /* Active states for mobile (replaces hover) */
+    @media (hover: none) {
+      .food-list-item:active{
+        transform:scale(0.97);
+        background:rgba(139,92,246,.12)
+      }
+      .tab:active{
+        transform:scale(0.95)
+      }
+      .btn-primary:active{
+        transform:scale(0.96)
+      }
+      .date-type:active{
+        transform:scale(0.96)
+      }
+    }
+    
     body{
-      margin:0;min-height:100vh;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
-      background:radial-gradient(1200px 700px at 10% 0%,#1d1f24 0%,var(--bg) 60%);
-      color:var(--text);display:flex;align-items:center;justify-content:center;padding:16px
+      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      background:var(--bg);color:var(--text);min-height:100vh;
+      -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale
     }
-    .app{width:min(600px,100%);max-width:100%}
-    h1{margin:0 0 6px;font-size:24px;font-weight:700;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-    .tag{font-size:12px;padding:4px 8px;border:1px solid var(--border);border-radius:999px;color:var(--muted)}
-    .subtitle{margin:0 0 14px;font-size:13px;color:var(--muted)}
     
-    .mode-switch{
-      display:flex;gap:6px;margin-bottom:16px;background:rgba(23,24,27,.75);
-      border:1px solid var(--border);border-radius:14px;padding:6px;backdrop-filter:blur(10px);
-      flex-wrap:wrap
-    }
-    .mode-btn{
-      flex:1;padding:10px 12px;border:none;background:transparent;color:var(--muted);
-      font-size:13px;font-weight:600;border-radius:10px;cursor:pointer;transition:all .2s ease;
-      white-space:nowrap;min-width:100px
-    }
-    .mode-btn:hover{color:var(--text)}
-    .mode-btn.active{background:#f4f4f5;color:#0f1012}
+    .container{max-width:480px;margin:0 auto;padding:20px}
     
-    .panel{
-      background:rgba(23,24,27,.75);border:1px solid var(--border);border-radius:18px;
-      padding:16px;backdrop-filter:blur(10px);box-shadow:0 20px 60px rgba(0,0,0,.35)
-    }
-    .panel.hidden{display:none}
+    .header{text-align:center;margin-bottom:32px;padding-top:20px}
+    .logo{font-size:40px;margin-bottom:8px}
+    h1{font-size:28px;font-weight:700;letter-spacing:-0.02em;margin-bottom:6px}
+    .tagline{color:var(--muted);font-size:15px}
     
-    .search-wrap{position:relative;margin-bottom:12px}
+    .tabs{
+      display:flex;gap:6px;margin-bottom:24px;background:var(--card-bg);
+      border-radius:16px;padding:4px;border:1px solid var(--border)
+    }
+    .tab{
+      flex:1;padding:12px;border:none;background:transparent;
+      color:var(--muted);font-size:14px;font-weight:600;
+      border-radius:12px;cursor:pointer;transition:all .2s ease
+    }
+    .tab.active{background:var(--primary);color:#fff}
+    
+    .panel{display:none;animation:fadeIn .3s ease}
+    .panel.active{display:block}
+    
+    @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    
+    .card{
+      background:var(--card-bg);border:1px solid var(--border);
+      border-radius:20px;padding:24px;margin-bottom:16px;
+      box-shadow:0 1px 3px rgba(0,0,0,.04)
+    }
+    
+    .section-title{
+      font-size:13px;font-weight:600;color:var(--muted);
+      text-transform:uppercase;letter-spacing:0.05em;margin-bottom:12px
+    }
+    
+    .search-box{
+      position:relative;margin-bottom:16px
+    }
     .search-input{
-      width:100%;padding:14px 40px 14px 14px;background:#121317;border:1px solid var(--border);
-      border-radius:14px;color:var(--text);font-size:15px;outline:none;
+      width:100%;padding:14px 40px 14px 16px;
+      background:var(--bg);border:1px solid var(--border);
+      border-radius:12px;font-size:16px;color:var(--text);
+      outline:none;transition:border .2s
     }
-    .search-input:focus{border-color:rgba(255,255,255,.24)}
-    .search-input::placeholder{color:var(--muted);opacity:.6}
-    .search-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
-    .clear-search{
+    .search-input:focus{border-color:var(--primary)}
+    .search-icon{
       position:absolute;right:14px;top:50%;transform:translateY(-50%);
-      background:none;border:none;color:var(--muted);cursor:pointer;padding:4px;
-      font-size:18px;line-height:1;display:none
+      color:var(--muted);font-size:18px;pointer-events:none
     }
-    .clear-search.visible{display:block}
-    .food-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:12px;max-height:300px;overflow-y:auto;padding:2px}
-    .food-grid::-webkit-scrollbar{width:6px}
-    .food-grid::-webkit-scrollbar-track{background:transparent}
-    .food-grid::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
-    .food-card{
-      background:#121317;border:2px solid var(--border);border-radius:12px;
-      padding:12px;cursor:pointer;transition:all .15s ease;text-align:center;
-      min-height:70px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px
-    }
-    .food-card:hover{border-color:rgba(255,255,255,.24);background:#16171c}
-    .food-card.selected{border-color:var(--text);background:#1a1b21}
-    .food-card.hidden{display:none}
-    .food-emoji{font-size:24px;line-height:1}
-    .food-name{font-size:13px;font-weight:500;line-height:1.3}
     
-    label{font-size:12px;color:var(--muted);display:block;margin:8px 0 6px;font-weight:500}
-    select,input[type="date"],input[type="text"]{
-      width:100%;padding:12px;background:#121317;border:1px solid var(--border);
-      border-radius:14px;color:var(--text);font-size:14px;outline:none;
+    .food-list{
+      max-height:320px;overflow-y:auto;margin-bottom:16px;
+      border:1px solid var(--border);border-radius:12px;background:var(--bg)
     }
-    select:focus,input[type="date"]:focus,input[type="text"]:focus{border-color:rgba(255,255,255,.24)}
-    
-    .date-type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
-    .date-type-btn{
-      padding:12px 8px;background:#121317;border:2px solid var(--border);border-radius:12px;
-      color:var(--text);font-size:13px;font-weight:600;cursor:pointer;text-align:center;transition:all .15s ease
+    .food-list-item{
+      padding:14px 16px;border-bottom:1px solid var(--border);
+      cursor:pointer;transition:all .15s;font-size:15px;
+      display:flex;align-items:center;justify-content:space-between
     }
-    .date-type-btn:hover{border-color:rgba(255,255,255,.24);background:#16171c}
-    .date-type-btn.selected{border-color:var(--blue);background:rgba(59,130,246,.1);color:var(--blue)}
-    .date-type-label{font-size:11px;color:var(--muted);display:block;margin-top:2px}
-    
-    .info-box{
-      background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);
-      border-radius:12px;padding:10px 12px;margin:10px 0;font-size:12px;color:var(--text);line-height:1.5
+    .food-list-item:last-child{border-bottom:none}
+    .food-list-item:hover{background:rgba(139,92,246,.04)}
+    .food-list-item:active{transform:scale(0.98)}
+    .food-list-item.selected{
+      background:rgba(139,92,246,.12);font-weight:600;color:var(--primary)
     }
-    .info-box strong{color:var(--blue)}
-    .info-box.purple{background:rgba(139,92,246,.08);border-color:rgba(139,92,246,.2)}
-    .info-box.purple strong{color:var(--purple)}
-    
-    .input-method-switch{
-      display:flex;gap:6px;margin-bottom:14px;background:#121317;border:1px solid var(--border);
-      border-radius:12px;padding:4px
+    .food-list-item .check{
+      width:20px;height:20px;border-radius:50%;border:2px solid var(--border);
+      transition:all .2s;display:flex;align-items:center;justify-content:center;
+      font-size:12px;color:#fff
     }
-    .input-method-btn{
-      flex:1;padding:8px 12px;border:none;background:transparent;color:var(--muted);
-      font-size:12px;font-weight:600;border-radius:8px;cursor:pointer;transition:all .15s ease
+    .food-list-item.selected .check{
+      background:var(--primary);border-color:var(--primary)
     }
-    .input-method-btn:hover{color:var(--text)}
-    .input-method-btn.active{background:rgba(139,92,246,.15);color:var(--purple)}
+    .food-list::-webkit-scrollbar{width:6px}
+    .food-list::-webkit-scrollbar-track{background:transparent}
+    .food-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
     
-    .input-section{display:none}
-    .input-section.active{display:block}
-    
-    .barcode-manual{display:flex;gap:8px;align-items:flex-end;margin-bottom:12px}
-    .barcode-manual input{flex:1;margin-bottom:0}
-    .barcode-manual .btn-small{
-      padding:12px 20px;background:#f4f4f5;color:#0f1012;border:none;
-      border-radius:14px;font-weight:700;font-size:14px;cursor:pointer;transition:all .15s ease;
-      white-space:nowrap
+    .empty-list{
+      padding:40px 20px;text-align:center;color:var(--muted);font-size:14px
     }
-    .barcode-manual .btn-small:hover{background:#fff;transform:translateY(-1px)}
-    .barcode-manual .btn-small:active{transform:translateY(0)}
     
-    .manual-inputs{display:grid;gap:12px}
-    .row{display:flex;gap:10px;margin-bottom:12px}
-    .col{flex:1}
-    
-    .scan-btn{
-      width:100%;padding:16px;background:linear-gradient(135deg,var(--purple),var(--blue));
-      border:none;border-radius:14px;color:var(--text);font-weight:700;font-size:15px;
-      cursor:pointer;transition:all .2s ease;margin-bottom:12px
+    .input-group{margin-bottom:16px}
+    .label{
+      display:block;font-size:14px;font-weight:600;
+      margin-bottom:8px;color:var(--text)
     }
-    .scan-btn:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(139,92,246,.3)}
-    .scan-btn:active{transform:translateY(0)}
-    .scan-btn.scanning{background:var(--red)}
-    
-    .btn{
-      width:100%;margin-top:8px;padding:16px;border-radius:14px;border:none;
-      font-weight:700;background:#f4f4f5;color:#0f1012;cursor:pointer;font-size:16px;
-      transition:all .15s ease
+    input[type="date"],select{
+      width:100%;padding:14px 16px;background:var(--bg);
+      border:1px solid var(--border);border-radius:12px;
+      font-size:16px;color:var(--text);outline:none;
+      -webkit-appearance:none;appearance:none
     }
-    .btn:hover{background:#fff;transform:translateY(-1px)}
-    .btn:active{transform:translateY(0)}
+    input[type="date"]:focus,select:focus{border-color:var(--primary)}
     
-    #scanner-container{
-      display:none;position:relative;width:100%;max-width:500px;margin:0 auto 12px;
-      border-radius:14px;overflow:hidden;background:#000
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    
+    .options{
+      display:flex;flex-direction:column;gap:10px;
+      padding:16px;background:var(--bg);border-radius:12px;margin-bottom:16px
     }
-    #scanner-container.active{display:block}
+    .option{
+      display:flex;align-items:center;gap:10px;cursor:pointer;
+      user-select:none;padding:2px 0
+    }
+    .option input[type="checkbox"]{
+      width:20px;height:20px;cursor:pointer;
+      accent-color:var(--primary)
+    }
+    .option label{font-size:15px;cursor:pointer}
+    
+    .btn-primary{
+      width:100%;padding:16px;background:var(--primary);
+      color:#fff;border:none;border-radius:14px;
+      font-size:16px;font-weight:700;cursor:pointer;
+      transition:all .2s;box-shadow:0 2px 8px rgba(139,92,246,.25)
+    }
+    .btn-primary:active{transform:translateY(1px)}
+    
+    .btn-secondary{
+      width:100%;padding:14px;background:var(--bg);
+      color:var(--text);border:1px solid var(--border);
+      border-radius:12px;font-size:15px;font-weight:600;
+      cursor:pointer;transition:all .2s;margin-bottom:12px
+    }
+    .btn-secondary:active{transform:scale(0.98)}
+    .btn-secondary.active{
+      background:var(--red);color:#fff;border-color:var(--red)
+    }
+    
+    .scanner-box{
+      position:relative;border-radius:16px;overflow:hidden;
+      margin-bottom:16px;display:none;background:#000
+    }
+    .scanner-box.active{display:block}
     #scanner-video{width:100%;height:auto;display:block}
     .scanner-overlay{
       position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-      width:80%;max-width:300px;height:150px;border:3px solid var(--green);
-      border-radius:12px;pointer-events:none;
-      box-shadow:0 0 0 9999px rgba(0,0,0,.5)
+      width:70%;height:140px;border:3px solid var(--green);
+      border-radius:12px;box-shadow:0 0 0 9999px rgba(0,0,0,.5)
     }
-    .scanner-hint{
-      position:absolute;bottom:20px;left:0;right:0;text-align:center;
-      color:var(--text);font-size:14px;font-weight:600;text-shadow:0 2px 4px rgba(0,0,0,.8)
+    .scanner-text{
+      position:absolute;bottom:20px;left:0;right:0;
+      text-align:center;color:#fff;font-weight:600;
+      font-size:14px;text-shadow:0 2px 8px rgba(0,0,0,.8)
     }
     
-    .product-card{
-      background:#121317;border:2px solid var(--border);border-radius:14px;
-      padding:14px;margin-bottom:12px
+    .barcode-input{
+      display:flex;gap:8px;margin-bottom:16px
     }
-    .product-header{display:flex;gap:12px;align-items:flex-start;margin-bottom:12px}
-    .product-image{width:70px;height:70px;border-radius:10px;background:#1a1b21;object-fit:contain}
+    .barcode-input input{flex:1}
+    .barcode-input button{
+      padding:0 20px;background:var(--primary);color:#fff;
+      border:none;border-radius:12px;font-weight:700;
+      font-size:14px;white-space:nowrap
+    }
+    
+    .date-types{
+      display:grid;grid-template-columns:repeat(3,1fr);
+      gap:8px;margin-bottom:16px
+    }
+    .date-type{
+      padding:16px 12px;background:var(--bg);border:2px solid var(--border);
+      border-radius:12px;text-align:center;cursor:pointer;transition:all .2s
+    }
+    .date-type:active{transform:scale(0.95)}
+    .date-type.selected{border-color:var(--primary);background:rgba(59,130,246,.05)}
+    .date-type-label{font-size:14px;font-weight:700;margin-bottom:4px}
+    .date-type-sub{font-size:11px;color:var(--muted)}
+    
+    .info-banner{
+      background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);
+      border-radius:12px;padding:12px 14px;margin-bottom:16px;
+      font-size:13px;line-height:1.5;display:none
+    }
+    .info-banner.show{display:block}
+    
+    .result-card{
+      border-radius:20px;padding:24px;margin-top:20px;
+      border:2px solid var(--border);transition:all .3s;
+      min-height:120px;display:flex;flex-direction:column;
+      align-items:center;justify-content:center;text-align:center
+    }
+    .result-card.good{
+      border-color:var(--green);
+      background:linear-gradient(135deg,rgba(16,185,129,.08),rgba(16,185,129,.02))
+    }
+    .result-card.warning{
+      border-color:var(--yellow);
+      background:linear-gradient(135deg,rgba(245,158,11,.08),rgba(245,158,11,.02))
+    }
+    .result-card.bad{
+      border-color:var(--red);
+      background:linear-gradient(135deg,rgba(239,68,68,.08),rgba(239,68,68,.02))
+    }
+    .result-icon{font-size:48px;margin-bottom:12px}
+    .result-title{font-size:24px;font-weight:800;margin-bottom:8px}
+    .result-text{font-size:15px;color:var(--muted);line-height:1.5;max-width:340px}
+    .result-detail{
+      margin-top:16px;padding-top:16px;border-top:1px solid var(--border);
+      font-size:14px;font-weight:600;color:var(--text)
+    }
+    
+    .product-result{margin-top:20px}
+    .product-header{
+      display:flex;gap:16px;align-items:start;margin-bottom:16px;
+      padding-bottom:16px;border-bottom:1px solid var(--border)
+    }
+    .product-img{
+      width:80px;height:80px;border-radius:12px;
+      background:var(--bg);object-fit:contain
+    }
     .product-info{flex:1;min-width:0}
-    .product-brand{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
-    .product-name{font-size:15px;font-weight:700;margin:0 0 4px;line-height:1.3;word-wrap:break-word}
-    .product-category{font-size:12px;color:var(--muted)}
-    
-    .health-score{
-      display:flex;align-items:center;justify-content:space-between;padding:12px;
-      background:rgba(16,185,129,.1);border:2px solid var(--green);border-radius:12px;margin-bottom:12px
+    .product-brand{
+      font-size:11px;color:var(--muted);
+      text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px
     }
-    .health-score.warning{background:rgba(245,158,11,.1);border-color:var(--yellow)}
-    .health-score.bad{background:rgba(239,68,68,.1);border-color:var(--red)}
-    .score-label{font-size:13px;font-weight:600}
-    .score-value{font-size:32px;font-weight:800;line-height:1}
-    .score-text{font-size:11px;color:var(--muted);margin-top:2px}
-    
-    .issues-list{margin-top:12px}
-    .issue-item{
-      display:flex;align-items:start;gap:8px;padding:8px;background:rgba(239,68,68,.08);
-      border:1px solid rgba(239,68,68,.2);border-radius:10px;margin-bottom:6px;font-size:13px;line-height:1.4
+    .product-name{
+      font-size:17px;font-weight:700;line-height:1.3;margin-bottom:4px
     }
-    .issue-item.warning{background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.2)}
-    .issue-icon{font-size:16px;line-height:1}
+    .product-cat{font-size:13px;color:var(--muted)}
     
-    .positives-list{margin-top:12px}
-    .positive-item{
-      display:flex;align-items:start;gap:8px;padding:8px;background:rgba(16,185,129,.08);
-      border:1px solid rgba(16,185,129,.2);border-radius:10px;margin-bottom:6px;font-size:13px;line-height:1.4
+    .health-badge{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:16px;border-radius:14px;margin-bottom:16px
     }
+    .health-badge.good{
+      background:linear-gradient(135deg,rgba(16,185,129,.12),rgba(16,185,129,.06));
+      border:2px solid var(--green)
+    }
+    .health-badge.warning{
+      background:linear-gradient(135deg,rgba(245,158,11,.12),rgba(245,158,11,.06));
+      border:2px solid var(--yellow)
+    }
+    .health-badge.bad{
+      background:linear-gradient(135deg,rgba(239,68,68,.12),rgba(239,68,68,.06));
+      border:2px solid var(--red)
+    }
+    .health-label{font-size:14px;font-weight:700}
+    .health-score{font-size:36px;font-weight:900;line-height:1}
     
-    .nutrition-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}
+    .issue-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+    .issue{
+      display:flex;align-items:start;gap:10px;padding:12px;
+      background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.15);
+      border-radius:10px;font-size:14px;line-height:1.4
+    }
+    .issue.warning{
+      background:rgba(245,158,11,.06);border-color:rgba(245,158,11,.15)
+    }
+    .issue.good{
+      background:rgba(16,185,129,.06);border-color:rgba(16,185,129,.15)
+    }
+    .issue-icon{font-size:18px;line-height:1;flex-shrink:0}
+    
+    .nutrition{
+      display:grid;grid-template-columns:repeat(2,1fr);gap:12px
+    }
     .nutrition-item{
-      background:#1a1b21;padding:10px;border-radius:10px;text-align:center
+      padding:14px;background:var(--bg);border-radius:12px;text-align:center
     }
-    .nutrition-value{font-size:18px;font-weight:700;margin-bottom:2px}
-    .nutrition-label{font-size:11px;color:var(--muted)}
+    .nutrition-value{font-size:22px;font-weight:800;margin-bottom:4px}
+    .nutrition-label{font-size:12px;color:var(--muted);font-weight:500}
     
-    .options{margin-top:12px;font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:12px}
-    .options .opt{display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none;padding:6px 0}
-    .options input[type="checkbox"]{width:16px;height:16px;cursor:pointer;margin:0}
-    .result{
-      margin-top:14px;padding:18px;border-radius:16px;border:2px solid var(--border);
-      background:linear-gradient(180deg,#191a1f 0%,#121317 100%);min-height:110px;
-      transition:all .2s ease
+    .footer{
+      text-align:center;padding:20px;margin-top:32px;
+      color:var(--muted);font-size:12px;line-height:1.6
     }
-    .result.good{border-color:var(--green);background:linear-gradient(180deg,rgba(16,185,129,.12) 0%,#121317 100%)}
-    .result.warning{border-color:var(--yellow);background:linear-gradient(180deg,rgba(245,158,11,.12) 0%,#121317 100%)}
-    .result.bad{border-color:var(--red);background:linear-gradient(180deg,rgba(239,68,68,.12) 0%,#121317 100%)}
-    .headline{font-size:22px;font-weight:800;margin:0 0 8px}
-    .sub{margin:0;font-size:14px;color:var(--muted);line-height:1.6}
-    .time-left{margin-top:10px;font-size:13px;color:var(--text);opacity:.85;padding-top:8px;border-top:1px solid var(--border)}
-    .pop{animation:pop .2s ease-out}
-    .pulse{animation:pulse 1.3s ease-in-out infinite}
-    .shake{animation:shake .3s ease-in-out}
-    @keyframes pop{from{transform:scale(.97);opacity:.8}to{transform:scale(1);opacity:1}}
-    @keyframes pulse{0%,100%{opacity:.88}50%{opacity:1}}
+    
+    .loading{
+      text-align:center;padding:40px 20px;color:var(--muted);font-size:15px
+    }
+    
+    .empty-state{
+      text-align:center;padding:60px 20px;color:var(--muted)
+    }
+    .empty-icon{font-size:64px;margin-bottom:16px;opacity:0.5}
+    .empty-text{font-size:15px;line-height:1.5}
+    
+    /* Enhanced animations */
+    .pop{animation:pop .35s cubic-bezier(0.68,-0.55,0.265,1.55)}
+    .shake{animation:shake .5s ease-in-out}
+    .pulse{animation:pulse 1.5s ease-in-out infinite}
+    .fadeIn{animation:fadeIn .3s ease}
+    .slideUp{animation:slideUp .5s cubic-bezier(0.175,0.885,0.32,1.275)}
+    .bounce{animation:bounce .8s cubic-bezier(0.68,-0.55,0.265,1.55)}
+    .wiggle{animation:wiggle .6s ease-in-out}
+    .celebrate{animation:celebrate 1s cubic-bezier(0.68,-0.55,0.265,1.55)}
+    
+    @keyframes pop{
+      0%{transform:scale(0.8) rotate(-5deg);opacity:0}
+      50%{transform:scale(1.1) rotate(2deg)}
+      100%{transform:scale(1) rotate(0);opacity:1}
+    }
     @keyframes shake{
-      0%{transform:translateX(0)}20%{transform:translateX(-8px)}
-      40%{transform:translateX(8px)}60%{transform:translateX(-5px)}
-      80%{transform:translateX(5px)}100%{transform:translateX(0)}
+      0%,100%{transform:translateX(0) rotate(0deg)}
+      10%{transform:translateX(-12px) rotate(-3deg)}
+      30%{transform:translateX(12px) rotate(3deg)}
+      50%{transform:translateX(-10px) rotate(-2deg)}
+      70%{transform:translateX(10px) rotate(2deg)}
+      90%{transform:translateX(-5px) rotate(-1deg)}
     }
-    .footer{margin-top:12px;font-size:11px;color:var(--muted);line-height:1.5;text-align:center;padding:0 8px}
-    .no-results{text-align:center;padding:30px;color:var(--muted);font-size:14px}
-    .loading{text-align:center;padding:20px;color:var(--muted);font-size:14px}
+    @keyframes pulse{
+      0%,100%{opacity:0.9;transform:scale(1)}
+      50%{opacity:1;transform:scale(1.03)}
+    }
+    @keyframes slideUp{
+      0%{transform:translateY(40px);opacity:0}
+      100%{transform:translateY(0);opacity:1}
+    }
+    @keyframes bounce{
+      0%{transform:scale(0.3) translateY(100px);opacity:0}
+      50%{transform:scale(1.15) translateY(-10px)}
+      65%{transform:scale(0.92) translateY(0)}
+      80%{transform:scale(1.05) translateY(-5px)}
+      100%{transform:scale(1) translateY(0);opacity:1}
+    }
+    @keyframes wiggle{
+      0%,100%{transform:rotate(0deg) scale(1)}
+      20%{transform:rotate(-5deg) scale(1.05)}
+      40%{transform:rotate(5deg) scale(1.05)}
+      60%{transform:rotate(-3deg) scale(1.03)}
+      80%{transform:rotate(3deg) scale(1.03)}
+    }
+    @keyframes celebrate{
+      0%{transform:scale(0) rotate(-180deg);opacity:0}
+      25%{transform:scale(1.3) rotate(10deg)}
+      50%{transform:scale(0.9) rotate(-5deg)}
+      75%{transform:scale(1.1) rotate(3deg)}
+      100%{transform:scale(1) rotate(0deg);opacity:1}
+    }
+    @keyframes glow{
+      0%,100%{box-shadow:0 0 15px rgba(139,92,246,.3),0 0 30px rgba(139,92,246,.1)}
+      50%{box-shadow:0 0 25px rgba(139,92,246,.6),0 0 50px rgba(139,92,246,.2)}
+    }
+    @keyframes shimmer{
+      0%{transform:translate(-100%,-50%)}
+      100%{transform:translate(200%,-50%)}
+    }
+    @keyframes confetti{
+      0%{transform:translateY(0) rotate(0deg);opacity:1}
+      100%{transform:translateY(-100px) rotate(720deg);opacity:0}
+    }
+    
+    /* Interactive list items - more fun! */
+    .food-list-item{
+      transition:all .25s cubic-bezier(0.68,-0.55,0.265,1.55);
+      position:relative;overflow:hidden
+    }
+    .food-list-item::before{
+      content:'';position:absolute;top:50%;left:-200%;
+      width:200%;height:200%;
+      background:linear-gradient(90deg,transparent,rgba(139,92,246,.15),transparent);
+      transition:left .6s cubic-bezier(0.68,-0.55,0.265,1.55)
+    }
+    .food-list-item:hover::before{left:100%}
+    .food-list-item:hover{
+      transform:translateX(6px) scale(1.01);
+      background:linear-gradient(90deg,rgba(139,92,246,.1),rgba(139,92,246,.03));
+      box-shadow:0 2px 8px rgba(139,92,246,.1)
+    }
+    .food-list-item:active{
+      transform:translateX(6px) scale(0.97);
+      background:rgba(139,92,246,.18)
+    }
+    .food-list-item.selected{
+      animation:celebrate .8s cubic-bezier(0.68,-0.55,0.265,1.55);
+      background:linear-gradient(135deg,rgba(139,92,246,.18),rgba(139,92,246,.10));
+      box-shadow:0 4px 12px rgba(139,92,246,.2)
+    }
+    .food-list-item.selected .check{
+      animation:checkPop .5s cubic-bezier(0.68,-0.55,0.265,1.55)
+    }
+    @keyframes checkPop{
+      0%{transform:scale(0) rotate(-180deg)}
+      50%{transform:scale(1.3) rotate(10deg)}
+      100%{transform:scale(1) rotate(0deg)}
+    }
+    
+    /* Tab animations - bouncy! */
+    .tab{transition:all .3s cubic-bezier(0.68,-0.55,0.265,1.55)}
+    .tab:hover:not(.active){
+      transform:translateY(-4px) scale(1.05);
+      background:rgba(139,92,246,.08)
+    }
+    .tab:active:not(.active){
+      transform:translateY(-2px) scale(1.02)
+    }
+    .tab.active{
+      animation:celebrate .6s cubic-bezier(0.68,-0.55,0.265,1.55);
+      box-shadow:0 4px 12px rgba(139,92,246,.3)
+    }
+    
+    /* Button magic! */
+    .btn-primary{
+      transition:all .25s cubic-bezier(0.68,-0.55,0.265,1.55);
+      position:relative;overflow:hidden
+    }
+    .btn-primary::before{
+      content:'✨';position:absolute;font-size:20px;
+      opacity:0;transition:all .6s cubic-bezier(0.68,-0.55,0.265,1.55)
+    }
+    .btn-primary:hover{
+      transform:translateY(-3px) scale(1.03);
+      box-shadow:0 10px 30px rgba(139,92,246,.45);
+      animation:glow 1.5s ease-in-out infinite
+    }
+    .btn-primary:hover::before{
+      opacity:1;animation:confetti .8s ease-out
+    }
+    .btn-primary:active{
+      transform:translateY(-1px) scale(0.98)
+    }
+    
+    /* Date type cards - super interactive */
+    .date-type{
+      transition:all .3s cubic-bezier(0.68,-0.55,0.265,1.55);
+      position:relative
+    }
+    .date-type::after{
+      content:'';position:absolute;inset:-2px;
+      border-radius:14px;opacity:0;
+      background:radial-gradient(circle at center,rgba(139,92,246,.25),transparent 70%);
+      transition:opacity .4s;pointer-events:none
+    }
+    .date-type:hover{
+      transform:translateY(-5px) scale(1.05) rotate(1deg);
+      box-shadow:0 6px 20px rgba(0,0,0,.15)
+    }
+    .date-type:hover::after{opacity:1;animation:pulse 1s ease-in-out infinite}
+    .date-type:active{transform:translateY(-2px) scale(1.02) rotate(0deg)}
+    .date-type.selected{
+      animation:celebrate .8s cubic-bezier(0.68,-0.55,0.265,1.55);
+      box-shadow:0 6px 24px rgba(59,130,246,.35);
+      transform:scale(1.02)
+    }
+    
+    /* Input fields - playful focus */
+    input[type="date"],select,.search-input{
+      transition:all .3s cubic-bezier(0.68,-0.55,0.265,1.55)
+    }
+    input[type="date"]:focus,select:focus,.search-input:focus{
+      transform:translateY(-3px) scale(1.01);
+      box-shadow:0 8px 20px rgba(139,92,246,.18);
+      border-color:var(--primary)
+    }
+    
+    /* Checkboxes - bouncy rotation */
+    input[type="checkbox"]{
+      transition:all .3s cubic-bezier(0.68,-0.55,0.265,1.55)
+    }
+    input[type="checkbox"]:checked{
+      transform:scale(1.25) rotate(405deg)
+    }
+    input[type="checkbox"]:active{
+      transform:scale(0.85)
+    }
+    
+    /* Result cards - dramatic entrance */
+    .result-card{
+      transition:all .4s cubic-bezier(0.68,-0.55,0.265,1.55);
+      position:relative;overflow:hidden
+    }
+    .result-card::before{
+      content:'';position:absolute;top:-50%;left:-50%;
+      width:200%;height:200%;
+      background:radial-gradient(circle,rgba(255,255,255,.15),transparent 60%);
+      opacity:0;transition:all .6s
+    }
+    .result-card.good::before,.result-card.warning::before,.result-card.bad::before{
+      opacity:1;animation:shimmer 3s linear infinite
+    }
+    
+    /* Result icon - super bouncy */
+    .result-icon{
+      display:inline-block;
+      animation:celebrate 1s cubic-bezier(0.68,-0.55,0.265,1.55)
+    }
+    
+    /* Scanner overlay - intense pulse */
+    .scanner-overlay{
+      animation:scanPulse 1.2s ease-in-out infinite
+    }
+    
+    @keyframes scanPulse{
+      0%,100%{
+        border-color:var(--green);border-width:3px;
+        box-shadow:0 0 0 0 rgba(16,185,129,.7),inset 0 0 30px rgba(16,185,129,.3)
+      }
+      50%{
+        border-color:var(--green);border-width:4px;
+        box-shadow:0 0 0 15px rgba(16,185,129,0),inset 0 0 50px rgba(16,185,129,.5)
+      }
+    }
+    
+    /* Entrance animations - staggered and bouncy */
+    .header{animation:slideUp .6s cubic-bezier(0.175,0.885,0.32,1.275) both}
+    .logo{animation:celebrate 1.2s cubic-bezier(0.68,-0.55,0.265,1.55) .3s both}
+    .tabs{animation:slideUp .5s cubic-bezier(0.175,0.885,0.32,1.275) .2s both}
+    
+    .card:nth-child(1){animation:slideUp .6s cubic-bezier(0.175,0.885,0.32,1.275) .15s both}
+    .card:nth-child(2){animation:slideUp .6s cubic-bezier(0.175,0.885,0.32,1.275) .3s both}
+    .card:nth-child(3){animation:slideUp .6s cubic-bezier(0.175,0.885,0.32,1.275) .45s both}
+    
+    .food-list{animation:slideUp .5s cubic-bezier(0.175,0.885,0.32,1.275) .4s both}
+    
+    /* Product results - dramatic */
+    .product-result{animation:bounce .8s cubic-bezier(0.68,-0.55,0.265,1.55)}
+    .product-img{animation:celebrate .8s cubic-bezier(0.68,-0.55,0.265,1.55) .2s both}
+    
+    .health-badge{
+      animation:bounce .7s cubic-bezier(0.68,-0.55,0.265,1.55) .3s both
+    }
+    .health-badge.good{animation:glow 2s ease-in-out infinite}
+    .health-badge.bad{animation:pulse 1.5s ease-in-out infinite}
+    
+    /* Issue list - playful stagger */
+    .issue{position:relative}
+    .issue:nth-child(1){animation:slideUp .4s cubic-bezier(0.68,-0.55,0.265,1.55) .15s both}
+    .issue:nth-child(2){animation:slideUp .4s cubic-bezier(0.68,-0.55,0.265,1.55) .25s both}
+    .issue:nth-child(3){animation:slideUp .4s cubic-bezier(0.68,-0.55,0.265,1.55) .35s both}
+    .issue:nth-child(4){animation:slideUp .4s cubic-bezier(0.68,-0.55,0.265,1.55) .45s both}
+    .issue:nth-child(5){animation:slideUp .4s cubic-bezier(0.68,-0.55,0.265,1.55) .55s both}
+    
+    /* Nutrition grid - bouncy entrance */
+    .nutrition-item{transition:all .2s cubic-bezier(0.68,-0.55,0.265,1.55)}
+    .nutrition-item:hover{transform:scale(1.05) rotate(2deg);box-shadow:0 4px 12px rgba(0,0,0,.1)}
+    .nutrition-item:nth-child(1){animation:bounce .5s cubic-bezier(0.68,-0.55,0.265,1.55) .4s both}
+    .nutrition-item:nth-child(2){animation:bounce .5s cubic-bezier(0.68,-0.55,0.265,1.55) .5s both}
+    .nutrition-item:nth-child(3){animation:bounce .5s cubic-bezier(0.68,-0.55,0.265,1.55) .6s both}
+    .nutrition-item:nth-child(4){animation:bounce .5s cubic-bezier(0.68,-0.55,0.265,1.55) .7s both}
+    
+    /* Loading - spinner fun */
+    .loading::after{
+      content:'';display:inline-block;width:20px;height:20px;
+      margin-left:12px;border:3px solid var(--muted);
+      border-top-color:var(--primary);border-radius:50%;
+      animation:spin .5s linear infinite
+    }
+    
+    @keyframes spin{
+      to{transform:rotate(360deg)}
+    }
+    
+    /* Search icon wiggle on focus */
+    .search-input:focus + .search-icon{
+      animation:wiggle .6s ease-in-out
+    }
+    
+    /* Scan button pulse when active */
+    .btn-secondary.active{
+      animation:pulse 1.3s ease-in-out infinite;
+      box-shadow:0 0 25px rgba(239,68,68,.5)
+    }
+    
+    /* Info banner slide */
+    .info-banner.show{
+      animation:slideUp .5s cubic-bezier(0.175,0.885,0.32,1.275)
+    }
+    
+    /* Option hover - slide */
+    .option{
+      transition:all .2s cubic-bezier(0.68,-0.55,0.265,1.55);
+      border-radius:10px;padding:8px 4px;margin:-4px
+    }
+    .option:hover{
+      transform:translateX(6px) scale(1.02);
+      background:linear-gradient(90deg,rgba(139,92,246,.08),rgba(139,92,246,.03))
+    }
+    
+    /* Smooth scroll */
+    html{scroll-behavior:smooth}
+    
+    @keyframes pop{
+      0%{transform:scale(0.95);opacity:0.8}
+      100%{transform:scale(1);opacity:1}
+    }
+    @keyframes shake{
+      0%,100%{transform:translateX(0) rotate(0deg)}
+      25%{transform:translateX(-10px) rotate(-2deg)}
+      50%{transform:translateX(10px) rotate(2deg)}
+      75%{transform:translateX(-6px) rotate(-1deg)}
+    }
+    @keyframes pulse{
+      0%,100%{opacity:0.9;transform:scale(1)}
+      50%{opacity:1;transform:scale(1.02)}
+    }
+    @keyframes slideUp{
+      0%{transform:translateY(20px);opacity:0}
+      100%{transform:translateY(0);opacity:1}
+    }
+    @keyframes bounce{
+      0%{transform:scale(0.3) rotate(-10deg);opacity:0}
+      50%{transform:scale(1.05) rotate(2deg)}
+      70%{transform:scale(0.95) rotate(-1deg)}
+      100%{transform:scale(1) rotate(0deg);opacity:1}
+    }
+    @keyframes wiggle{
+      0%,100%{transform:rotate(0deg)}
+      25%{transform:rotate(5deg)}
+      75%{transform:rotate(-5deg)}
+    }
+    @keyframes celebrate{
+      0%{transform:scale(0.8) translateY(0);opacity:0}
+      50%{transform:scale(1.1) translateY(-10px);opacity:1}
+      100%{transform:scale(1) translateY(0);opacity:1}
+    }
+    
+    /* Confetti */
+    .confetti{
+      position:fixed;pointer-events:none;width:10px;height:10px;
+      background:var(--primary);top:-10px;z-index:9999;
+      animation:confettiFall 3s ease-out forwards
+    }
+    @keyframes confettiFall{
+      to{transform:translateY(100vh) rotate(720deg);opacity:0}
+    }
+    
+    /* Hover effects */
+    .food-list-item{transition:all .2s cubic-bezier(0.4,0,0.2,1)}
+    .food-list-item:hover{
+      transform:translateX(4px);background:rgba(139,92,246,.08);
+      box-shadow:inset 3px 0 0 var(--primary)
+    }
+    
+    .tab{transition:all .2s cubic-bezier(0.4,0,0.2,1)}
+    .tab:hover:not(.active){transform:translateY(-2px)}
+    
+    .btn-primary{transition:all .2s cubic-bezier(0.4,0,0.2,1)}
+    .btn-primary:hover{
+      transform:translateY(-2px) scale(1.02);
+      box-shadow:0 8px 24px rgba(139,92,246,.4)
+    }
+    
+    .btn-secondary{transition:all .2s cubic-bezier(0.4,0,0.2,1)}
+    .btn-secondary:hover{
+      transform:translateY(-1px);
+      box-shadow:0 4px 12px rgba(0,0,0,.12)
+    }
+    
+    .date-type{transition:all .2s cubic-bezier(0.4,0,0.2,1)}
+    .date-type:hover{
+      transform:translateY(-3px) scale(1.02);
+      box-shadow:0 4px 12px rgba(0,0,0,.08)
+    }
+    
+    .card{transition:all .3s cubic-bezier(0.4,0,0.2,1)}
+    
+    input[type="date"],select,.search-input{
+      transition:all .2s cubic-bezier(0.4,0,0.2,1)
+    }
+    input[type="date"]:focus,select:focus,.search-input:focus{
+      transform:translateY(-2px);
+      box-shadow:0 6px 16px rgba(139,92,246,.15)
+    }
+    
+    .option{transition:all .15s ease}
+    .option:hover{transform:translateX(4px);background:rgba(139,92,246,.04);border-radius:8px;padding:2px 8px;margin:-2px -8px}
+    
+    /* Loading spinner */
+    .loading::after{
+      content:'';display:inline-block;width:16px;height:16px;
+      margin-left:8px;border:2px solid var(--muted);
+      border-top-color:transparent;border-radius:50%;
+      animation:spin .8s linear infinite
+    }
+    
+    @keyframes spin{
+      to{transform:rotate(360deg)}
+    }
+    
+    /* Ripple effect for buttons */
+    .btn-primary,.btn-secondary{
+      position:relative;overflow:hidden
+    }
+    .btn-primary::before,.btn-secondary::before{
+      content:'';position:absolute;top:50%;left:50%;
+      width:0;height:0;border-radius:50%;
+      background:rgba(255,255,255,.4);
+      transform:translate(-50%,-50%);
+      transition:width .5s,height .5s
+    }
+    .btn-primary:active::before,.btn-secondary:active::before{
+      width:400px;height:400px
+    }
+    
+    /* Success glow */
+    .result-card.good{
+      animation:successGlow 2s ease-in-out
+    }
+    @keyframes successGlow{
+      0%,100%{box-shadow:0 0 0 rgba(16,185,129,0)}
+      50%{box-shadow:0 0 30px rgba(16,185,129,.4)}
+    }
+    
+    /* Warning pulse enhanced */
+    .result-card.warning{
+      animation:warningPulse 1.5s ease-in-out infinite
+    }
+    @keyframes warningPulse{
+      0%,100%{transform:scale(1);box-shadow:0 0 0 rgba(245,158,11,0)}
+      50%{transform:scale(1.01);box-shadow:0 0 20px rgba(245,158,11,.3)}
+    }
+    
+    /* Card entrance stagger */
+    .card:nth-child(1){animation:slideUp .4s cubic-bezier(0.16,1,0.3,1) .05s both}
+    .card:nth-child(2){animation:slideUp .4s cubic-bezier(0.16,1,0.3,1) .1s both}
+    .card:nth-child(3){animation:slideUp .4s cubic-bezier(0.16,1,0.3,1) .15s both}
+    
+    /* Food list entrance */
+    .food-list{animation:fadeIn .3s ease .2s both}
+    
+    /* Checkbox animation */
+    input[type="checkbox"]{
+      transition:all .2s cubic-bezier(0.4,0,0.2,1)
+    }
+    input[type="checkbox"]:checked{
+      transform:scale(1.15) rotate(10deg)
+    }
+    
+    /* Result card entrance */
+    .result-card{
+      transition:all .3s cubic-bezier(0.4,0,0.2,1)
+    }
+    
+    /* Result icon animations */
+    .result-icon{
+      display:inline-block;
+      animation:iconBounce .6s cubic-bezier(0.68,-0.55,0.265,1.55) .2s both
+    }
+    @keyframes iconBounce{
+      0%{transform:scale(0) rotate(-180deg)}
+      50%{transform:scale(1.2) rotate(10deg)}
+      100%{transform:scale(1) rotate(0deg)}
+    }
+    
+    /* Scanner overlay pulse */
+    .scanner-overlay{
+      animation:scanPulse 2s ease-in-out infinite
+    }
+    
+    @keyframes scanPulse{
+      0%,100%{border-color:var(--green);box-shadow:0 0 0 0 rgba(16,185,129,.4)}
+      50%{border-color:var(--green);box-shadow:0 0 0 12px rgba(16,185,129,0)}
+    }
+    
+    /* Smooth scroll */
+    html{scroll-behavior:smooth}
+    
+    /* Product result entrance */
+    .product-result{
+      animation:slideUp .4s cubic-bezier(0.16,1,0.3,1)
+    }
+    
+    /* Issue list stagger */
+    .issue:nth-child(1){animation:slideUp .3s cubic-bezier(0.16,1,0.3,1) .05s both}
+    .issue:nth-child(2){animation:slideUp .3s cubic-bezier(0.16,1,0.3,1) .1s both}
+    .issue:nth-child(3){animation:slideUp .3s cubic-bezier(0.16,1,0.3,1) .15s both}
+    .issue:nth-child(4){animation:slideUp .3s cubic-bezier(0.16,1,0.3,1) .2s both}
+    .issue:nth-child(5){animation:slideUp .3s cubic-bezier(0.16,1,0.3,1) .25s both}
+    
+    /* Interactive selection pulse */
+    .food-list-item.selected{
+      animation:selectionPulse .4s ease-out
+    }
+    @keyframes selectionPulse{
+      0%{background:rgba(139,92,246,.3)}
+      100%{background:rgba(139,92,246,.12)}
+    }
+    
+    /* Check mark pop */
+    .food-list-item.selected .check{
+      animation:checkPop .3s cubic-bezier(0.68,-0.55,0.265,1.55)
+    }
+    @keyframes checkPop{
+      0%{transform:scale(0) rotate(-90deg)}
+      50%{transform:scale(1.3) rotate(10deg)}
+      100%{transform:scale(1) rotate(0deg)}
+    }
+    
+    /* Tab switch animation */
+    .panel{
+      animation:tabSlide .3s ease-out
+    }
+    @keyframes tabSlide{
+      from{opacity:0;transform:translateX(-20px)}
+      to{opacity:1;transform:translateX(0)}
+    }
+    
+    /* Scrollbar */
+    .food-grid::-webkit-scrollbar{width:4px}
+    .food-grid::-webkit-scrollbar-track{background:transparent}
+    .food-grid::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
   </style>
 </head>
 <body>
-  <div class="app">
-    <h1>Good2Go <span class="tag">Food Safety & Health</span></h1>
-    <p class="subtitle">Check expiry dates & ingredient health</p>
-
-    <div class="mode-switch">
-      <button class="mode-btn active" id="modeLeftover">🍕 Leftovers</button>
-      <button class="mode-btn" id="modePackage">📦 Dates</button>
-      <button class="mode-btn" id="modeScanner">🔍 Scanner</button>
+  <div class="container">
+    <div class="header">
+      <div class="logo">🥗</div>
+      <h1>Good2Go</h1>
+      <p class="tagline">Check if your food is safe to eat</p>
     </div>
 
-    <!-- LEFTOVER MODE -->
-    <div class="panel" id="panelLeftover">
-      <label>1. What food are you checking?</label>
-      <div class="search-wrap">
-        <input type="text" id="searchFood" class="search-input" placeholder="Search for your food..." autocomplete="off" />
-        <span class="search-icon">🔍</span>
-        <button class="clear-search" id="clearSearch">×</button>
-      </div>
-      
-      <div class="food-grid" id="foodGrid"></div>
-      <div class="no-results" id="noResults" style="display:none">No foods found. Try a different search.</div>
-
-      <div class="row">
-        <div class="col">
-          <label for="date">2. When did you open/cook it?</label>
-          <input type="date" id="date" />
-        </div>
-
-        <div class="col">
-          <label for="storage">3. Where is it stored?</label>
-          <select id="storage">
-            <option value="fridge">🧊 Fridge</option>
-            <option value="freezer">❄️ Freezer</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="options" aria-label="Quick safety checks">
-        <label class="opt"><input type="checkbox" id="leftOut" /> Left out 2+ hours</label>
-        <label class="opt"><input type="checkbox" id="off" /> Looks/smells off</label>
-        <label class="opt"><input type="checkbox" id="cautious" /> Extra cautious</label>
-      </div>
-
-      <button class="btn" id="checkLeftover" type="button">Check Safety</button>
-
-      <div class="result" id="resultLeftover" aria-live="polite">
-        <p class="headline">👋 Ready to check!</p>
-        <p class="sub">Select a food, enter the date, and click "Check Safety"</p>
-      </div>
+    <div class="tabs">
+      <button class="tab active" data-tab="leftovers">Leftovers</button>
+      <button class="tab" data-tab="dates">Package</button>
+      <button class="tab" data-tab="scanner">Scanner</button>
     </div>
 
-    <!-- PACKAGE DATE MODE -->
-    <div class="panel hidden" id="panelPackage">
-      <label>1. What type of date is on the package?</label>
-      <div class="date-type-grid">
-        <div class="date-type-btn" data-type="best_by">
-          <div>Best By</div>
-          <span class="date-type-label">Quality date</span>
+    <!-- LEFTOVERS -->
+    <div class="panel active" data-panel="leftovers">
+      <div class="card">
+        <div class="section-title">What do you have?</div>
+        <div class="search-box">
+          <input type="text" class="search-input" id="foodSearch" placeholder="Type to search foods..." />
+          <span class="search-icon">🔍</span>
         </div>
-        <div class="date-type-btn" data-type="use_by">
-          <div>Use By</div>
-          <span class="date-type-label">Safety date</span>
-        </div>
-        <div class="date-type-btn" data-type="sell_by">
-          <div>Sell By</div>
-          <span class="date-type-label">Store date</span>
-        </div>
+        <div class="food-list" id="foodList"></div>
       </div>
 
-      <div class="info-box" id="dateTypeInfo" style="display:none"></div>
-
-      <div class="row">
-        <div class="col">
-          <label for="packageDate">2. What's the date on the package?</label>
-          <input type="date" id="packageDate" />
-        </div>
-
-        <div class="col">
-          <label for="packageCategory">3. What type of food?</label>
-          <select id="packageCategory">
-            <option value="">-- Select category --</option>
-            <option value="dairy">🥛 Dairy (milk, yogurt, cheese)</option>
-            <option value="meat">🥩 Fresh meat & poultry</option>
-            <option value="deli">🥪 Deli meats</option>
-            <option value="eggs">🥚 Eggs</option>
-            <option value="bread">🍞 Bread & baked goods</option>
-            <option value="canned">🥫 Canned goods</option>
-            <option value="dry">📦 Dry goods (pasta, rice)</option>
-            <option value="frozen">❄️ Frozen foods</option>
-            <option value="condiments">🍯 Condiments & sauces</option>
-            <option value="produce">🥕 Fresh produce</option>
-          </select>
+      <div class="card">
+        <div class="section-title">When & Where?</div>
+        <div class="grid-2">
+          <div class="input-group">
+            <label class="label">Opened/Cooked</label>
+            <input type="date" id="leftoverDate" />
+          </div>
+          <div class="input-group">
+            <label class="label">Stored in</label>
+            <select id="storage">
+              <option value="fridge">Fridge</option>
+              <option value="freezer">Freezer</option>
+            </select>
+          </div>
         </div>
       </div>
 
       <div class="options">
-        <label class="opt"><input type="checkbox" id="packageOpened" /> Package is opened</label>
-        <label class="opt"><input type="checkbox" id="packageOff" /> Looks/smells off</label>
+        <div class="option">
+          <input type="checkbox" id="leftOut" />
+          <label for="leftOut">Left out 2+ hours</label>
+        </div>
+        <div class="option">
+          <input type="checkbox" id="smellsOff" />
+          <label for="smellsOff">Looks or smells off</label>
+        </div>
+        <div class="option">
+          <input type="checkbox" id="cautious" />
+          <label for="cautious">Extra cautious</label>
+        </div>
       </div>
 
-      <button class="btn" id="checkPackage" type="button">Check Package Date</button>
+      <button class="btn-primary" id="checkLeftover">Check Safety</button>
 
-      <div class="result" id="resultPackage" aria-live="polite">
-        <p class="headline">👋 Ready to check!</p>
-        <p class="sub">Select the date type, enter the package date, and click "Check Package Date"</p>
+      <div class="result-card" id="leftoverResult">
+        <div class="result-icon">👋</div>
+        <div class="result-title">Ready when you are</div>
+        <div class="result-text">Select your food and tap Check Safety</div>
       </div>
     </div>
 
-    <!-- BARCODE SCANNER MODE -->
-    <div class="panel hidden" id="panelScanner">
-      <div class="input-method-switch">
-        <button class="input-method-btn active" id="methodBarcode">📷 Barcode</button>
-        <button class="input-method-btn" id="methodManual">✍️ Manual</button>
+    <!-- PACKAGE DATES -->
+    <div class="panel" data-panel="dates">
+      <div class="card">
+        <div class="section-title">Date Type</div>
+        <div class="date-types" id="dateTypes">
+          <div class="date-type" data-type="best_by">
+            <div class="date-type-label">Best By</div>
+            <div class="date-type-sub">Quality</div>
+          </div>
+          <div class="date-type" data-type="use_by">
+            <div class="date-type-label">Use By</div>
+            <div class="date-type-sub">Safety</div>
+          </div>
+          <div class="date-type" data-type="sell_by">
+            <div class="date-type-label">Sell By</div>
+            <div class="date-type-sub">Store</div>
+          </div>
+        </div>
+        <div class="info-banner" id="dateInfo"></div>
       </div>
 
-      <!-- BARCODE INPUT -->
-      <div class="input-section active" id="sectionBarcode">
-        <div class="info-box purple">
-          <strong>Scan or enter barcode</strong> to look up product information and check ingredient health.
+      <div class="card">
+        <div class="section-title">Package Details</div>
+        <div class="grid-2">
+          <div class="input-group">
+            <label class="label">Date on package</label>
+            <input type="date" id="packageDate" />
+          </div>
+          <div class="input-group">
+            <label class="label">Food type</label>
+            <select id="packageType">
+              <option value="">Select...</option>
+              <option value="dairy">Dairy</option>
+              <option value="meat">Meat/Poultry</option>
+              <option value="deli">Deli Meat</option>
+              <option value="eggs">Eggs</option>
+              <option value="bread">Bread</option>
+              <option value="canned">Canned</option>
+              <option value="dry">Dry Goods</option>
+              <option value="frozen">Frozen</option>
+              <option value="condiments">Condiments</option>
+              <option value="produce">Produce</option>
+            </select>
+          </div>
         </div>
+      </div>
 
-        <div id="scanner-container">
+      <div class="options">
+        <div class="option">
+          <input type="checkbox" id="packageOpened" />
+          <label for="packageOpened">Package is opened</label>
+        </div>
+        <div class="option">
+          <input type="checkbox" id="packageOff" />
+          <label for="packageOff">Looks or smells off</label>
+        </div>
+      </div>
+
+      <button class="btn-primary" id="checkPackage">Check Date</button>
+
+      <div class="result-card" id="packageResult">
+        <div class="result-icon">👋</div>
+        <div class="result-title">Ready when you are</div>
+        <div class="result-text">Fill in the details and tap Check Date</div>
+      </div>
+    </div>
+
+    <!-- SCANNER -->
+    <div class="panel" data-panel="scanner">
+      <div class="card">
+        <div class="section-title">Scan Barcode</div>
+        <button class="btn-secondary" id="scanBtn">📷 Start Camera</button>
+        <div class="scanner-box" id="scannerBox">
           <div id="scanner-video"></div>
           <div class="scanner-overlay"></div>
-          <div class="scanner-hint">Point camera at barcode</div>
+          <div class="scanner-text">Point at barcode</div>
         </div>
-
-        <button class="scan-btn" id="scanBarcode">📷 Start Camera Scanner</button>
-
-        <label for="barcodeInput">Or enter barcode manually</label>
-        <div class="barcode-manual">
-          <input type="text" id="barcodeInput" placeholder="e.g., 737628064502" />
-          <button class="btn-small" id="lookupBarcode">Look Up</button>
+        <div class="barcode-input">
+          <input type="text" id="barcodeInput" placeholder="Or enter barcode" class="search-input" />
+          <button id="lookupBtn">Look Up</button>
         </div>
       </div>
 
-      <!-- MANUAL INPUT -->
-      <div class="input-section" id="sectionManual">
-        <div class="info-box purple">
-          <strong>Search by brand and product</strong> to check ingredient health and nutrition.
+      <div class="card">
+        <div class="section-title">Or Search by Name</div>
+        <div class="input-group">
+          <label class="label">Brand</label>
+          <input type="text" id="brandInput" placeholder="e.g., Coca-Cola" class="search-input" />
         </div>
-
-        <div class="manual-inputs">
-          <div>
-            <label for="brandInput">Brand name</label>
-            <input type="text" id="brandInput" placeholder="e.g., Dannon, Kraft, General Mills" />
-          </div>
-
-          <div>
-            <label for="productInput">Product name</label>
-            <input type="text" id="productInput" placeholder="e.g., Light & Fit Vanilla Yogurt" />
-          </div>
+        <div class="input-group">
+          <label class="label">Product</label>
+          <input type="text" id="productInput" placeholder="e.g., Diet Coke" class="search-input" />
         </div>
-
-        <button class="btn" id="searchProduct">Search Product</button>
+        <button class="btn-primary" id="searchProduct">Search Product</button>
       </div>
 
-      <!-- RESULTS -->
-      <div id="scannerResults"></div>
+      <div id="scannerResult"></div>
     </div>
 
     <div class="footer">
-      Based on USDA, FDA & Open Food Facts data. When in doubt, throw it out.
+      Based on USDA & FDA guidelines<br>
+      When in doubt, throw it out
     </div>
   </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@ericblade/quagga2@1.8.4/dist/quagga.min.js"></script>
 <script>
 (function(){
+  'use strict';
+  
   var FOODS = [
-    {id:"cooked_chicken",emoji:"🍗",name:"Cooked Chicken",fridge:3,freezer:120},
-    {id:"cooked_turkey",emoji:"🦃",name:"Cooked Turkey",fridge:3,freezer:120},
-    {id:"cooked_beef",emoji:"🥩",name:"Cooked Beef",fridge:3,freezer:120},
-    {id:"cooked_pork",emoji:"🥓",name:"Cooked Pork",fridge:3,freezer:120},
-    {id:"pizza",emoji:"🍕",name:"Pizza",fridge:3,freezer:60},
-    {id:"pasta",emoji:"🍝",name:"Cooked Pasta",fridge:3,freezer:120},
-    {id:"rice",emoji:"🍚",name:"Cooked Rice",fridge:3,freezer:180},
-    {id:"soup",emoji:"🍲",name:"Soup/Stew",fridge:3,freezer:180},
-    {id:"deli_meat",emoji:"🥩",name:"Deli Meat",fridge:3,freezer:60},
-    {id:"milk",emoji:"🥛",name:"Milk",fridge:7,freezer:90},
-    {id:"yogurt",emoji:"🍦",name:"Yogurt",fridge:7,freezer:60},
-    {id:"cheese",emoji:"🧀",name:"Cheese",fridge:21,freezer:180},
-    {id:"eggs",emoji:"🥚",name:"Hard-boiled Eggs",fridge:7,freezer:0},
-    {id:"fruit",emoji:"🍎",name:"Cut Fruit",fridge:3,freezer:180},
-    {id:"veggies",emoji:"🥕",name:"Cut Vegetables",fridge:3,freezer:240},
-    {id:"salad",emoji:"🥗",name:"Salad Mix",fridge:3,freezer:0}
+    // Cooked Poultry
+    {id:"chicken_breast",name:"Chicken Breast (cooked)",fridge:3,freezer:120},
+    {id:"chicken_thighs",name:"Chicken Thighs (cooked)",fridge:3,freezer:120},
+    {id:"chicken_wings",name:"Chicken Wings (cooked)",fridge:3,freezer:120},
+    {id:"chicken_drumsticks",name:"Chicken Drumsticks (cooked)",fridge:3,freezer:120},
+    {id:"whole_chicken",name:"Whole Chicken (cooked)",fridge:3,freezer:120},
+    {id:"rotisserie",name:"Rotisserie Chicken",fridge:3,freezer:120},
+    {id:"chicken_nuggets",name:"Chicken Nuggets",fridge:3,freezer:120},
+    {id:"fried_chicken",name:"Fried Chicken",fridge:3,freezer:120},
+    {id:"turkey_breast",name:"Turkey Breast (cooked)",fridge:3,freezer:120},
+    {id:"ground_turkey",name:"Ground Turkey (cooked)",fridge:3,freezer:120},
+    {id:"turkey_slices",name:"Turkey Slices",fridge:3,freezer:60},
+    {id:"duck",name:"Duck (cooked)",fridge:3,freezer:120},
+    
+    // Raw Poultry
+    {id:"raw_chicken_breast",name:"Chicken Breast (raw)",fridge:1,freezer:365},
+    {id:"raw_chicken_thighs",name:"Chicken Thighs (raw)",fridge:1,freezer:365},
+    {id:"raw_chicken_whole",name:"Whole Chicken (raw)",fridge:1,freezer:365},
+    {id:"raw_ground_chicken",name:"Ground Chicken (raw)",fridge:1,freezer:120},
+    {id:"raw_turkey",name:"Turkey (raw)",fridge:1,freezer:365},
+    {id:"raw_ground_turkey",name:"Ground Turkey (raw)",fridge:1,freezer:120},
+    
+    // Cooked Beef & Pork
+    {id:"steak",name:"Steak (cooked)",fridge:3,freezer:120},
+    {id:"ground_beef",name:"Ground Beef (cooked)",fridge:3,freezer:120},
+    {id:"beef_roast",name:"Beef Roast",fridge:3,freezer:120},
+    {id:"pot_roast",name:"Pot Roast",fridge:3,freezer:120},
+    {id:"brisket",name:"Brisket",fridge:3,freezer:120},
+    {id:"meatballs",name:"Meatballs",fridge:3,freezer:90},
+    {id:"meatloaf",name:"Meatloaf",fridge:3,freezer:90},
+    {id:"pork_chops",name:"Pork Chops (cooked)",fridge:3,freezer:120},
+    {id:"pulled_pork",name:"Pulled Pork",fridge:3,freezer:120},
+    {id:"pork_tenderloin",name:"Pork Tenderloin",fridge:3,freezer:120},
+    {id:"ribs",name:"Ribs (cooked)",fridge:3,freezer:120},
+    {id:"bacon",name:"Bacon (cooked)",fridge:4,freezer:30},
+    {id:"sausage",name:"Sausage (cooked)",fridge:3,freezer:60},
+    {id:"ham",name:"Ham (cooked)",fridge:7,freezer:60},
+    {id:"lamb",name:"Lamb (cooked)",fridge:3,freezer:120},
+    
+    // Raw Beef & Pork
+    {id:"raw_steak",name:"Steak (raw)",fridge:3,freezer:365},
+    {id:"raw_ground_beef",name:"Ground Beef (raw)",fridge:1,freezer:120},
+    {id:"raw_roast",name:"Beef Roast (raw)",fridge:3,freezer:365},
+    {id:"raw_pork_chops",name:"Pork Chops (raw)",fridge:3,freezer:180},
+    {id:"raw_pork_loin",name:"Pork Loin (raw)",fridge:3,freezer:180},
+    {id:"raw_ribs",name:"Ribs (raw)",fridge:3,freezer:180},
+    {id:"raw_bacon",name:"Bacon (raw)",fridge:7,freezer:180},
+    {id:"raw_sausage",name:"Sausage (raw)",fridge:1,freezer:60},
+    
+    // Cooked Seafood
+    {id:"salmon",name:"Salmon (cooked)",fridge:2,freezer:90},
+    {id:"tuna",name:"Tuna (cooked)",fridge:2,freezer:90},
+    {id:"cod",name:"Cod (cooked)",fridge:2,freezer:90},
+    {id:"tilapia",name:"Tilapia (cooked)",fridge:2,freezer:90},
+    {id:"shrimp",name:"Shrimp (cooked)",fridge:2,freezer:90},
+    {id:"crab",name:"Crab (cooked)",fridge:2,freezer:90},
+    {id:"lobster",name:"Lobster (cooked)",fridge:2,freezer:90},
+    {id:"fish_sticks",name:"Fish Sticks",fridge:2,freezer:180},
+    {id:"sushi",name:"Sushi (cooked rolls)",fridge:1,freezer:0},
+    
+    // Raw Seafood
+    {id:"raw_salmon",name:"Salmon (raw)",fridge:1,freezer:180},
+    {id:"raw_fish",name:"Fish (raw)",fridge:1,freezer:180},
+    {id:"raw_shrimp",name:"Shrimp (raw)",fridge:1,freezer:180},
+    
+    // Pasta & Rice Dishes
+    {id:"spaghetti",name:"Spaghetti",fridge:3,freezer:180},
+    {id:"fettuccine",name:"Fettuccine",fridge:3,freezer:180},
+    {id:"pasta_salad",name:"Pasta Salad",fridge:3,freezer:0},
+    {id:"mac_cheese",name:"Mac & Cheese",fridge:3,freezer:120},
+    {id:"lasagna",name:"Lasagna",fridge:3,freezer:180},
+    {id:"ravioli",name:"Ravioli",fridge:3,freezer:120},
+    {id:"tortellini",name:"Tortellini",fridge:3,freezer:120},
+    {id:"baked_ziti",name:"Baked Ziti",fridge:3,freezer:180},
+    {id:"white_rice",name:"White Rice (cooked)",fridge:3,freezer:180},
+    {id:"brown_rice",name:"Brown Rice (cooked)",fridge:3,freezer:180},
+    {id:"fried_rice",name:"Fried Rice",fridge:2,freezer:120},
+    {id:"rice_pilaf",name:"Rice Pilaf",fridge:3,freezer:180},
+    {id:"risotto",name:"Risotto",fridge:3,freezer:180},
+    {id:"quinoa",name:"Quinoa (cooked)",fridge:5,freezer:240},
+    
+    // Pizza & Fast Food
+    {id:"pizza",name:"Pizza",fridge:3,freezer:60},
+    {id:"calzone",name:"Calzone",fridge:3,freezer:60},
+    {id:"burger",name:"Burger",fridge:3,freezer:120},
+    {id:"hot_dog",name:"Hot Dog (cooked)",fridge:3,freezer:60},
+    {id:"sandwich",name:"Sandwich",fridge:2,freezer:0},
+    {id:"sub",name:"Sub Sandwich",fridge:2,freezer:0},
+    {id:"wrap",name:"Wrap",fridge:2,freezer:0},
+    {id:"taco",name:"Taco",fridge:2,freezer:90},
+    {id:"burrito",name:"Burrito",fridge:2,freezer:90},
+    {id:"quesadilla",name:"Quesadilla",fridge:2,freezer:90},
+    {id:"nachos",name:"Nachos",fridge:2,freezer:0},
+    {id:"french_fries",name:"French Fries",fridge:3,freezer:60},
+    {id:"onion_rings",name:"Onion Rings",fridge:3,freezer:60},
+    {id:"chinese_takeout",name:"Chinese Takeout",fridge:3,freezer:120},
+    
+    // Soups & Stews
+    {id:"chicken_soup",name:"Chicken Soup",fridge:3,freezer:180},
+    {id:"beef_stew",name:"Beef Stew",fridge:3,freezer:180},
+    {id:"chili",name:"Chili",fridge:3,freezer:180},
+    {id:"tomato_soup",name:"Tomato Soup",fridge:3,freezer:180},
+    {id:"vegetable_soup",name:"Vegetable Soup",fridge:3,freezer:180},
+    {id:"minestrone",name:"Minestrone",fridge:3,freezer:180},
+    {id:"clam_chowder",name:"Clam Chowder",fridge:2,freezer:90},
+    {id:"broth",name:"Broth/Stock",fridge:3,freezer:180},
+    
+    // Casseroles & Baked
+    {id:"casserole",name:"Casserole",fridge:3,freezer:180},
+    {id:"shepherds_pie",name:"Shepherd's Pie",fridge:3,freezer:180},
+    {id:"pot_pie",name:"Pot Pie",fridge:3,freezer:180},
+    {id:"enchiladas",name:"Enchiladas",fridge:3,freezer:120},
+    {id:"tamales",name:"Tamales",fridge:3,freezer:120},
+    {id:"quiche",name:"Quiche",fridge:3,freezer:60},
+    
+    // Deli & Prepared Meats
+    {id:"deli_turkey",name:"Deli Turkey",fridge:3,freezer:60},
+    {id:"deli_ham",name:"Deli Ham",fridge:3,freezer:60},
+    {id:"deli_roast_beef",name:"Deli Roast Beef",fridge:3,freezer:60},
+    {id:"bologna",name:"Bologna",fridge:3,freezer:60},
+    {id:"salami",name:"Salami",fridge:14,freezer:60},
+    {id:"pepperoni",name:"Pepperoni",fridge:21,freezer:180},
+    {id:"hot_dogs_pkg",name:"Hot Dogs (package)",fridge:7,freezer:60},
+    
+    // Salads & Cold Sides
+    {id:"egg_salad",name:"Egg Salad",fridge:3,freezer:0},
+    {id:"tuna_salad",name:"Tuna Salad",fridge:3,freezer:0},
+    {id:"chicken_salad",name:"Chicken Salad",fridge:3,freezer:0},
+    {id:"potato_salad",name:"Potato Salad",fridge:3,freezer:0},
+    {id:"coleslaw",name:"Coleslaw",fridge:3,freezer:0},
+    {id:"macaroni_salad",name:"Macaroni Salad",fridge:3,freezer:0},
+    {id:"green_salad",name:"Green Salad",fridge:1,freezer:0},
+    
+    // Dairy Products
+    {id:"milk",name:"Milk (opened)",fridge:7,freezer:90},
+    {id:"yogurt",name:"Yogurt (opened)",fridge:7,freezer:60},
+    {id:"greek_yogurt",name:"Greek Yogurt",fridge:7,freezer:60},
+    {id:"sour_cream",name:"Sour Cream (opened)",fridge:14,freezer:0},
+    {id:"cottage_cheese",name:"Cottage Cheese",fridge:7,freezer:0},
+    {id:"cream_cheese",name:"Cream Cheese (opened)",fridge:14,freezer:60},
+    {id:"heavy_cream",name:"Heavy Cream",fridge:7,freezer:120},
+    {id:"half_and_half",name:"Half and Half",fridge:7,freezer:0},
+    {id:"butter",name:"Butter",fridge:30,freezer:270},
+    {id:"margarine",name:"Margarine",fridge:60,freezer:365},
+    
+    // Cheese
+    {id:"cheddar",name:"Cheddar Cheese",fridge:21,freezer:180},
+    {id:"mozzarella",name:"Mozzarella",fridge:21,freezer:180},
+    {id:"swiss",name:"Swiss Cheese",fridge:21,freezer:180},
+    {id:"parmesan",name:"Parmesan",fridge:30,freezer:270},
+    {id:"brie",name:"Brie",fridge:7,freezer:0},
+    {id:"feta",name:"Feta",fridge:7,freezer:0},
+    {id:"goat_cheese",name:"Goat Cheese",fridge:7,freezer:0},
+    {id:"blue_cheese",name:"Blue Cheese",fridge:14,freezer:0},
+    {id:"shredded_cheese",name:"Shredded Cheese",fridge:14,freezer:120},
+    {id:"cheese_slices",name:"Cheese Slices",fridge:21,freezer:180},
+    
+    // Eggs
+    {id:"hard_boiled_eggs",name:"Hard-Boiled Eggs",fridge:7,freezer:0},
+    {id:"scrambled_eggs",name:"Scrambled Eggs",fridge:3,freezer:0},
+    {id:"fried_eggs",name:"Fried Eggs",fridge:3,freezer:0},
+    {id:"omelet",name:"Omelet",fridge:3,freezer:0},
+    {id:"frittata",name:"Frittata",fridge:3,freezer:0},
+    
+    // Vegetables (cooked)
+    {id:"roasted_vegetables",name:"Roasted Vegetables",fridge:3,freezer:180},
+    {id:"steamed_vegetables",name:"Steamed Vegetables",fridge:3,freezer:240},
+    {id:"grilled_vegetables",name:"Grilled Vegetables",fridge:3,freezer:180},
+    {id:"mashed_potatoes",name:"Mashed Potatoes",fridge:3,freezer:180},
+    {id:"baked_potato",name:"Baked Potato",fridge:3,freezer:0},
+    {id:"sweet_potato",name:"Sweet Potato (cooked)",fridge:3,freezer:180},
+    {id:"corn_on_cob",name:"Corn on the Cob",fridge:3,freezer:180},
+    {id:"green_beans",name:"Green Beans (cooked)",fridge:3,freezer:240},
+    {id:"broccoli",name:"Broccoli (cooked)",fridge:3,freezer:240},
+    {id:"cauliflower",name:"Cauliflower (cooked)",fridge:3,freezer:240},
+    {id:"asparagus",name:"Asparagus (cooked)",fridge:3,freezer:180},
+    
+    // Vegetables (raw/fresh)
+    {id:"lettuce",name:"Lettuce",fridge:5,freezer:0},
+    {id:"spinach",name:"Spinach",fridge:5,freezer:0},
+    {id:"kale",name:"Kale",fridge:5,freezer:0},
+    {id:"carrots",name:"Carrots",fridge:14,freezer:240},
+    {id:"celery",name:"Celery",fridge:7,freezer:240},
+    {id:"bell_peppers",name:"Bell Peppers",fridge:7,freezer:240},
+    {id:"tomatoes",name:"Tomatoes",fridge:7,freezer:0},
+    {id:"cucumbers",name:"Cucumbers",fridge:5,freezer:0},
+    {id:"onions",name:"Onions (cut)",fridge:7,freezer:180},
+    {id:"mushrooms",name:"Mushrooms",fridge:5,freezer:240},
+    
+    // Fruits
+    {id:"berries",name:"Berries",fridge:5,freezer:365},
+    {id:"strawberries",name:"Strawberries",fridge:5,freezer:365},
+    {id:"blueberries",name:"Blueberries",fridge:7,freezer:365},
+    {id:"grapes",name:"Grapes",fridge:7,freezer:365},
+    {id:"cut_melon",name:"Cut Melon",fridge:3,freezer:180},
+    {id:"cut_pineapple",name:"Cut Pineapple",fridge:3,freezer:180},
+    {id:"apple_slices",name:"Apple Slices",fridge:3,freezer:180},
+    {id:"fruit_salad",name:"Fruit Salad",fridge:3,freezer:0},
+    {id:"bananas",name:"Bananas (cut)",fridge:2,freezer:180},
+    
+    // Breads & Baked Goods
+    {id:"bread",name:"Bread",fridge:7,freezer:90},
+    {id:"bagels",name:"Bagels",fridge:5,freezer:180},
+    {id:"english_muffins",name:"English Muffins",fridge:7,freezer:180},
+    {id:"tortillas",name:"Tortillas",fridge:7,freezer:240},
+    {id:"pita_bread",name:"Pita Bread",fridge:7,freezer:180},
+    {id:"croissants",name:"Croissants",fridge:2,freezer:60},
+    {id:"dinner_rolls",name:"Dinner Rolls",fridge:7,freezer:90},
+    {id:"biscuits",name:"Biscuits",fridge:2,freezer:90},
+    
+    // Desserts
+    {id:"cake",name:"Cake",fridge:3,freezer:180},
+    {id:"cupcakes",name:"Cupcakes",fridge:3,freezer:180},
+    {id:"brownies",name:"Brownies",fridge:4,freezer:90},
+    {id:"cookies",name:"Cookies",fridge:14,freezer:365},
+    {id:"pie",name:"Pie (fruit)",fridge:3,freezer:240},
+    {id:"pumpkin_pie",name:"Pumpkin Pie",fridge:3,freezer:60},
+    {id:"cheesecake",name:"Cheesecake",fridge:5,freezer:180},
+    {id:"muffins",name:"Muffins",fridge:7,freezer:90},
+    {id:"donuts",name:"Donuts",fridge:2,freezer:90},
+    {id:"ice_cream",name:"Ice Cream",fridge:0,freezer:180},
+    
+    // Condiments & Sauces
+    {id:"ketchup",name:"Ketchup (opened)",fridge:180,freezer:0},
+    {id:"mustard",name:"Mustard (opened)",fridge:365,freezer:0},
+    {id:"mayo",name:"Mayonnaise (opened)",fridge:60,freezer:0},
+    {id:"bbq_sauce",name:"BBQ Sauce (opened)",fridge:120,freezer:0},
+    {id:"soy_sauce",name:"Soy Sauce (opened)",fridge:730,freezer:0},
+    {id:"hot_sauce",name:"Hot Sauce (opened)",fridge:365,freezer:0},
+    {id:"salsa",name:"Salsa (opened)",fridge:7,freezer:60},
+    {id:"guacamole",name:"Guacamole",fridge:2,freezer:90},
+    {id:"hummus",name:"Hummus (opened)",fridge:4,freezer:120},
+    {id:"ranch",name:"Ranch Dressing",fridge:60,freezer:0},
+    {id:"caesar",name:"Caesar Dressing",fridge:90,freezer:0},
+    {id:"marinara",name:"Marinara Sauce",fridge:5,freezer:180},
+    {id:"alfredo",name:"Alfredo Sauce",fridge:3,freezer:90},
+    {id:"pesto",name:"Pesto",fridge:7,freezer:180},
+    {id:"gravy",name:"Gravy",fridge:2,freezer:120},
+    {id:"cranberry_sauce",name:"Cranberry Sauce",fridge:14,freezer:180},
+    
+    // Beans & Legumes
+    {id:"baked_beans",name:"Baked Beans",fridge:3,freezer:180},
+    {id:"black_beans",name:"Black Beans (cooked)",fridge:3,freezer:180},
+    {id:"kidney_beans",name:"Kidney Beans (cooked)",fridge:3,freezer:180},
+    {id:"refried_beans",name:"Refried Beans",fridge:3,freezer:180},
+    {id:"lentils",name:"Lentils (cooked)",fridge:3,freezer:180},
+    {id:"chickpeas",name:"Chickpeas (cooked)",fridge:3,freezer:180},
+    
+    // Other
+    {id:"tofu",name:"Tofu (opened)",fridge:3,freezer:180},
+    {id:"tempeh",name:"Tempeh",fridge:7,freezer:240},
+    {id:"baby_food",name:"Baby Food (opened)",fridge:2,freezer:0},
+    {id:"smoothie",name:"Smoothie",fridge:1,freezer:90},
+    {id:"protein_shake",name:"Protein Shake",fridge:1,freezer:0}
   ];
 
-  var DATE_TYPE_INFO = {
-    best_by: "<strong>Best By</strong> is about quality, not safety. Food may still be safe to eat after this date, though quality (taste, texture) may decline.",
-    use_by: "<strong>Use By</strong> is the last date recommended for peak quality. After this date, food may not be safe to eat, especially for perishable items.",
-    sell_by: "<strong>Sell By</strong> tells stores how long to display the product. You typically have several days after this date to use the product safely."
+  var DATE_INFO = {
+    best_by: "Best By dates are about quality, not safety. Food is often safe after this date.",
+    use_by: "Use By is the last date for peak quality. May not be safe after this for perishables.",
+    sell_by: "Sell By tells stores when to remove from shelves. You have days after to use it safely."
   };
 
-  var PACKAGE_GRACE = {
-    dairy: {best_by: 7, use_by: 2, sell_by: 7, opened: 7},
-    meat: {best_by: 2, use_by: 1, sell_by: 3, opened: 2},
-    deli: {best_by: 3, use_by: 1, sell_by: 5, opened: 3},
-    eggs: {best_by: 21, use_by: 14, sell_by: 21, opened: 21},
-    bread: {best_by: 7, use_by: 3, sell_by: 7, opened: 5},
-    canned: {best_by: 365, use_by: 180, sell_by: 365, opened: 3},
-    dry: {best_by: 180, use_by: 90, sell_by: 180, opened: 60},
-    frozen: {best_by: 90, use_by: 60, sell_by: 90, opened: 60},
-    condiments: {best_by: 90, use_by: 60, sell_by: 90, opened: 30},
-    produce: {best_by: 5, use_by: 3, sell_by: 7, opened: 3}
+  var GRACE_DAYS = {
+    dairy: {best_by:7,use_by:2,sell_by:7,opened:7},
+    meat: {best_by:2,use_by:1,sell_by:3,opened:2},
+    deli: {best_by:3,use_by:1,sell_by:5,opened:3},
+    eggs: {best_by:21,use_by:14,sell_by:21,opened:21},
+    bread: {best_by:7,use_by:3,sell_by:7,opened:5},
+    canned: {best_by:365,use_by:180,sell_by:365,opened:3},
+    dry: {best_by:180,use_by:90,sell_by:180,opened:60},
+    frozen: {best_by:90,use_by:60,sell_by:90,opened:60},
+    condiments: {best_by:90,use_by:60,sell_by:90,opened:30},
+    produce: {best_by:5,use_by:3,sell_by:7,opened:3}
   };
 
-  var BAD_INGREDIENTS = [
-    {terms: ['high fructose corn syrup', 'hfcs'], penalty: 20, label: 'High fructose corn syrup'},
-    {terms: ['canola oil', 'soybean oil', 'sunflower oil', 'vegetable oil', 'seed oil'], penalty: 15, label: 'Seed oils'},
-    {terms: ['red 40', 'yellow 5', 'yellow 6', 'blue 1', 'red 3'], penalty: 10, label: 'Artificial colors'},
-    {terms: ['aspartame', 'sucralose', 'acesulfame'], penalty: 8, label: 'Artificial sweeteners'},
-    {terms: ['sodium benzoate', 'potassium sorbate'], penalty: 5, label: 'Preservatives'},
-    {terms: ['carrageenan'], penalty: 5, label: 'Carrageenan (inflammatory)'},
-    {terms: ['trans fat', 'partially hydrogenated'], penalty: 25, label: 'Trans fats'},
-    {terms: ['msg', 'monosodium glutamate'], penalty: 7, label: 'MSG'}
+  var BAD_STUFF = [
+    {terms:['high fructose corn syrup','hfcs'],penalty:20,label:'High fructose corn syrup'},
+    {terms:['canola oil','soybean oil','sunflower oil','vegetable oil'],penalty:15,label:'Seed oils'},
+    {terms:['red 40','yellow 5','yellow 6','blue 1'],penalty:10,label:'Artificial colors'},
+    {terms:['aspartame','sucralose'],penalty:8,label:'Artificial sweeteners'},
+    {terms:['sodium benzoate','potassium sorbate'],penalty:5,label:'Preservatives'},
+    {terms:['carrageenan'],penalty:5,label:'Carrageenan'},
+    {terms:['trans fat','partially hydrogenated'],penalty:25,label:'Trans fats'},
+    {terms:['msg','monosodium glutamate'],penalty:7,label:'MSG'}
   ];
 
-  var GOOD_INGREDIENTS = [
-    {terms: ['organic'], bonus: 5, label: 'Organic'},
-    {terms: ['whole grain', 'whole wheat'], bonus: 8, label: 'Whole grains'},
-    {terms: ['probiotic', 'live cultures'], bonus: 10, label: 'Probiotics'},
-    {terms: ['non-gmo'], bonus: 3, label: 'Non-GMO'}
+  var GOOD_STUFF = [
+    {terms:['organic'],bonus:5,label:'Organic'},
+    {terms:['whole grain','whole wheat'],bonus:8,label:'Whole grains'},
+    {terms:['probiotic','live cultures'],bonus:10,label:'Probiotics'},
+    {terms:['non-gmo'],bonus:3,label:'Non-GMO'}
   ];
 
-  var selectedFood = null;
-  var selectedDateType = null;
-  var allCards = [];
-  var isScanning = false;
-  
-  var elModeLeftover = document.getElementById("modeLeftover");
-  var elModePackage = document.getElementById("modePackage");
-  var elModeScanner = document.getElementById("modeScanner");
-  var elPanelLeftover = document.getElementById("panelLeftover");
-  var elPanelPackage = document.getElementById("panelPackage");
-  var elPanelScanner = document.getElementById("panelScanner");
-  
-  var elSearchFood = document.getElementById("searchFood");
-  var elClearSearch = document.getElementById("clearSearch");
-  var elFoodGrid = document.getElementById("foodGrid");
-  var elNoResults = document.getElementById("noResults");
-  var elDate = document.getElementById("date");
-  var elStorage = document.getElementById("storage");
-  var elLeftOut = document.getElementById("leftOut");
-  var elOff = document.getElementById("off");
-  var elCautious = document.getElementById("cautious");
-  var elCheckLeftover = document.getElementById("checkLeftover");
-  var elResultLeftover = document.getElementById("resultLeftover");
-  
-  var elDateTypeInfo = document.getElementById("dateTypeInfo");
-  var elPackageDate = document.getElementById("packageDate");
-  var elPackageCategory = document.getElementById("packageCategory");
-  var elPackageOpened = document.getElementById("packageOpened");
-  var elPackageOff = document.getElementById("packageOff");
-  var elCheckPackage = document.getElementById("checkPackage");
-  var elResultPackage = document.getElementById("resultPackage");
+  var state = {
+    selectedFood: null,
+    selectedDateType: null,
+    isScanning: false
+  };
 
-  var elMethodBarcode = document.getElementById("methodBarcode");
-  var elMethodManual = document.getElementById("methodManual");
-  var elSectionBarcode = document.getElementById("sectionBarcode");
-  var elSectionManual = document.getElementById("sectionManual");
-  var elScannerContainer = document.getElementById("scanner-container");
-  var elBarcodeInput = document.getElementById("barcodeInput");
-  var elLookupBarcode = document.getElementById("lookupBarcode");
-  var elScanBarcode = document.getElementById("scanBarcode");
-  var elBrandInput = document.getElementById("brandInput");
-  var elProductInput = document.getElementById("productInput");
-  var elSearchProduct = document.getElementById("searchProduct");
-  var elScannerResults = document.getElementById("scannerResults");
+  // Elements
+  var els = {
+    foodList: document.getElementById('foodList'),
+    foodSearch: document.getElementById('foodSearch'),
+    leftoverDate: document.getElementById('leftoverDate'),
+    storage: document.getElementById('storage'),
+    leftOut: document.getElementById('leftOut'),
+    smellsOff: document.getElementById('smellsOff'),
+    cautious: document.getElementById('cautious'),
+    checkLeftover: document.getElementById('checkLeftover'),
+    leftoverResult: document.getElementById('leftoverResult'),
+    
+    dateTypes: document.getElementById('dateTypes'),
+    dateInfo: document.getElementById('dateInfo'),
+    packageDate: document.getElementById('packageDate'),
+    packageType: document.getElementById('packageType'),
+    packageOpened: document.getElementById('packageOpened'),
+    packageOff: document.getElementById('packageOff'),
+    checkPackage: document.getElementById('checkPackage'),
+    packageResult: document.getElementById('packageResult'),
+    
+    scanBtn: document.getElementById('scanBtn'),
+    scannerBox: document.getElementById('scannerBox'),
+    barcodeInput: document.getElementById('barcodeInput'),
+    lookupBtn: document.getElementById('lookupBtn'),
+    brandInput: document.getElementById('brandInput'),
+    productInput: document.getElementById('productInput'),
+    searchProduct: document.getElementById('searchProduct'),
+    scannerResult: document.getElementById('scannerResult')
+  };
 
-  function setTodayDefault(){
-    var today = new Date();
-    var dd = String(today.getDate()).padStart(2, '0');
-    var mm = String(today.getMonth() + 1).padStart(2, '0');
-    var yyyy = today.getFullYear();
-    var formatted = yyyy + '-' + mm + '-' + dd;
-    elDate.value = formatted;
-    elPackageDate.value = formatted;
+  // Init
+  function init(){
+    setToday();
+    renderFoods();
+    bindEvents();
   }
-  setTodayDefault();
 
-  // MODE SWITCHING
-  elModeLeftover.addEventListener("click", function(){
-    stopScanner();
-    elModeLeftover.classList.add("active");
-    elModePackage.classList.remove("active");
-    elModeScanner.classList.remove("active");
-    elPanelLeftover.classList.remove("hidden");
-    elPanelPackage.classList.add("hidden");
-    elPanelScanner.classList.add("hidden");
-  });
+  function setToday(){
+    var today = new Date().toISOString().split('T')[0];
+    els.leftoverDate.value = today;
+    els.packageDate.value = today;
+  }
 
-  elModePackage.addEventListener("click", function(){
-    stopScanner();
-    elModePackage.classList.add("active");
-    elModeLeftover.classList.remove("active");
-    elModeScanner.classList.remove("active");
-    elPanelPackage.classList.remove("hidden");
-    elPanelLeftover.classList.add("hidden");
-    elPanelScanner.classList.add("hidden");
-  });
+  function renderFoods(filter){
+    var html = '';
+    var count = 0;
+    
+    FOODS.forEach(function(food){
+      if(filter){
+        var query = filter.toLowerCase();
+        if(food.name.toLowerCase().indexOf(query) === -1) return;
+      }
+      count++;
+      var selected = state.selectedFood === food.id ? 'selected' : '';
+      html += '<div class="food-list-item ' + selected + '" data-id="' + food.id + '">';
+      html += '<span>' + food.name + '</span>';
+      html += '<span class="check">' + (selected ? '✓' : '') + '</span>';
+      html += '</div>';
+    });
+    
+    if(count === 0){
+      html = '<div class="empty-list">No foods found. Try a different search.</div>';
+    }
+    
+    els.foodList.innerHTML = html;
+  }
 
-  elModeScanner.addEventListener("click", function(){
-    elModeScanner.classList.add("active");
-    elModeLeftover.classList.remove("active");
-    elModePackage.classList.remove("active");
-    elPanelScanner.classList.remove("hidden");
-    elPanelLeftover.classList.add("hidden");
-    elPanelPackage.classList.add("hidden");
-  });
+  function bindEvents(){
+    // Tabs
+    document.querySelectorAll('.tab').forEach(function(tab){
+      tab.addEventListener('click', function(){
+        var target = this.dataset.tab;
+        document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+        document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
+        this.classList.add('active');
+        document.querySelector('[data-panel="' + target + '"]').classList.add('active');
+        if(state.isScanning) stopScanner();
+      });
+    });
 
-  // SCANNER INPUT METHOD SWITCHING
-  elMethodBarcode.addEventListener("click", function(){
-    stopScanner();
-    elMethodBarcode.classList.add("active");
-    elMethodManual.classList.remove("active");
-    elSectionBarcode.classList.add("active");
-    elSectionManual.classList.remove("active");
-  });
+    // Food selection
+    els.foodList.addEventListener('click', function(e){
+      var item = e.target.closest('.food-list-item');
+      if(!item) return;
+      document.querySelectorAll('.food-list-item').forEach(function(i){ i.classList.remove('selected'); });
+      item.classList.add('selected');
+      item.querySelector('.check').textContent = '✓';
+      state.selectedFood = item.dataset.id;
+    });
 
-  elMethodManual.addEventListener("click", function(){
-    stopScanner();
-    elMethodManual.classList.add("active");
-    elMethodBarcode.classList.remove("active");
-    elSectionManual.classList.add("active");
-    elSectionBarcode.classList.remove("active");
-  });
+    // Food search
+    els.foodSearch.addEventListener('input', function(){
+      renderFoods(this.value);
+    });
 
-  // BARCODE SCANNER
+    // Date types
+    els.dateTypes.addEventListener('click', function(e){
+      var btn = e.target.closest('.date-type');
+      if(!btn) return;
+      document.querySelectorAll('.date-type').forEach(function(d){ d.classList.remove('selected'); });
+      btn.classList.add('selected');
+      state.selectedDateType = btn.dataset.type;
+      els.dateInfo.textContent = DATE_INFO[state.selectedDateType];
+      els.dateInfo.classList.add('show');
+    });
+
+    // Check buttons
+    els.checkLeftover.addEventListener('click', checkLeftover);
+    els.checkPackage.addEventListener('click', checkPackage);
+    
+    // Scanner
+    els.scanBtn.addEventListener('click', toggleScanner);
+    els.lookupBtn.addEventListener('click', function(){
+      var code = els.barcodeInput.value.trim();
+      if(code) lookupBarcode(code);
+    });
+    els.searchProduct.addEventListener('click', searchProduct);
+    
+    // Enter keys
+    els.barcodeInput.addEventListener('keypress', function(e){
+      if(e.key === 'Enter') els.lookupBtn.click();
+    });
+    els.productInput.addEventListener('keypress', function(e){
+      if(e.key === 'Enter') els.searchProduct.click();
+    });
+  }
+
+  // Leftover checker
+  function checkLeftover(){
+    if(!state.selectedFood){
+      showResult(els.leftoverResult, 'bad', '🚫', 'Select a food', 'Pick what you want to check');
+      return;
+    }
+
+    if(!els.leftoverDate.value){
+      showResult(els.leftoverResult, 'bad', '🚫', 'Pick a date', 'When did you open or cook it?');
+      return;
+    }
+
+    if(els.smellsOff.checked){
+      showResult(els.leftoverResult, 'bad', '🚫', "Don't Risk It", 'Trust your senses — toss it out');
+      return;
+    }
+
+    if(els.leftOut.checked){
+      showResult(els.leftoverResult, 'bad', '🚫', 'Bacteria Alert', 'Left out 2+ hours? Not safe');
+      return;
+    }
+
+    var food = FOODS.find(function(f){ return f.id === state.selectedFood; });
+    var storageType = els.storage.value;
+    var allowed = food[storageType];
+
+    if(storageType === 'freezer' && allowed === 0){
+      showResult(els.leftoverResult, 'warning', '⚠️', "Don't Freeze", food.name + " shouldn't be frozen");
+      return;
+    }
+
+    if(els.cautious.checked) allowed = Math.floor(allowed * 0.75);
+
+    var days = daysBetween(els.leftoverDate.value, new Date());
+    var remaining = allowed - days;
+
+    if(remaining < 0){
+      showResult(els.leftoverResult, 'bad', '🚫', 'Too Old', 
+        'Been ' + days + ' days (limit: ' + allowed + ')');
+    } else if(remaining === 0){
+      showResult(els.leftoverResult, 'warning', '⏰', 'Last Day', 
+        'Eat today or toss it');
+    } else if(remaining === 1){
+      showResult(els.leftoverResult, 'warning', '⏰', 'Almost There', 
+        'Use by tomorrow');
+    } else {
+      showResult(els.leftoverResult, 'good', '✅', 'Good to Go', 
+        remaining + ' days left', '<strong>' + remaining + ' days</strong> remaining');
+    }
+  }
+
+  // Package checker
+  function checkPackage(){
+    if(!state.selectedDateType){
+      showResult(els.packageResult, 'bad', '🚫', 'Select date type', 'Best By, Use By, or Sell By?');
+      return;
+    }
+
+    if(!els.packageDate.value){
+      showResult(els.packageResult, 'bad', '🚫', 'Enter the date', "What's on the package?");
+      return;
+    }
+
+    if(!els.packageType.value){
+      showResult(els.packageResult, 'bad', '🚫', 'Select food type', 'What kind of food is it?');
+      return;
+    }
+
+    if(els.packageOff.checked){
+      showResult(els.packageResult, 'bad', '🚫', "Don't Risk It", 'Trust your senses — toss it out');
+      return;
+    }
+
+    var grace = GRACE_DAYS[els.packageType.value];
+    var graceDays = grace[state.selectedDateType];
+    
+    if(els.packageOpened.checked){
+      graceDays = Math.min(graceDays, grace.opened);
+    }
+
+    var days = daysBetween(els.packageDate.value, new Date());
+    var remaining = graceDays - days;
+
+    if(remaining < 0){
+      showResult(els.packageResult, 'bad', '🚫', 'Past Safe Period', 
+        Math.abs(days) + ' days past date');
+    } else if(remaining === 0){
+      showResult(els.packageResult, 'warning', '⏰', 'Last Day', 
+        'Use today');
+    } else if(remaining === 1){
+      showResult(els.packageResult, 'warning', '⏰', 'Almost There', 
+        'Use by tomorrow');
+    } else {
+      showResult(els.packageResult, 'good', '✅', 'Still Good', 
+        remaining + ' days left', '<strong>' + remaining + ' days</strong> remaining');
+    }
+  }
+
+  // Scanner functions
+  function toggleScanner(){
+    if(state.isScanning){
+      stopScanner();
+    } else {
+      startScanner();
+    }
+  }
+
   function startScanner(){
-    if(isScanning) return;
-    
-    isScanning = true;
-    elScannerContainer.classList.add('active');
-    elScanBarcode.textContent = '🛑 Stop Scanner';
-    elScanBarcode.classList.add('scanning');
-    
+    state.isScanning = true;
+    els.scannerBox.classList.add('active');
+    els.scanBtn.textContent = '🛑 Stop Camera';
+    els.scanBtn.classList.add('active');
+
     Quagga.init({
       inputStream: {
-        name: "Live",
         type: "LiveStream",
         target: document.querySelector('#scanner-video'),
-        constraints: {
-          facingMode: "environment"
-        }
+        constraints: { facingMode: "environment" }
       },
       decoder: {
-        readers: [
-          "ean_reader",
-          "ean_8_reader",
-          "code_128_reader",
-          "code_39_reader",
-          "upc_reader",
-          "upc_e_reader"
-        ]
+        readers: ["ean_reader","ean_8_reader","code_128_reader","upc_reader","upc_e_reader"]
       },
       locate: true
     }, function(err){
       if(err){
         console.error(err);
-        showError("Camera access denied or not available. Please use manual barcode entry.");
+        showScannerError("Camera not available. Use manual entry.");
         stopScanner();
         return;
       }
       Quagga.start();
     });
 
-    var lastDetectedCode = null;
-    var lastDetectedTime = 0;
-    
+    var lastCode = null;
+    var lastTime = 0;
+
     Quagga.onDetected(function(result){
       var code = result.codeResult.code;
       var now = Date.now();
-      
-      // Debounce: only process if different code or 2 seconds have passed
-      if(code !== lastDetectedCode || (now - lastDetectedTime) > 2000){
-        lastDetectedCode = code;
-        lastDetectedTime = now;
-        
-        elBarcodeInput.value = code;
+
+      if(code !== lastCode || (now - lastTime) > 2000){
+        lastCode = code;
+        lastTime = now;
+        els.barcodeInput.value = code;
         stopScanner();
-        lookupProductByBarcode(code);
+        lookupBarcode(code);
       }
     });
   }
 
   function stopScanner(){
-    if(!isScanning) return;
-    
-    isScanning = false;
-    elScannerContainer.classList.remove('active');
-    elScanBarcode.textContent = '📷 Start Camera Scanner';
-    elScanBarcode.classList.remove('scanning');
-    
-    if(typeof Quagga !== 'undefined'){
-      Quagga.stop();
-    }
+    if(!state.isScanning) return;
+    state.isScanning = false;
+    els.scannerBox.classList.remove('active');
+    els.scanBtn.textContent = '📷 Start Camera';
+    els.scanBtn.classList.remove('active');
+    if(typeof Quagga !== 'undefined') Quagga.stop();
   }
 
-  elScanBarcode.addEventListener("click", function(){
-    if(isScanning){
-      stopScanner();
-    } else {
-      startScanner();
-    }
-  });
-
-  // DATE TYPE SELECTION
-  var dateTypeBtns = document.querySelectorAll(".date-type-btn");
-  dateTypeBtns.forEach(function(btn){
-    btn.addEventListener("click", function(){
-      var type = this.getAttribute("data-type");
-      selectedDateType = type;
-      dateTypeBtns.forEach(function(b){ b.classList.remove("selected"); });
-      this.classList.add("selected");
-      elDateTypeInfo.innerHTML = DATE_TYPE_INFO[type];
-      elDateTypeInfo.style.display = "block";
-    });
-  });
-
-  // LEFTOVER MODE FOOD GRID
-  function renderFoodGrid(){
-    elFoodGrid.innerHTML = '';
-    allCards = [];
-    
-    FOODS.forEach(function(food){
-      var card = document.createElement('div');
-      card.className = 'food-card';
-      card.setAttribute('data-id', food.id);
-      card.setAttribute('data-name', food.name.toLowerCase());
-      card.innerHTML = '<div class="food-emoji">' + food.emoji + '</div><div class="food-name">' + food.name + '</div>';
-      
-      card.addEventListener('click', function(){
-        selectFood(food.id);
-      });
-      
-      elFoodGrid.appendChild(card);
-      allCards.push({element: card, food: food});
-    });
-  }
-
-  function selectFood(id){
-    selectedFood = id;
-    allCards.forEach(function(item){
-      if(item.food.id === id){
-        item.element.classList.add('selected');
-      } else {
-        item.element.classList.remove('selected');
-      }
-    });
-  }
-
-  function filterFoods(){
-    var query = elSearchFood.value.toLowerCase().trim();
-    var visibleCount = 0;
-    
-    if(query === ''){
-      elClearSearch.classList.remove('visible');
-      allCards.forEach(function(item){
-        item.element.classList.remove('hidden');
-        visibleCount++;
-      });
-    } else {
-      elClearSearch.classList.add('visible');
-      allCards.forEach(function(item){
-        var name = item.food.name.toLowerCase();
-        if(name.indexOf(query) !== -1){
-          item.element.classList.remove('hidden');
-          visibleCount++;
+  function lookupBarcode(code){
+    showLoading();
+    fetch('https://world.openfoodfacts.org/api/v0/product/' + code + '.json')
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if(data.status === 1 && data.product){
+          analyzeAndShow(data.product);
         } else {
-          item.element.classList.add('hidden');
+          showScannerError('Product not found. Try manual search.');
         }
+      })
+      .catch(function(err){
+        showScannerError('Connection error. Try again.');
+        console.error(err);
       });
-    }
-    
-    if(visibleCount === 0){
-      elNoResults.style.display = 'block';
-      elFoodGrid.style.display = 'none';
-    } else {
-      elNoResults.style.display = 'none';
-      elFoodGrid.style.display = 'grid';
-    }
   }
 
-  elSearchFood.addEventListener('input', filterFoods);
-  
-  elClearSearch.addEventListener('click', function(){
-    elSearchFood.value = '';
-    filterFoods();
-    elSearchFood.focus();
-  });
+  function searchProduct(){
+    var brand = els.brandInput.value.trim();
+    var product = els.productInput.value.trim();
 
-  renderFoodGrid();
-
-  function renderResult(container, state, headline, sub, timeLeft){
-    var resultEl = container.querySelector('.result');
-    if(!resultEl) resultEl = container;
-    
-    resultEl.className = "result";
-    void resultEl.offsetWidth;
-    
-    if(state === "OK"){
-      resultEl.className = "result good pop";
-      resultEl.querySelector('.headline').textContent = headline || "✅ Good to Go!";
-      resultEl.querySelector('.sub').innerHTML = sub || "Still within recommended storage time.";
-      if(timeLeft){
-        resultEl.querySelector('.sub').innerHTML += '<div class="time-left">' + timeLeft + '</div>';
-      }
-    } else if(state === "TODAY"){
-      resultEl.className = "result warning pulse";
-      resultEl.querySelector('.headline').textContent = headline || "⏰ Eat Today";
-      resultEl.querySelector('.sub').innerHTML = sub || "Best eaten today.";
-    } else {
-      resultEl.className = "result bad shake";
-      resultEl.querySelector('.headline').textContent = headline || "🚫 Don't Risk It";
-      resultEl.querySelector('.sub').innerHTML = sub || "Not safe to eat.";
+    if(!brand && !product){
+      showScannerError('Enter brand or product name');
+      return;
     }
+
+    var query = (brand + ' ' + product).trim();
+    showLoading();
+
+    fetch('https://world.openfoodfacts.org/cgi/search.pl?search_terms=' + encodeURIComponent(query) + '&json=1&page_size=5')
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if(data.products && data.products.length > 0){
+          analyzeAndShow(data.products[0]);
+        } else {
+          showScannerError('No products found');
+        }
+      })
+      .catch(function(err){
+        showScannerError('Connection error. Try again.');
+        console.error(err);
+      });
   }
 
-  function getDaysBetween(startDate, endDate){
-    var start = new Date(startDate);
-    var end = new Date(endDate);
-    var diff = end - start;
-    return Math.floor(diff / (1000 * 60 * 60 * 24));
-  }
-
-  // LEFTOVER CHECKER
-  elCheckLeftover.addEventListener("click", function(){
-    var iso = elDate.value;
-    if(!iso){
-      renderResult(elPanelLeftover, "TOSS", "🚫 Missing Date", "Please pick a date so I can calculate.");
-      return;
-    }
-
-    if(!selectedFood){
-      renderResult(elPanelLeftover, "TOSS", "🚫 No Food Selected", "Please select a food from the list above.");
-      return;
-    }
-
-    if(elOff.checked){
-      renderResult(elPanelLeftover, "TOSS", "🚫 Trust Your Senses", "If it looks or smells off, don't eat it!");
-      return;
-    }
-    
-    if(elLeftOut.checked){
-      renderResult(elPanelLeftover, "TOSS", "🚫 Bacteria Growth", "Food left out 2+ hours at room temp should be tossed.");
-      return;
-    }
-
-    var food = FOODS.find(function(f){ return f.id === selectedFood; });
-    if(!food){
-      renderResult(elPanelLeftover, "TOSS", "🚫 Error", "Something went wrong. Try again.");
-      return;
-    }
-
-    var storageType = elStorage.value;
-    var allowed = food[storageType];
-    
-    if(storageType === "freezer" && allowed === 0){
-      renderResult(elPanelLeftover, "TODAY", "⚠️ Don't Freeze", food.name + " shouldn't be frozen. If it's in the fridge, change storage and check again.");
-      return;
-    }
-
-    if(elCautious.checked && allowed > 1){
-      allowed = Math.floor(allowed * 0.75);
-    }
-
-    var today = new Date();
-    var startDate = new Date(iso + "T00:00:00");
-    var daysElapsed = getDaysBetween(startDate, today);
-    var daysRemaining = allowed - daysElapsed;
-
-    if(daysRemaining < 0){
-      renderResult(elPanelLeftover, "TOSS", "🚫 Past Limit", "Your " + food.name.toLowerCase() + " has been in the " + storageType + " for " + daysElapsed + " days. Limit is " + allowed + " days.");
-    } else if(daysRemaining === 0){
-      renderResult(elPanelLeftover, "TODAY", "⏰ Last Day", "Your " + food.name.toLowerCase() + " is at its limit. Eat today or toss.");
-    } else if(daysRemaining === 1){
-      renderResult(elPanelLeftover, "TODAY", "⏰ Almost There", "Your " + food.name.toLowerCase() + " has 1 day left. Use tomorrow at the latest.");
-    } else {
-      var timeMsg = "You have <strong>" + daysRemaining + " days left</strong> to use this " + food.name.toLowerCase() + ".";
-      renderResult(elPanelLeftover, "OK", "✅ Still Good", "Safe to eat.", timeMsg);
-    }
-  });
-
-  // PACKAGE DATE CHECKER
-  elCheckPackage.addEventListener("click", function(){
-    var packageDate = elPackageDate.value;
-    if(!packageDate){
-      renderResult(elPanelPackage, "TOSS", "🚫 Missing Date", "Please enter the date from your package.");
-      return;
-    }
-
-    if(!selectedDateType){
-      renderResult(elPanelPackage, "TOSS", "🚫 Select Date Type", "Please select Best By, Use By, or Sell By.");
-      return;
-    }
-
-    var category = elPackageCategory.value;
-    if(!category){
-      renderResult(elPanelPackage, "TOSS", "🚫 Select Category", "Please select what type of food this is.");
-      return;
-    }
-
-    if(elPackageOff.checked){
-      renderResult(elPanelPackage, "TOSS", "🚫 Trust Your Senses", "If it looks or smells off, don't eat it!");
-      return;
-    }
-
-    var grace = PACKAGE_GRACE[category];
-    if(!grace){
-      renderResult(elPanelPackage, "TOSS", "🚫 Error", "Invalid category selected.");
-      return;
-    }
-
-    var graceDays = grace[selectedDateType];
-    if(elPackageOpened.checked){
-      graceDays = Math.min(graceDays, grace.opened);
-    }
-
-    var today = new Date();
-    var pkgDate = new Date(packageDate + "T00:00:00");
-    var daysSince = getDaysBetween(pkgDate, today);
-    var daysRemaining = graceDays - daysSince;
-
-    var dateLabel = selectedDateType.replace('_', ' ').replace(/\b\w/g, function(l){ return l.toUpperCase(); });
-
-    if(daysRemaining < 0){
-      renderResult(elPanelPackage, "TOSS", "🚫 Past Safe Period", "This item's " + dateLabel + " date was " + Math.abs(daysSince) + " days ago. Recommended to discard.");
-    } else if(daysRemaining === 0){
-      renderResult(elPanelPackage, "TODAY", "⏰ Last Day", "This item should be used today. The " + dateLabel + " date passed recently.");
-    } else if(daysRemaining === 1){
-      renderResult(elPanelPackage, "TODAY", "⏰ Use Soon", "This item has 1 day left past its " + dateLabel + " date. Use tomorrow at the latest.");
-    } else {
-      var timeMsg = "You have <strong>" + daysRemaining + " days left</strong> to safely use this item.";
-      renderResult(elPanelPackage, "OK", "✅ Still Good", "Safe to eat based on " + dateLabel + " guidelines.", timeMsg);
-    }
-  });
-
-  // BARCODE SCANNER FUNCTIONS
-  function analyzeProduct(product){
+  function analyzeAndShow(product){
     var score = 70;
     var issues = [];
-    var warnings = [];
-    var positives = [];
+    var goods = [];
 
-    var ingredientsText = (product.ingredients_text || '').toLowerCase();
+    var ingredients = (product.ingredients_text || '').toLowerCase();
     var nutrition = product.nutriments || {};
 
-    // Check for bad ingredients
-    BAD_INGREDIENTS.forEach(function(bad){
+    BAD_STUFF.forEach(function(bad){
       bad.terms.forEach(function(term){
-        if(ingredientsText.indexOf(term) !== -1){
+        if(ingredients.includes(term)){
           score -= bad.penalty;
-          issues.push({icon: '🚫', text: bad.label});
+          issues.push({icon:'🚫', text:bad.label});
         }
       });
     });
 
-    // Check for good ingredients
-    GOOD_INGREDIENTS.forEach(function(good){
+    GOOD_STUFF.forEach(function(good){
       good.terms.forEach(function(term){
-        if(ingredientsText.indexOf(term) !== -1){
+        if(ingredients.includes(term)){
           score += good.bonus;
-          positives.push({icon: '✅', text: good.label});
+          goods.push({icon:'✅', text:good.label});
         }
       });
     });
 
-    // Nutrition checks
-    var sugar = nutrition.sugars_100g || nutrition['sugars'] || 0;
+    var sugar = nutrition.sugars_100g || 0;
     if(sugar > 15){
       score -= 10;
-      warnings.push({icon: '⚠️', text: 'High sugar (' + sugar.toFixed(1) + 'g per 100g)'});
+      issues.push({icon:'⚠️', text:'High sugar (' + sugar.toFixed(1) + 'g)'});
     }
 
-    var sodium = nutrition.sodium_100g || nutrition['sodium'] || 0;
+    var sodium = nutrition.sodium_100g || 0;
     if(sodium > 0.5){
       score -= 8;
-      warnings.push({icon: '⚠️', text: 'High sodium (' + (sodium * 1000).toFixed(0) + 'mg per 100g)'});
-    }
-
-    var fiber = nutrition.fiber_100g || nutrition['fiber'] || 0;
-    if(fiber > 5){
-      score += 8;
-      positives.push({icon: '✅', text: 'High fiber (' + fiber.toFixed(1) + 'g per 100g)'});
+      issues.push({icon:'⚠️', text:'High sodium (' + (sodium*1000).toFixed(0) + 'mg)'});
     }
 
     score = Math.max(0, Math.min(100, score));
 
-    return {
-      score: score,
-      issues: issues,
-      warnings: warnings,
-      positives: positives,
-      nutrition: {
-        calories: nutrition.energy_100g ? (nutrition.energy_100g / 4.184).toFixed(0) : nutrition['energy-kcal_100g'] || 'N/A',
-        sugar: sugar.toFixed(1),
-        sodium: (sodium * 1000).toFixed(0),
-        fiber: fiber.toFixed(1)
-      }
-    };
-  }
-
-  function renderProductResult(product, analysis){
-    var scoreClass = analysis.score >= 70 ? 'good' : (analysis.score >= 40 ? 'warning' : 'bad');
-    var scoreLabel = analysis.score >= 70 ? 'Good' : (analysis.score >= 40 ? 'Fair' : 'Poor');
-
-    var html = '<div class="product-card pop">';
+    var html = '<div class="card pop product-result">';
     html += '<div class="product-header">';
     if(product.image_url){
-      html += '<img src="' + product.image_url + '" class="product-image" alt="Product" />';
+      html += '<img src="' + product.image_url + '" class="product-img" />';
     }
     html += '<div class="product-info">';
     if(product.brands){
@@ -941,127 +1779,74 @@
     }
     html += '<div class="product-name">' + (product.product_name || 'Unknown Product') + '</div>';
     if(product.categories){
-      html += '<div class="product-category">' + product.categories.split(',')[0] + '</div>';
+      html += '<div class="product-cat">' + product.categories.split(',')[0] + '</div>';
     }
     html += '</div></div>';
 
-    html += '<div class="health-score ' + scoreClass + '">';
-    html += '<div><div class="score-label">Health Score</div><div class="score-text">' + scoreLabel + '</div></div>';
-    html += '<div class="score-value">' + analysis.score + '</div>';
+    var badgeClass = score >= 70 ? 'good' : (score >= 40 ? 'warning' : 'bad');
+    var badgeLabel = score >= 70 ? 'Good Choice' : (score >= 40 ? 'Fair' : 'Poor Choice');
+
+    html += '<div class="health-badge ' + badgeClass + '">';
+    html += '<div class="health-label">' + badgeLabel + '</div>';
+    html += '<div class="health-score">' + score + '</div>';
     html += '</div>';
 
-    if(analysis.issues.length > 0){
-      html += '<div class="issues-list"><strong style="font-size:13px;display:block;margin-bottom:6px">⚠️ Issues Found:</strong>';
-      analysis.issues.forEach(function(issue){
-        html += '<div class="issue-item"><span class="issue-icon">' + issue.icon + '</span><span>' + issue.text + '</span></div>';
+    if(issues.length > 0){
+      html += '<div class="section-title">Issues Found</div>';
+      html += '<div class="issue-list">';
+      issues.forEach(function(issue){
+        html += '<div class="issue"><span class="issue-icon">' + issue.icon + '</span><span>' + issue.text + '</span></div>';
       });
       html += '</div>';
     }
 
-    if(analysis.warnings.length > 0){
-      html += '<div class="issues-list"><strong style="font-size:13px;display:block;margin-bottom:6px">⚠️ Warnings:</strong>';
-      analysis.warnings.forEach(function(warning){
-        html += '<div class="issue-item warning"><span class="issue-icon">' + warning.icon + '</span><span>' + warning.text + '</span></div>';
+    if(goods.length > 0){
+      html += '<div class="section-title">Good Stuff</div>';
+      html += '<div class="issue-list">';
+      goods.forEach(function(good){
+        html += '<div class="issue good"><span class="issue-icon">' + good.icon + '</span><span>' + good.text + '</span></div>';
       });
       html += '</div>';
     }
 
-    if(analysis.positives.length > 0){
-      html += '<div class="positives-list"><strong style="font-size:13px;display:block;margin-bottom:6px;color:var(--green)">✅ Good Stuff:</strong>';
-      analysis.positives.forEach(function(positive){
-        html += '<div class="positive-item"><span class="issue-icon">' + positive.icon + '</span><span>' + positive.text + '</span></div>';
-      });
-      html += '</div>';
-    }
-
-    html += '<div class="nutrition-grid">';
-    html += '<div class="nutrition-item"><div class="nutrition-value">' + analysis.nutrition.calories + '</div><div class="nutrition-label">Calories</div></div>';
-    html += '<div class="nutrition-item"><div class="nutrition-value">' + analysis.nutrition.sugar + 'g</div><div class="nutrition-label">Sugar</div></div>';
-    html += '<div class="nutrition-item"><div class="nutrition-value">' + analysis.nutrition.sodium + 'mg</div><div class="nutrition-label">Sodium</div></div>';
-    html += '<div class="nutrition-item"><div class="nutrition-value">' + analysis.nutrition.fiber + 'g</div><div class="nutrition-label">Fiber</div></div>';
+    html += '<div class="section-title">Nutrition (per 100g)</div>';
+    html += '<div class="nutrition">';
+    html += '<div class="nutrition-item"><div class="nutrition-value">' + (nutrition['energy-kcal_100g'] || 'N/A') + '</div><div class="nutrition-label">Calories</div></div>';
+    html += '<div class="nutrition-item"><div class="nutrition-value">' + sugar.toFixed(1) + 'g</div><div class="nutrition-label">Sugar</div></div>';
+    html += '<div class="nutrition-item"><div class="nutrition-value">' + (sodium*1000).toFixed(0) + 'mg</div><div class="nutrition-label">Sodium</div></div>';
+    html += '<div class="nutrition-item"><div class="nutrition-value">' + ((nutrition.fiber_100g || 0).toFixed(1)) + 'g</div><div class="nutrition-label">Fiber</div></div>';
     html += '</div>';
 
     html += '</div>';
-    
-    elScannerResults.innerHTML = html;
-  }
 
-  function showError(message){
-    elScannerResults.innerHTML = '<div class="result bad shake"><p class="headline">🚫 Not Found</p><p class="sub">' + message + '</p></div>';
+    els.scannerResult.innerHTML = html;
   }
 
   function showLoading(){
-    elScannerResults.innerHTML = '<div class="loading">🔍 Looking up product...</div>';
+    els.scannerResult.innerHTML = '<div class="loading">🔍 Looking up product...</div>';
   }
 
-  function lookupProductByBarcode(barcode){
-    showLoading();
-
-    fetch('https://world.openfoodfacts.org/api/v0/product/' + barcode + '.json')
-      .then(function(response){ return response.json(); })
-      .then(function(data){
-        if(data.status === 1 && data.product){
-          var analysis = analyzeProduct(data.product);
-          renderProductResult(data.product, analysis);
-        } else {
-          showError("Product not found. Try manual search or a different barcode.");
-        }
-      })
-      .catch(function(error){
-        showError("Error looking up product. Please check your connection and try again.");
-        console.error(error);
-      });
+  function showScannerError(msg){
+    els.scannerResult.innerHTML = '<div class="result-card bad shake"><div class="result-icon">🚫</div><div class="result-title">Not Found</div><div class="result-text">' + msg + '</div></div>';
   }
 
-  // BARCODE LOOKUP
-  elLookupBarcode.addEventListener("click", function(){
-    var barcode = elBarcodeInput.value.trim();
-    if(!barcode){
-      showError("Please enter a barcode number.");
-      return;
-    }
-    lookupProductByBarcode(barcode);
-  });
+  // Helpers
+  function showResult(el, type, icon, title, text, detail){
+    el.className = 'result-card ' + type + ' pop';
+    var html = '<div class="result-icon">' + icon + '</div>';
+    html += '<div class="result-title">' + title + '</div>';
+    html += '<div class="result-text">' + text + '</div>';
+    if(detail) html += '<div class="result-detail">' + detail + '</div>';
+    el.innerHTML = html;
+  }
 
-  // MANUAL PRODUCT SEARCH
-  elSearchProduct.addEventListener("click", function(){
-    var brand = elBrandInput.value.trim();
-    var productName = elProductInput.value.trim();
+  function daysBetween(date1, date2){
+    var d1 = new Date(date1);
+    var d2 = new Date(date2);
+    return Math.floor((d2 - d1) / (1000*60*60*24));
+  }
 
-    if(!brand && !productName){
-      showError("Please enter a brand or product name.");
-      return;
-    }
-
-    var searchQuery = (brand + ' ' + productName).trim();
-    showLoading();
-
-    fetch('https://world.openfoodfacts.org/cgi/search.pl?search_terms=' + encodeURIComponent(searchQuery) + '&search_simple=1&action=process&json=1&page_size=5')
-      .then(function(response){ return response.json(); })
-      .then(function(data){
-        if(data.products && data.products.length > 0){
-          var product = data.products[0];
-          var analysis = analyzeProduct(product);
-          renderProductResult(product, analysis);
-        } else {
-          showError("No products found matching '" + searchQuery + "'. Try different search terms.");
-        }
-      })
-      .catch(function(error){
-        showError("Error searching for product. Please check your connection and try again.");
-        console.error(error);
-      });
-  });
-
-  // Allow Enter key to submit
-  elBarcodeInput.addEventListener("keypress", function(e){
-    if(e.key === 'Enter') elLookupBarcode.click();
-  });
-
-  elProductInput.addEventListener("keypress", function(e){
-    if(e.key === 'Enter') elSearchProduct.click();
-  });
-
+  init();
 })();
 </script>
 </body>
