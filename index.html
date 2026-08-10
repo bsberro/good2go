@@ -72,6 +72,7 @@ h1{font-size:28px;font-weight:800;letter-spacing:-.02em;margin-bottom:4px}
 }
 .field:focus{border-color:var(--primary);transform:translateY(-2px);box-shadow:0 6px 16px rgba(139,92,246,.15)}
 .row{display:flex;gap:8px}
+.row .btn-ghost{flex:1}
 .row .field{flex:1}
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .label{display:block;font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
@@ -389,9 +390,9 @@ img.rec-thumb{object-fit:cover}
         <button class="chip on" data-mood="easy">⚡ Weeknight</button>
         <button class="chip" data-mood="special">✨ Something special</button>
       </div>
-      <input class="field" id="dishInput" placeholder="Name a dish, or leave blank" style="margin-bottom:10px" />
-      <button class="btn" id="btnWeb" style="margin-bottom:8px">🌐 Find a real recipe online</button>
-      <button class="btn-ghost" id="btnInvent">🧪 Invent one from what I have</button>
+      <input class="field" id="dishInput" placeholder="Name a dish, or leave blank to use the fridge" style="margin-bottom:10px" />
+      <button class="btn" id="btnFind" style="margin-bottom:8px">🔍 What can I make with these?</button>
+      <button class="btn-ghost" id="btnSurprise">🎲 Surprise me</button>
       <div id="cookErr"></div>
     </div>
     <div id="cookResults"></div>
@@ -1306,49 +1307,91 @@ function renderCookMatches() {
     }).join('') + '</div>';
 }
 
-/* ── Claude: invent or find ─────────────────────────────── */
-function askClaude(kind) {
-  var dish = document.getElementById('dishInput').value.trim();
-  var have = S.pantry.map(function (p) { return p.n; }).join(', ');
-  if (!dish && !have) return;
-  var errEl = document.getElementById('cookErr');
-  errEl.innerHTML = '<div class="loading">' + (kind === 'web' ? 'Searching the web' : 'Writing a recipe') + '</div>';
+/* ── cooking from the fridge, no API key needed ─────────
+   TheMealDB allows cross-origin requests, so we can query it
+   straight from the browser. filter.php?i= returns every dish
+   containing an ingredient — intersect a few of those and you
+   have a real "what can I make" over the whole catalogue.     */
 
-  var rules = 'Rules, all mandatory:\n' +
-    '- ABSOLUTELY NO PORK and NO SEAFOOD. No bacon, ham, prosciutto, pancetta, lardons, chorizo, salami. No fish, shellfish, fish sauce, anchovy, shrimp. If the classic uses them, adapt it and say so in the note.\n' +
-    '- ' + (S.mood === 'easy' ? 'A weeknight dish: under 45 minutes, straightforward technique.' : 'Ambitious is fine — a weekend dish with real technique.') + '\n' +
-    '- Specific, no filler, one genuine technique note. Metric quantities.';
-  var shape = '{"title":"","origin":"","effort":"' + S.mood + '","time":"","serves":4,"note":"one sentence","source":"","sourceUrl":"","ing":[{"name":"","qty":""}],"steps":[""]}';
+function setCookMsg(html) { document.getElementById('cookErr').innerHTML = html; }
 
-  var body = kind === 'web'
-    ? { model: 'claude-sonnet-4-6', max_tokens: 1500, tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-        messages: [{ role: 'user', content: 'Search the web for a well-regarded recipe for ' + (dish || 'a dish using ' + have) +
-          '. Read the best source, then write it IN YOUR OWN WORDS — never copy the original wording. Fill "source" with the publication and "sourceUrl" with the link.\n\n' + rules +
-          '\n\nReply with ONLY a JSON object as your final message, no fences:\n' + shape }] }
-    : { model: 'claude-sonnet-4-6', max_tokens: 1000,
-        messages: [{ role: 'user', content: 'You are a well-travelled cook writing one recipe for a home kitchen.\n\n' +
-          (dish ? 'The dish: ' + dish + '. In the kitchen: ' + have : 'In the kitchen right now: ' + have +
-            '. Build the dish around these. You may add up to 4 things not listed.') + '\n\n' + rules +
-          '\n\nReply with ONLY a JSON object, no fences:\n' + shape }] };
+function whatCanIMake() {
+  var have = S.pantry.map(function (p) { return p.n; });
+  if (!have.length) return setCookMsg('<div class="banner">Add a few things to the kitchen first.</div>');
+  setCookMsg('<div class="loading">Searching the catalogue</div>');
 
-  fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
-  }).then(function (r) { return r.json(); }).then(function (d) {
-    if (!d.content) throw new Error(d.error ? d.error.message : 'no response');
-    var text = d.content.filter(function (c) { return c.type === 'text'; }).map(function (c) { return c.text; }).join('\n');
-    var raw = text.replace(/```json|```/g, '');
-    var p = JSON.parse(raw.slice(raw.indexOf('{'), raw.lastIndexOf('}') + 1));
-    var breach = dietBreach(p.title + ' ' + JSON.stringify(p.ing));
-    if (breach) { errEl.innerHTML = '<div class="banner err">That came back with ' + esc(breach) + ' in it. Run it again.</div>'; return; }
-    p.id = uid(); p.generated = true; p.fromWeb = kind === 'web';
-    p.ing = (p.ing || []).map(function (x) { return { name: x.name, qty: x.qty, aisle: guessAisle(x.name) }; });
-    RECIPES.push(p);
-    errEl.innerHTML = '';
-    document.getElementById('dishInput').value = '';
-    openSheet(p);
-  }).catch(function (e) {
-    errEl.innerHTML = '<div class="banner err">Didn\'t come back cleanly (' + esc(e.message || e) + '). Try again, or reword it.</div>';
+  var keys = have.slice(0, 4).map(function (x) { return x.replace(/\s+/g, '_'); });
+  Promise.all(keys.map(byIngredient)).then(function (sets) {
+    var count = {}, meta = {};
+    sets.forEach(function (list) {
+      var seen = {};
+      list.forEach(function (m) {
+        if (seen[m.idMeal]) return;
+        seen[m.idMeal] = 1;
+        count[m.idMeal] = (count[m.idMeal] || 0) + 1;
+        meta[m.idMeal] = m;
+      });
+    });
+    var ids = Object.keys(count).sort(function (a, b) { return count[b] - count[a]; }).slice(0, 8);
+    if (!ids.length) return setCookMsg('<div class="banner">Nothing online matches those. Try a more common ingredient.</div>');
+    return Promise.all(ids.map(function (id) { return lookupMeal(id); })).then(function (full) {
+      var clean = full.filter(function (r) {
+        return r && !dietBreach(r.title + ' ' + r.ing.map(function (x) { return x.name; }).join(' '));
+      }).map(function (r) {
+        r.matched = count[r.id.replace('db', '')];
+        return r;
+      });
+      if (!clean.length) return setCookMsg('<div class="banner">Everything that matched had pork or seafood in it. Try another ingredient.</div>');
+      S.found = clean;
+      setCookMsg('');
+      renderWebMatches(clean);
+    });
+  }).catch(function () {
+    setCookMsg('<div class="banner err">Could not reach the recipe catalogue. Check your connection.</div>');
   });
+}
+
+function surpriseMe() {
+  setCookMsg('<div class="loading">Picking something</div>');
+  var tries = 0;
+  var spin = function () {
+    if (++tries > 6) return setCookMsg('<div class="banner err">Kept landing on pork or seafood. Try again.</div>');
+    mealdb('random.php').then(function (d) {
+      var m = d.meals && d.meals[0];
+      if (!m) return spin();
+      var r = mealToRecipe(m);
+      if (dietBreach(r.title + ' ' + r.ing.map(function (x) { return x.name; }).join(' '))) return spin();
+      if (S.mood === 'easy' && r.effort === 'special' && tries < 4) return spin();
+      setCookMsg('');
+      S.found = [r];
+      openSheet(r);
+    }).catch(function () { setCookMsg('<div class="banner err">Could not reach the catalogue.</div>'); });
+  };
+  spin();
+}
+
+function findByName() {
+  var dish = document.getElementById('dishInput').value.trim();
+  if (!dish) return whatCanIMake();
+  setCookMsg('<div class="loading">Looking for ' + esc(dish) + '</div>');
+  searchWeb(dish).then(function (list) {
+    if (!list.length) return setCookMsg('<div class="banner">No dish by that name in the catalogue. Try a simpler term — "tagine" rather than "chicken tagine with olives".</div>');
+    S.found = list;
+    setCookMsg('');
+    renderWebMatches(list);
+  });
+}
+
+function renderWebMatches(list) {
+  document.getElementById('cookResults').innerHTML =
+    '<div class="card"><div class="section-title">🌍 From the catalogue</div>' +
+    list.map(function (r) {
+      return '<div class="rec" data-recipe="' + r.id + '">' +
+        (r.thumb ? '<img class="rec-thumb" src="' + esc(r.thumb) + '" alt="" loading="lazy" />' : '<div class="rec-thumb">🌍</div>') +
+        '<div class="rec-body"><div class="rec-title">' + esc(r.title) + '</div><div class="rec-meta">' +
+        (r.matched ? '<span class="tagpill have">uses ' + r.matched + ' you have</span>' : '') +
+        esc(r.origin) + ' · ' + r.ing.length + ' ingredients</div></div></div>';
+    }).join('') + '</div>';
 }
 
 /* ── recipes tab ────────────────────────────────────────── */
@@ -1715,8 +1758,8 @@ function boot() {
     if (c('[data-share]')) return shareList(c('[data-share]').dataset.share);
     if (t.id === 'listAdd') return submitList();
     if (t.id === 'pantryAdd') return submitPantry();
-    if (t.id === 'btnWeb') return askClaude('web');
-    if (t.id === 'btnInvent') return askClaude('invent');
+    if (t.id === 'btnFind') return findByName();
+    if (t.id === 'btnSurprise') return surpriseMe();
     if (t.id === 'scanBtn') return S.scanning ? stopScanner() : startScanner();
     if (t.id === 'codeGo') {
       var q = document.getElementById('codeInput').value.trim();
