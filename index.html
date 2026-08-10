@@ -143,9 +143,10 @@ h1{font-size:28px;font-weight:800;letter-spacing:-.02em;margin-bottom:4px}
 .rec:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.08)}
 .rec:active{transform:scale(.98)}
 .rec-thumb{
-  width:62px;height:62px;flex-shrink:0;border-radius:12px;object-fit:cover;background:var(--primary-soft);
-  display:flex;align-items:center;justify-content:center;font-size:26px
+  width:76px;height:76px;flex-shrink:0;border-radius:14px;object-fit:cover;background:var(--primary-soft);
+  display:flex;align-items:center;justify-content:center;font-size:28px
 }
+.rec-title{letter-spacing:-.01em}
 .rec-body{flex:1;min-width:0}
 .rec-title{font-size:15px;font-weight:700;line-height:1.3;margin-bottom:3px}
 .rec-meta{font-size:12px;color:var(--muted)}
@@ -292,6 +293,33 @@ h1{font-size:28px;font-weight:800;letter-spacing:-.02em;margin-bottom:4px}
 }
 .footer{text-align:center;padding:24px 20px;color:var(--muted);font-size:12px;line-height:1.6}
 
+/* ── share & toast ──────────────────────────────────── */
+.share-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.share-grid button{
+  display:flex;flex-direction:column;align-items:center;gap:5px;padding:14px 4px;
+  border:1px solid var(--border);border-radius:14px;background:var(--bg);
+  font-size:11px;font-weight:700;color:var(--text);cursor:pointer;
+  transition:all .2s cubic-bezier(.4,0,.2,1)
+}
+.share-grid button span{font-size:22px}
+.share-grid button:hover{transform:translateY(-3px);border-color:var(--primary);box-shadow:0 6px 16px rgba(139,92,246,.18)}
+.share-grid button:active{transform:scale(.94)}
+.toast{
+  position:fixed;left:50%;bottom:96px;transform:translate(-50%,20px);z-index:80;
+  background:var(--text);color:var(--bg);padding:13px 20px;border-radius:999px;
+  font-size:14px;font-weight:600;opacity:0;pointer-events:none;transition:all .3s cubic-bezier(.16,1,.3,1);
+  box-shadow:0 8px 30px rgba(0,0,0,.25);max-width:88vw;text-align:center
+}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* ── photography ────────────────────────────────────── */
+.hero{
+  width:100%;height:210px;object-fit:cover;border-radius:18px;margin-bottom:16px;
+  background:var(--primary-soft);animation:bounce .5s cubic-bezier(.68,-.55,.265,1.55)
+}
+img.rec-thumb{object-fit:cover}
+.rec{overflow:hidden}
+
 /* ── animations (each defined once) ─────────────────── */
 @keyframes slideUp{from{transform:translateY(24px);opacity:0}to{transform:translateY(0);opacity:1}}
 @keyframes tabSlide{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:translateX(0)}}
@@ -329,6 +357,16 @@ h1{font-size:28px;font-weight:800;letter-spacing:-.02em;margin-bottom:4px}
         <button class="btn-sm" id="listAdd">Add</button>
       </div>
       <div id="syncNote" style="margin-top:10px;font-size:12px;color:var(--muted)"></div>
+    </div>
+    <div class="card" id="shareBar" style="display:none">
+      <div class="section-title">Take the list with you</div>
+      <div class="share-grid">
+        <button data-share="share"><span>📤</span>Share sheet</button>
+        <button data-share="mail"><span>✉️</span>Email</button>
+        <button data-share="sms"><span>💬</span>Text</button>
+        <button data-share="copy"><span>📋</span>Copy</button>
+      </div>
+      <p style="margin-top:10px;font-size:12px;color:var(--muted)">Share sheet sends it straight into Messages, Mail or a shared Note.</p>
     </div>
     <div id="listBody"></div>
   </div>
@@ -458,6 +496,7 @@ h1{font-size:28px;font-weight:800;letter-spacing:-.02em;margin-bottom:4px}
   <button data-tab="recipes"><span class="ico">📖</span>Recipes</button>
 </div>
 
+<div class="toast" id="toast"></div>
 <div class="sheet-bg" id="sheetBg">
   <div class="sheet" id="sheet"></div>
 </div>
@@ -537,95 +576,95 @@ var SHELF = [
 function i(name, qty, aisle){ return { name: name, qty: qty, aisle: aisle || guessAisle(name) }; }
 
 var RECIPES = [
-{id:"poulet-roti",title:"Poulet Rôti aux Herbes",origin:"French",effort:"easy",time:"1 h 30",serves:4,note:"The Sunday default. Almost no work, all oven.",
+{id:"poulet-roti",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Max%27s_Roasted_Chicken_-_Evan_Swigart.jpg/500px-Max%27s_Roasted_Chicken_-_Evan_Swigart.jpg",title:"Poulet Rôti aux Herbes",origin:"French",effort:"easy",time:"1 h 30",serves:4,note:"The Sunday default. Almost no work, all oven.",
 ing:[i("Whole chicken, 1.8 kg","1"),i("Lemon","1"),i("Garlic head","1"),i("Thyme","1 bunch"),i("Butter","60 g"),i("Yukon potatoes","1 kg"),i("Olive oil","3 tbsp"),i("Sea salt","to taste")],
 steps:["Heat oven to 220°C. Dry the chicken well, salt it inside and out.","Halve the lemon and garlic head, stuff both into the cavity with the thyme.","Rub soft butter over the skin. Set breast-up on quartered potatoes tossed in oil.","Roast 20 minutes, drop to 190°C, then 55–65 minutes more, basting twice.","Rest 15 minutes before carving — not optional."]},
 
-{id:"omelette-fines-herbes",title:"Omelette aux Fines Herbes",origin:"French",effort:"easy",time:"10 min",serves:2,note:"Dinner when neither of you wants to cook.",
+{id:"omelette-fines-herbes",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Gorgonzola_%2B_Bacon_Omelette_%40_Omelegg_%40_Amsterdam_%2816600947041%29.jpg/500px-Gorgonzola_%2B_Bacon_Omelette_%40_Omelegg_%40_Amsterdam_%2816600947041%29.jpg",title:"Omelette aux Fines Herbes",origin:"French",effort:"easy",time:"10 min",serves:2,note:"Dinner when neither of you wants to cook.",
 ing:[i("Eggs","6"),i("Butter","30 g"),i("Chives","2 tbsp"),i("Parsley","2 tbsp"),i("Tarragon","1 tbsp")],
 steps:["Beat the eggs just until streaky — over-beating makes them tough.","Melt butter over medium-low until it foams.","Pour in the eggs, stir 20 seconds with a fork, then let the base set.","Scatter herbs, fold in thirds, slide out while the centre is still loose."]},
 
-{id:"soupe-oignon",title:"Soupe à l'Oignon Gratinée",origin:"French",effort:"special",time:"1 h 45",serves:4,note:"The onions take an hour. No shortcut, and you can taste it.",
+{id:"soupe-oignon",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Soupe_%C3%A0_l%27oignon.jpg/500px-Soupe_%C3%A0_l%27oignon.jpg",title:"Soupe à l'Oignon Gratinée",origin:"French",effort:"special",time:"1 h 45",serves:4,note:"The onions take an hour. No shortcut, and you can taste it.",
 ing:[i("Yellow onions","1.5 kg"),i("Butter","60 g"),i("Beef stock","1.5 L"),i("Dry white wine","200 ml"),i("Baguette","1"),i("Gruyère","250 g"),i("Bay leaf","2")],
 steps:["Slice onions thin. Cook in butter over medium-low 50–60 minutes to deep mahogany.","Deglaze with wine, scraping the pan, reduce by half.","Add stock and bay, simmer 30 minutes uncovered.","Top with toasted baguette and a thick blanket of gruyère.","Broil until the cheese blisters and runs down the sides."]},
 
-{id:"poulet-basquaise",title:"Poulet Basquaise",origin:"French",effort:"easy",time:"55 min",serves:4,
+{id:"poulet-basquaise",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Pinchos_txaka_bonito.jpg/500px-Pinchos_txaka_bonito.jpg",title:"Poulet Basquaise",origin:"French",effort:"easy",time:"55 min",serves:4,
 ing:[i("Chicken thighs","8"),i("Red bell peppers","3"),i("Onions","2"),i("Garlic cloves","4"),i("Crushed tomatoes","400 g"),i("Espelette pepper","1 tsp"),i("Olive oil","3 tbsp"),i("Bay leaf","1")],
 steps:["Brown the thighs skin-side down in oil, 8 minutes. Set aside.","Soften sliced peppers and onions in the same pan, 12 minutes.","Add garlic, tomatoes, bay and Espelette. Return the chicken.","Cover, simmer 30 minutes. Serve with rice."]},
 
-{id:"boeuf-bourguignon",title:"Boeuf Bourguignon",origin:"French",effort:"special",time:"3 h 30",serves:6,note:"No lardons — the mushrooms and the wine carry it.",
+{id:"boeuf-bourguignon",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Beef_bourguignon_NYT.jpg/500px-Beef_bourguignon_NYT.jpg",title:"Boeuf Bourguignon",origin:"French",effort:"special",time:"3 h 30",serves:6,note:"No lardons — the mushrooms and the wine carry it.",
 ing:[i("Beef chuck","1.5 kg"),i("Red burgundy","750 ml"),i("Cremini mushrooms","500 g"),i("Pearl onions","300 g"),i("Carrots","4"),i("Beef stock","500 ml"),i("Tomato paste","2 tbsp"),i("Flour","3 tbsp"),i("Thyme","1 bunch"),i("Butter","50 g")],
 steps:["Cube the beef, dry it, brown hard in batches. Crowding is the enemy.","Soften carrots and onions, add tomato paste, dust with flour, cook 2 minutes.","Return the beef, add wine, stock and thyme. Cover.","Braise at 160°C for 2½ hours until a spoon goes through the meat.","Sauté mushrooms and pearl onions separately in butter, fold in at the end."]},
 
-{id:"coq-au-vin",title:"Coq au Vin",origin:"French",effort:"special",time:"2 h",serves:4,
+{id:"coq-au-vin",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Gourmet_coq_au_vin.jpg/500px-Gourmet_coq_au_vin.jpg",title:"Coq au Vin",origin:"French",effort:"special",time:"2 h",serves:4,
 ing:[i("Chicken, jointed","1.8 kg"),i("Red wine","750 ml"),i("Cremini mushrooms","400 g"),i("Pearl onions","250 g"),i("Chicken stock","400 ml"),i("Garlic cloves","4"),i("Flour","2 tbsp"),i("Butter","50 g"),i("Thyme","1 bunch")],
 steps:["Marinate the chicken in wine with thyme and garlic, 4 hours or overnight.","Pat dry, brown in butter, dust with flour.","Add marinade and stock, simmer covered 50 minutes.","Brown mushrooms and onions separately, add for the last 15 minutes.","Reduce the sauce hard until it coats a spoon."]},
 
-{id:"gratin-dauphinois",title:"Gratin Dauphinois",origin:"French",effort:"easy",time:"1 h 20",serves:6,
+{id:"gratin-dauphinois",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Gratin_dauphinois.jpg/500px-Gratin_dauphinois.jpg",title:"Gratin Dauphinois",origin:"French",effort:"easy",time:"1 h 20",serves:6,
 ing:[i("Waxy potatoes","1.2 kg"),i("Heavy cream","500 ml"),i("Whole milk","250 ml"),i("Garlic clove","1"),i("Nutmeg","pinch"),i("Butter","20 g")],
 steps:["Rub the dish with the cut garlic clove, then butter it.","Slice potatoes 3 mm thin. Do not rinse them — the starch is the binder.","Warm cream and milk with salt and nutmeg, pour over the layered potatoes.","Bake at 160°C for 70 minutes until bronzed and a knife slides through."]},
 
-{id:"quiche-poireaux",title:"Quiche aux Poireaux",origin:"French",effort:"easy",time:"1 h",serves:6,
+{id:"quiche-poireaux",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Quiche.jpg/500px-Quiche.jpg",title:"Quiche aux Poireaux",origin:"French",effort:"easy",time:"1 h",serves:6,
 ing:[i("Puff pastry sheet","1"),i("Leeks","4"),i("Eggs","4"),i("Heavy cream","300 ml"),i("Comté","150 g"),i("Butter","30 g"),i("Nutmeg","pinch")],
 steps:["Blind-bake the pastry at 190°C for 15 minutes.","Sweat sliced leeks in butter 15 minutes until silky, not browned.","Whisk eggs, cream, nutmeg and half the grated Comté.","Spread leeks in the shell, pour the custard over, top with cheese.","Bake 30 minutes until barely set — it firms as it cools."]},
 
-{id:"ratatouille",title:"Ratatouille",origin:"French",effort:"easy",time:"1 h",serves:4,note:"Cook each vegetable separately. That's the whole trick.",
+{id:"ratatouille",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Ratatouille_home_cooked.jpg/500px-Ratatouille_home_cooked.jpg",title:"Ratatouille",origin:"French",effort:"easy",time:"1 h",serves:4,note:"Cook each vegetable separately. That's the whole trick.",
 ing:[i("Eggplant","2"),i("Zucchini","3"),i("Red bell peppers","2"),i("Tomatoes","6"),i("Onion","1"),i("Garlic cloves","4"),i("Olive oil","6 tbsp"),i("Basil","1 bunch"),i("Thyme","3 sprigs")],
 steps:["Cut everything into 2 cm dice, each vegetable in its own bowl.","Fry eggplant in oil until golden. Remove. Repeat with zucchini, then peppers.","Soften onion and garlic, add tomatoes and thyme, cook down 20 minutes.","Fold it all back together, simmer 10 minutes, finish with torn basil."]},
 
-{id:"steak-frites",title:"Steak Frites, Sauce au Poivre",origin:"French",effort:"easy",time:"40 min",serves:2,
+{id:"steak-frites",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Reel_and_Brand_-_September_2021_-_Sarah_Stierch_05.jpg/500px-Reel_and_Brand_-_September_2021_-_Sarah_Stierch_05.jpg",title:"Steak Frites, Sauce au Poivre",origin:"French",effort:"easy",time:"40 min",serves:2,
 ing:[i("Ribeye steaks","2"),i("Yukon potatoes","800 g"),i("Black peppercorns","2 tbsp"),i("Heavy cream","200 ml"),i("Cognac","50 ml"),i("Beef stock","100 ml"),i("Butter","40 g"),i("Neutral oil","1 L")],
 steps:["Cut potatoes into batons, soak 20 minutes, dry completely.","Fry at 150°C for 6 minutes, rest, then again at 190°C until deep gold.","Sear the steaks hard, 3 minutes a side, baste with butter. Rest.","In the pan, crush peppercorns, deglaze with cognac, add stock and cream, reduce."]},
 
-{id:"soupe-pistou",title:"Soupe au Pistou",origin:"French",effort:"easy",time:"50 min",serves:6,
+{id:"soupe-pistou",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Pistou-2.JPG/500px-Pistou-2.JPG",title:"Soupe au Pistou",origin:"French",effort:"easy",time:"50 min",serves:6,
 ing:[i("White beans","400 g"),i("Green beans","250 g"),i("Zucchini","2"),i("Carrots","2"),i("Tomatoes","3"),i("Small pasta","100 g"),i("Basil","2 bunches"),i("Garlic cloves","4"),i("Parmesan","80 g"),i("Olive oil","120 ml")],
 steps:["Simmer diced carrots, zucchini, green beans and tomatoes in salted water 25 minutes.","Add white beans and pasta, cook until the pasta is done.","Pound basil, garlic and parmesan with oil into a rough pistou.","Stir it in off the heat — never boil it."]},
 
-{id:"pissaladiere",title:"Pissaladière aux Olives",origin:"French",effort:"easy",time:"1 h 15",serves:4,
+{id:"pissaladiere",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Pissaladi%C3%A8re.jpg/500px-Pissaladi%C3%A8re.jpg",title:"Pissaladière aux Olives",origin:"French",effort:"easy",time:"1 h 15",serves:4,
 ing:[i("Puff pastry sheet","1"),i("Yellow onions","1.2 kg"),i("Black olives","150 g"),i("Thyme","4 sprigs"),i("Olive oil","4 tbsp"),i("Bay leaf","1")],
 steps:["Cook thin-sliced onions in oil with thyme and bay over low heat 45 minutes, until jammy.","Spread over pastry on a sheet pan, leaving a 2 cm border.","Stud with olives in a lattice.","Bake at 200°C for 25 minutes until crisp underneath."]},
 
-{id:"blanquette",title:"Blanquette de Veau",origin:"French",effort:"special",time:"2 h 30",serves:6,
+{id:"blanquette",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Blanquette_de_veau_%C3%A0_l%27ancienne_04.jpg/500px-Blanquette_de_veau_%C3%A0_l%27ancienne_04.jpg",title:"Blanquette de Veau",origin:"French",effort:"special",time:"2 h 30",serves:6,
 ing:[i("Veal shoulder","1.5 kg"),i("Carrots","4"),i("Leeks","2"),i("Onion","1"),i("Button mushrooms","300 g"),i("Heavy cream","250 ml"),i("Egg yolks","2"),i("Butter","50 g"),i("Flour","50 g"),i("Lemon","1")],
 steps:["Blanch the cubed veal 5 minutes, drain, rinse. This keeps the sauce white.","Simmer with carrots, leeks, onion and bay 90 minutes.","Make a roux, loosen with the cooking liquid.","Off the heat, temper in yolks and cream with a squeeze of lemon.","Add sautéed mushrooms. Serve over rice."]},
 
-{id:"croque",title:"Croque-Monsieur au Poulet",origin:"French",effort:"easy",time:"25 min",serves:2,
+{id:"croque",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Croque_monsieur.jpg/500px-Croque_monsieur.jpg",title:"Croque-Monsieur au Poulet",origin:"French",effort:"easy",time:"25 min",serves:2,
 ing:[i("Pain de mie","4 slices"),i("Roast turkey breast","200 g"),i("Gruyère","200 g"),i("Whole milk","300 ml"),i("Butter","40 g"),i("Flour","40 g"),i("Dijon mustard","2 tsp"),i("Nutmeg","pinch")],
 steps:["Make a tight béchamel with butter, flour, milk, mustard and nutmeg.","Spread on the bread, layer turkey and gruyère, close the sandwiches.","Top with more béchamel and a heavy handful of cheese.","Bake at 200°C for 12 minutes, then broil until blistered."]},
 
-{id:"poulet-vinaigre",title:"Poulet au Vinaigre",origin:"French",effort:"easy",time:"50 min",serves:4,note:"Lyonnais. The vinegar cooks down into something round and sweet.",
+{id:"poulet-vinaigre",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Lyon_3e_lesHalles_pain.jpg/500px-Lyon_3e_lesHalles_pain.jpg",title:"Poulet au Vinaigre",origin:"French",effort:"easy",time:"50 min",serves:4,note:"Lyonnais. The vinegar cooks down into something round and sweet.",
 ing:[i("Chicken thighs","8"),i("Red wine vinegar","150 ml"),i("Shallots","4"),i("Tomato paste","1 tbsp"),i("Heavy cream","150 ml"),i("Butter","50 g"),i("Tarragon","small bunch"),i("Chicken stock","200 ml")],
 steps:["Brown the thighs in butter, remove.","Soften chopped shallots, add tomato paste, then the vinegar. Reduce almost dry.","Add stock, return the chicken, simmer 25 minutes.","Stir cream and tarragon into the sauce off the heat."]},
 
-{id:"daube",title:"Daube Provençale",origin:"French",effort:"special",time:"4 h",serves:6,
+{id:"daube",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Daube_de_boeuf.JPG/500px-Daube_de_boeuf.JPG",title:"Daube Provençale",origin:"French",effort:"special",time:"4 h",serves:6,
 ing:[i("Beef chuck","1.5 kg"),i("Red wine","750 ml"),i("Orange","1"),i("Carrots","4"),i("Onions","2"),i("Black olives","150 g"),i("Garlic cloves","6"),i("Tomatoes","4"),i("Thyme","1 bunch"),i("Bay leaf","2")],
 steps:["Marinate the beef overnight in wine with orange peel, thyme and bay.","Brown the drained meat, then the vegetables.","Return everything with the marinade, cover, braise 3 hours at 150°C.","Add olives for the last 20 minutes. Better still the next day."]},
 
-{id:"chevre-chaud",title:"Salade de Chèvre Chaud",origin:"French",effort:"easy",time:"20 min",serves:2,
+{id:"chevre-chaud",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Chevre_Chaud.jpg/500px-Chevre_Chaud.jpg",title:"Salade de Chèvre Chaud",origin:"French",effort:"easy",time:"20 min",serves:2,
 ing:[i("Goat cheese log","200 g"),i("Baguette","1/2"),i("Mixed greens","150 g"),i("Walnuts","60 g"),i("Honey","1 tbsp"),i("Dijon mustard","1 tsp"),i("Red wine vinegar","2 tbsp"),i("Olive oil","5 tbsp")],
 steps:["Slice the baguette, top each round with a disc of goat cheese, drizzle honey.","Broil 4 minutes until the cheese slumps and colours.","Whisk mustard, vinegar and oil into a sharp vinaigrette.","Dress the greens, add toasted walnuts, set the hot toasts on top."]},
 
-{id:"gigot",title:"Gigot d'Agneau aux Flageolets",origin:"French",effort:"special",time:"2 h",serves:8,
+{id:"gigot",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Lamb_meat_%281%29.jpg/500px-Lamb_meat_%281%29.jpg",title:"Gigot d'Agneau aux Flageolets",origin:"French",effort:"special",time:"2 h",serves:8,
 ing:[i("Leg of lamb","2.5 kg"),i("Flageolet beans","500 g"),i("Garlic cloves","8"),i("Rosemary","4 sprigs"),i("Black olive tapenade","2 tbsp"),i("Olive oil","4 tbsp"),i("Onion","1"),i("Carrots","2")],
 steps:["Stud the lamb with slivers of garlic and rosemary. Salt heavily, rest at room temperature 1 hour.","Roast at 240°C for 20 minutes, then 170°C for 15 minutes per 500 g for pink.","Simmer soaked flageolets with onion, carrot and garlic 1 hour.","Rest the lamb 25 minutes. Serve the beans in the roasting juices."]},
 
-{id:"veloute-champignons",title:"Velouté de Champignons",origin:"French",effort:"easy",time:"40 min",serves:4,
+{id:"veloute-champignons",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Cream_mushroom_soup_3.jpg/500px-Cream_mushroom_soup_3.jpg",title:"Velouté de Champignons",origin:"French",effort:"easy",time:"40 min",serves:4,
 ing:[i("Cremini mushrooms","700 g"),i("Shallots","2"),i("Chicken stock","1 L"),i("Heavy cream","150 ml"),i("Butter","50 g"),i("Dry sherry","50 ml"),i("Thyme","3 sprigs"),i("Parsley","small bunch")],
 steps:["Brown the sliced mushrooms in butter in two batches — a wet pan gives you grey soup.","Add shallots and thyme, then the sherry.","Pour in stock, simmer 20 minutes, blend until completely smooth.","Finish with cream. Keep a few sautéed slices back for the top."]},
 
-{id:"hachis",title:"Hachis Parmentier",origin:"French",effort:"easy",time:"1 h 15",serves:6,
+{id:"hachis",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Homerton_College_-_Shepherd%27s_pie_%28cropped%29.jpg/500px-Homerton_College_-_Shepherd%27s_pie_%28cropped%29.jpg",title:"Hachis Parmentier",origin:"French",effort:"easy",time:"1 h 15",serves:6,
 ing:[i("Ground beef","1 kg"),i("Yukon potatoes","1.2 kg"),i("Onions","2"),i("Garlic cloves","3"),i("Beef stock","300 ml"),i("Tomato paste","2 tbsp"),i("Butter","100 g"),i("Whole milk","150 ml"),i("Gruyère","100 g"),i("Parsley","1 bunch")],
 steps:["Brown the beef with onions and garlic, add tomato paste and stock, reduce 20 minutes.","Boil and mash the potatoes with butter and hot milk. Season hard.","Layer meat then mash, rake the top with a fork, scatter gruyère.","Bake 30 minutes at 200°C until the ridges catch."]},
 
-{id:"piperade",title:"Piperade",origin:"French",effort:"easy",time:"35 min",serves:3,
+{id:"piperade",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Pip%C3%A9rade.jpg/500px-Pip%C3%A9rade.jpg",title:"Piperade",origin:"French",effort:"easy",time:"35 min",serves:3,
 ing:[i("Eggs","6"),i("Red bell peppers","3"),i("Green bell pepper","1"),i("Onions","2"),i("Tomatoes","4"),i("Garlic cloves","3"),i("Espelette pepper","1 tsp"),i("Olive oil","4 tbsp")],
 steps:["Cook sliced peppers and onions slowly in oil, 20 minutes.","Add garlic, tomatoes and Espelette, reduce until jammy.","Beat the eggs and stir them through over low heat until barely set.","Serve straight from the pan with bread."]},
 
-{id:"tarte-oignon",title:"Tarte à l'Oignon Alsacienne",origin:"French",effort:"easy",time:"1 h 10",serves:6,
+{id:"tarte-oignon",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Zwiebelkuchen_1.JPG/500px-Zwiebelkuchen_1.JPG",title:"Tarte à l'Oignon Alsacienne",origin:"French",effort:"easy",time:"1 h 10",serves:6,
 ing:[i("Shortcrust pastry","1"),i("Yellow onions","1 kg"),i("Eggs","3"),i("Crème fraîche","300 g"),i("Butter","40 g"),i("Nutmeg","pinch"),i("Caraway seeds","1 tsp")],
 steps:["Sweat sliced onions in butter 30 minutes until soft and pale gold, not brown.","Blind-bake the pastry 15 minutes at 190°C.","Whisk eggs with crème fraîche, nutmeg and caraway.","Combine with the onions, pour in, bake 30 minutes at 180°C."]},
 
-{id:"vallee-auge",title:"Poulet Vallée d'Auge",origin:"French",effort:"easy",time:"1 h",serves:4,note:"Normandy: cider, cream, apples.",
+{id:"vallee-auge",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Chickens_in_market.jpg/500px-Chickens_in_market.jpg",title:"Poulet Vallée d'Auge",origin:"French",effort:"easy",time:"1 h",serves:4,note:"Normandy: cider, cream, apples.",
 ing:[i("Chicken, jointed","1.6 kg"),i("Dry cider","400 ml"),i("Apples","3"),i("Shallots","3"),i("Heavy cream","200 ml"),i("Butter","60 g"),i("Calvados","50 ml"),i("Thyme","3 sprigs")],
 steps:["Brown the chicken in butter, flame with calvados if you're feeling brave.","Add shallots, cider and thyme. Simmer covered 35 minutes.","Sauté apple wedges in butter until caramelised.","Reduce the sauce, stir in cream, add the apples at the last minute."]},
 
@@ -637,305 +676,305 @@ steps:["Brown the cubed lamb hard, sprinkle with flour and sugar, let it catch."
 ing:[i("Eggs","8"),i("Red wine","750 ml"),i("Shallots","4"),i("Cremini mushrooms","250 g"),i("Beef stock","300 ml"),i("Butter","80 g"),i("Flour","2 tbsp"),i("Baguette","1"),i("Garlic clove","1")],
 steps:["Reduce wine with shallots and stock by half, 30 minutes.","Whisk in a beurre manié of butter and flour to thicken.","Sauté mushrooms, add to the sauce.","Poach the eggs in the sauce itself, 3 minutes, and serve on garlic-rubbed toast."]},
 
-{id:"blanquette-legumes",title:"Gratin de Blettes",origin:"French",effort:"easy",time:"50 min",serves:4,
+{id:"blanquette-legumes",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Chard_%28Beta_vulgaris_var_cicla%29.jpg/500px-Chard_%28Beta_vulgaris_var_cicla%29.jpg",title:"Gratin de Blettes",origin:"French",effort:"easy",time:"50 min",serves:4,
 ing:[i("Swiss chard","1 kg"),i("Whole milk","500 ml"),i("Butter","50 g"),i("Flour","50 g"),i("Gruyère","150 g"),i("Garlic clove","1"),i("Nutmeg","pinch")],
 steps:["Separate stalks from leaves. Boil stalks 8 minutes, wilt leaves 2 minutes, drain both hard.","Make a béchamel with butter, flour, milk, garlic and nutmeg.","Fold the chard through, pour into a dish, cover with gruyère.","Bake 25 minutes at 190°C."]},
-{id:"shakshuka",title:"Shakshuka",origin:"Levantine",effort:"easy",time:"30 min",serves:3,
+{id:"shakshuka",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Shakshuka_by_Calliopejen1.jpg/500px-Shakshuka_by_Calliopejen1.jpg",title:"Shakshuka",origin:"Levantine",effort:"easy",time:"30 min",serves:3,
 ing:[i("Eggs","6"),i("Crushed tomatoes","800 g"),i("Red bell peppers","2"),i("Onion","1"),i("Garlic cloves","4"),i("Cumin","2 tsp"),i("Sweet paprika","1 tsp"),i("Feta","150 g"),i("Cilantro","1 bunch"),i("Olive oil","3 tbsp")],
 steps:["Soften sliced peppers and onion in oil, 10 minutes.","Add garlic and spices, bloom 1 minute, then the tomatoes.","Simmer 15 minutes until thick enough to hold a well.","Crack the eggs into wells, cover, cook 6–8 minutes until whites set.","Crumble feta and cilantro over the top."]},
 
-{id:"tagine-olives",title:"Chicken Tagine, Olives & Preserved Lemon",origin:"Moroccan",effort:"easy",time:"1 h 15",serves:4,
+{id:"tagine-olives",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Tajine-marocain-un-plat-varie-et-sain_%28cropped%29.jpg/500px-Tajine-marocain-un-plat-varie-et-sain_%28cropped%29.jpg",title:"Chicken Tagine, Olives & Preserved Lemon",origin:"Moroccan",effort:"easy",time:"1 h 15",serves:4,
 ing:[i("Chicken thighs","8"),i("Preserved lemons","2"),i("Green olives","200 g"),i("Onions","2"),i("Garlic cloves","4"),i("Ginger","20 g"),i("Saffron","pinch"),i("Turmeric","1 tsp"),i("Cilantro","1 bunch"),i("Olive oil","3 tbsp")],
 steps:["Marinate chicken in grated garlic, ginger, saffron, turmeric and oil, 1 hour.","Brown the pieces, add sliced onions and 250 ml water.","Cover and simmer 45 minutes.","Add olives and chopped preserved lemon rind for the last 10 minutes.","Reduce the sauce, finish with cilantro."]},
 
-{id:"couscous-royal",title:"Couscous Royal",origin:"Moroccan",effort:"special",time:"2 h",serves:6,note:"Lamb, chicken and merguez — no pork in the pot.",
+{id:"couscous-royal",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Moroccan_cuscus%2C_from_Casablanca%2C_September_2018.jpg/500px-Moroccan_cuscus%2C_from_Casablanca%2C_September_2018.jpg",title:"Couscous Royal",origin:"Moroccan",effort:"special",time:"2 h",serves:6,note:"Lamb, chicken and merguez — no pork in the pot.",
 ing:[i("Lamb shoulder","800 g"),i("Chicken thighs","6"),i("Merguez, lamb","8"),i("Couscous","500 g"),i("Chickpeas","400 g"),i("Carrots","4"),i("Zucchini","3"),i("Turnips","2"),i("Ras el hanout","2 tbsp"),i("Harissa","3 tbsp"),i("Onions","2")],
 steps:["Brown lamb and chicken, add onions and ras el hanout, cover with water.","Simmer 60 minutes, then add carrots, turnips and chickpeas.","Add zucchini for the final 15 minutes so it keeps its shape.","Steam the couscous over the broth twice, fluffing with oil between.","Grill the merguez separately. Broth on the side with harissa."]},
 
-{id:"kefta-tagine",title:"Kefta Tagine with Eggs",origin:"Moroccan",effort:"easy",time:"45 min",serves:4,
+{id:"kefta-tagine",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Koofteh_tabrizi.jpg/500px-Koofteh_tabrizi.jpg",title:"Kefta Tagine with Eggs",origin:"Moroccan",effort:"easy",time:"45 min",serves:4,
 ing:[i("Ground beef","700 g"),i("Eggs","4"),i("Crushed tomatoes","600 g"),i("Onion","1"),i("Cumin","2 tsp"),i("Sweet paprika","2 tsp"),i("Parsley","1 bunch"),i("Cilantro","1 bunch"),i("Garlic cloves","3")],
 steps:["Mix beef with grated onion, half the herbs, cumin and paprika. Roll walnut-sized balls.","Simmer tomatoes with garlic and paprika 15 minutes.","Drop the meatballs in, cook 20 minutes uncovered.","Crack eggs over the top, cover until set. Shower with herbs."]},
 
-{id:"harira",title:"Harira",origin:"Moroccan",effort:"easy",time:"1 h 20",serves:6,
+{id:"harira",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Harira.png/500px-Harira.png",title:"Harira",origin:"Moroccan",effort:"easy",time:"1 h 20",serves:6,
 ing:[i("Lamb shoulder","400 g"),i("Brown lentils","150 g"),i("Chickpeas","250 g"),i("Crushed tomatoes","700 g"),i("Celery stalks","2"),i("Onion","1"),i("Cilantro","1 bunch"),i("Parsley","1 bunch"),i("Ginger","1 tsp"),i("Cinnamon","1 tsp"),i("Flour","3 tbsp"),i("Vermicelli","60 g")],
 steps:["Brown diced lamb with onion, celery, ginger and cinnamon.","Add tomatoes, lentils, chickpeas and 2 L water. Simmer 1 hour.","Add vermicelli and the chopped herbs.","Slake flour in cold water, stir in slowly to thicken. Serve with dates."]},
 
-{id:"zaalouk",title:"Zaalouk",origin:"Moroccan",effort:"easy",time:"45 min",serves:4,
+{id:"zaalouk",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Zaalouk-01.JPG/500px-Zaalouk-01.JPG",title:"Zaalouk",origin:"Moroccan",effort:"easy",time:"45 min",serves:4,
 ing:[i("Eggplant","2"),i("Tomatoes","5"),i("Garlic cloves","4"),i("Cumin","2 tsp"),i("Sweet paprika","1 tsp"),i("Cilantro","1 bunch"),i("Olive oil","5 tbsp"),i("Lemon","1")],
 steps:["Roast whole eggplants at 220°C for 35 minutes until collapsed. Scoop the flesh.","Cook grated tomatoes with garlic and spices in oil, 15 minutes.","Add the eggplant, mash together, cook down until no water remains.","Finish with lemon and cilantro. Serve warm or cold with bread."]},
 
-{id:"mujadara",title:"Mujadara",origin:"Levantine",effort:"easy",time:"50 min",serves:4,
+{id:"mujadara",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Mujaddara.jpg/500px-Mujaddara.jpg",title:"Mujadara",origin:"Levantine",effort:"easy",time:"50 min",serves:4,
 ing:[i("Brown lentils","300 g"),i("Basmati rice","200 g"),i("Yellow onions","4"),i("Cumin","2 tsp"),i("Olive oil","150 ml"),i("Yogurt","300 g"),i("Parsley","1 bunch")],
 steps:["Fry thin-sliced onions in oil until dark and crisp. Drain on paper.","Simmer lentils 20 minutes until nearly tender.","Add rice, cumin and water to cover by 2 cm. Cook covered 15 minutes.","Fold in half the onions, pile the rest on top. Serve with yogurt."]},
 
-{id:"shawarma-bowl",title:"Chicken Shawarma Bowls",origin:"Levantine",effort:"easy",time:"40 min",serves:4,
+{id:"shawarma-bowl",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Shawarma_2.jpg/500px-Shawarma_2.jpg",title:"Chicken Shawarma Bowls",origin:"Levantine",effort:"easy",time:"40 min",serves:4,
 ing:[i("Chicken thighs","1 kg"),i("Yogurt","200 g"),i("Cumin","2 tsp"),i("Sumac","2 tsp"),i("Sweet paprika","2 tsp"),i("Garlic cloves","4"),i("Lemon","2"),i("Pita","4"),i("Cucumber","2"),i("Tomatoes","3"),i("Tahini","4 tbsp"),i("Red onion","1")],
 steps:["Marinate the thighs in yogurt, spices, garlic and lemon 30 minutes.","Roast at 220°C for 25 minutes, then slice.","Thin tahini with lemon and water until pourable.","Build bowls with cucumber, tomato, pickled red onion and warm pita."]},
 
-{id:"hummus",title:"Hummus, Properly",origin:"Levantine",effort:"easy",time:"1 h",serves:6,note:"Baking soda in the water is what makes it silky.",
+{id:"hummus",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Lebanese_style_hummus.jpg/500px-Lebanese_style_hummus.jpg",title:"Hummus, Properly",origin:"Levantine",effort:"easy",time:"1 h",serves:6,note:"Baking soda in the water is what makes it silky.",
 ing:[i("Dried chickpeas","250 g"),i("Tahini","180 g"),i("Lemon","2"),i("Garlic cloves","2"),i("Baking soda","1 tsp"),i("Cumin","1 tsp"),i("Olive oil","4 tbsp")],
 steps:["Soak chickpeas overnight with half the baking soda.","Boil with the rest 45 minutes until the skins slip and they crush easily.","Blend hot with tahini, lemon, garlic and a little cooking water.","Run the processor a full 4 minutes. Longer than feels right."]},
 
-{id:"baba-ghanoush",title:"Baba Ghanoush",origin:"Levantine",effort:"easy",time:"45 min",serves:4,
+{id:"baba-ghanoush",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Baba_Ganoush_05of05_%288735238183%29.jpg/500px-Baba_Ganoush_05of05_%288735238183%29.jpg",title:"Baba Ghanoush",origin:"Levantine",effort:"easy",time:"45 min",serves:4,
 ing:[i("Eggplant","3"),i("Tahini","4 tbsp"),i("Lemon","2"),i("Garlic clove","1"),i("Pomegranate seeds","100 g"),i("Olive oil","4 tbsp"),i("Parsley","small bunch")],
 steps:["Char the eggplants directly over a flame until the skin blackens and they slump.","Rest in a colander 20 minutes so the bitter liquid drains.","Chop the flesh by hand — a processor makes it gluey.","Fold in tahini, lemon and garlic. Top with pomegranate and oil."]},
 
-{id:"fattoush",title:"Fattoush",origin:"Levantine",effort:"easy",time:"20 min",serves:4,
+{id:"fattoush",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Fattoush_mixed-salad.jpg/500px-Fattoush_mixed-salad.jpg",title:"Fattoush",origin:"Levantine",effort:"easy",time:"20 min",serves:4,
 ing:[i("Pita","2"),i("Romaine","1 head"),i("Tomatoes","4"),i("Cucumber","2"),i("Radishes","6"),i("Mint","1 bunch"),i("Parsley","1 bunch"),i("Sumac","2 tsp"),i("Pomegranate molasses","2 tbsp"),i("Olive oil","5 tbsp")],
 steps:["Tear the pita, toast in oil until crisp.","Chop everything into rough, generous pieces.","Whisk oil, lemon, pomegranate molasses and sumac.","Toss the bread in at the last second so it keeps some crunch."]},
 
-{id:"tabbouleh",title:"Tabbouleh",origin:"Levantine",effort:"easy",time:"25 min",serves:4,note:"It's a parsley salad with bulgur, not the reverse.",
+{id:"tabbouleh",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Tabouleh_1.JPG/500px-Tabouleh_1.JPG",title:"Tabbouleh",origin:"Levantine",effort:"easy",time:"25 min",serves:4,note:"It's a parsley salad with bulgur, not the reverse.",
 ing:[i("Flat-leaf parsley","3 bunches"),i("Mint","1 bunch"),i("Fine bulgur","60 g"),i("Tomatoes","3"),i("Scallions","4"),i("Lemon","2"),i("Olive oil","80 ml")],
 steps:["Soak the bulgur in lemon juice 15 minutes — no water.","Chop the parsley by hand, as fine as patience allows.","Dice tomatoes small, drain briefly so they don't flood the bowl.","Dress with oil and salt just before serving."]},
 
-{id:"falafel",title:"Falafel",origin:"Levantine",effort:"special",time:"40 min + soak",serves:4,
+{id:"falafel",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Falafels_2.jpg/500px-Falafels_2.jpg",title:"Falafel",origin:"Levantine",effort:"special",time:"40 min + soak",serves:4,
 ing:[i("Dried chickpeas","400 g"),i("Onion","1"),i("Garlic cloves","5"),i("Parsley","1 bunch"),i("Cilantro","1 bunch"),i("Cumin","2 tsp"),i("Coriander","2 tsp"),i("Baking powder","1 tsp"),i("Neutral oil","1 L")],
 steps:["Soak chickpeas 24 hours. Never use cooked or canned — they fall apart.","Grind raw with onion, garlic and herbs to a coarse, sandy paste.","Fold in spices and baking powder, rest 30 minutes in the fridge.","Shape and fry at 175°C for 3–4 minutes until deep brown."]},
 
-{id:"cilbir",title:"Çılbır — Turkish Eggs",origin:"Turkish",effort:"easy",time:"20 min",serves:2,
+{id:"cilbir",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/%C3%87%C4%B1lb%C4%B1r_with_duck-fat_saut%C3%A9ed_Ramps_%2814826584557%29.jpg/500px-%C3%87%C4%B1lb%C4%B1r_with_duck-fat_saut%C3%A9ed_Ramps_%2814826584557%29.jpg",title:"Çılbır — Turkish Eggs",origin:"Turkish",effort:"easy",time:"20 min",serves:2,
 ing:[i("Eggs","4"),i("Greek yogurt","400 g"),i("Garlic clove","1"),i("Butter","60 g"),i("Aleppo pepper","2 tsp"),i("Dill","small bunch"),i("Sourdough","4 slices")],
 steps:["Whisk grated garlic into room-temperature yogurt with salt. Spread on warm plates.","Poach the eggs in barely-trembling vinegared water, 3 minutes.","Melt butter with Aleppo pepper until it foams and turns red.","Set eggs on the yogurt, spoon the butter over, scatter dill."]},
 
-{id:"menemen",title:"Menemen",origin:"Turkish",effort:"easy",time:"25 min",serves:2,
+{id:"menemen",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Menemen_in_a_sahan.jpg/500px-Menemen_in_a_sahan.jpg",title:"Menemen",origin:"Turkish",effort:"easy",time:"25 min",serves:2,
 ing:[i("Eggs","5"),i("Tomatoes","4"),i("Green bell peppers","2"),i("Butter","40 g"),i("Aleppo pepper","1 tsp"),i("Feta","100 g"),i("Parsley","small bunch")],
 steps:["Cook chopped peppers in butter until soft, 8 minutes.","Add grated tomatoes and Aleppo pepper, reduce 8 minutes.","Beat in the eggs over low heat, stirring slowly — keep them creamy, never dry.","Crumble feta over and eat straight from the pan."]},
 
-{id:"kofta-tahini",title:"Kofta bil Tahini",origin:"Levantine",effort:"easy",time:"50 min",serves:4,
+{id:"kofta-tahini",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Koofteh_tabrizi.jpg/500px-Koofteh_tabrizi.jpg",title:"Kofta bil Tahini",origin:"Levantine",effort:"easy",time:"50 min",serves:4,
 ing:[i("Ground lamb","800 g"),i("Onion","1"),i("Tahini","150 g"),i("Lemon","2"),i("Potatoes","500 g"),i("Tomatoes","3"),i("Parsley","1 bunch"),i("Allspice","1 tsp"),i("Garlic cloves","2")],
 steps:["Mix lamb with grated onion, parsley and allspice. Press into a flat layer in a baking dish.","Bake 15 minutes at 200°C, drain the fat.","Layer sliced potatoes and tomatoes on top.","Whisk tahini with lemon, garlic and water to a pourable sauce, pour over, bake 30 minutes."]},
 
-{id:"maqluba",title:"Maqluba",origin:"Levantine",effort:"special",time:"1 h 30",serves:6,note:"The flip at the end is the whole event. Commit to it.",
+{id:"maqluba",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Makluba.JPG/500px-Makluba.JPG",title:"Maqluba",origin:"Levantine",effort:"special",time:"1 h 30",serves:6,note:"The flip at the end is the whole event. Commit to it.",
 ing:[i("Chicken thighs","8"),i("Basmati rice","500 g"),i("Eggplant","2"),i("Cauliflower","1"),i("Onion","1"),i("Allspice","2 tsp"),i("Cinnamon","1 tsp"),i("Turmeric","1 tsp"),i("Pine nuts","60 g"),i("Neutral oil","300 ml")],
 steps:["Simmer chicken with onion and spices 30 minutes. Keep the broth.","Fry eggplant and cauliflower until deep gold.","Layer in a pot: chicken, then vegetables, then soaked rice. Pour broth to 1 cm above.","Cook covered on low 30 minutes, rest 10, then invert onto a platter in one motion.","Top with toasted pine nuts."]},
 
-{id:"fasolia",title:"Fasolia — White Bean Stew",origin:"Levantine",effort:"easy",time:"1 h 30",serves:6,
+{id:"fasolia",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Fasolada.JPG/500px-Fasolada.JPG",title:"Fasolia — White Bean Stew",origin:"Levantine",effort:"easy",time:"1 h 30",serves:6,
 ing:[i("White beans","500 g"),i("Beef stew meat","600 g"),i("Crushed tomatoes","400 g"),i("Onion","1"),i("Garlic cloves","5"),i("Cilantro","1 bunch"),i("Allspice","1 tsp"),i("Olive oil","4 tbsp")],
 steps:["Brown the beef, add onion and allspice, cover with water and simmer 1 hour.","Add soaked beans and tomatoes, cook 40 minutes more.","Fry crushed garlic with cilantro in oil until fragrant, stir it in at the end.","Serve over vermicelli rice."]},
 
-{id:"muhammara",title:"Muhammara",origin:"Levantine",effort:"easy",time:"25 min",serves:6,
+{id:"muhammara",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Tanoreen_muhammara.jpg/500px-Tanoreen_muhammara.jpg",title:"Muhammara",origin:"Levantine",effort:"easy",time:"25 min",serves:6,
 ing:[i("Roasted red peppers","400 g"),i("Walnuts","150 g"),i("Breadcrumbs","50 g"),i("Pomegranate molasses","3 tbsp"),i("Cumin","1 tsp"),i("Aleppo pepper","2 tsp"),i("Garlic clove","1"),i("Olive oil","80 ml")],
 steps:["Toast the walnuts until fragrant, cool.","Pulse everything to a coarse paste — texture is the point, not smoothness.","Adjust with molasses for sourness and Aleppo for heat.","Rest an hour before serving."]},
 
-{id:"batata-harra",title:"Batata Harra",origin:"Levantine",effort:"easy",time:"40 min",serves:4,
+{id:"batata-harra",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Batata_harra.jpg/500px-Batata_harra.jpg",title:"Batata Harra",origin:"Levantine",effort:"easy",time:"40 min",serves:4,
 ing:[i("Potatoes","1 kg"),i("Garlic cloves","6"),i("Cilantro","1 bunch"),i("Aleppo pepper","2 tsp"),i("Lemon","1"),i("Olive oil","6 tbsp")],
 steps:["Cube potatoes, parboil 6 minutes, drain and dry thoroughly.","Roast at 220°C for 25 minutes until crusted.","Fry garlic, cilantro and Aleppo in oil for 40 seconds.","Toss the hot potatoes through it with lemon."]},
 
-{id:"labneh",title:"Labneh with Za'atar",origin:"Levantine",effort:"easy",time:"10 min + overnight",serves:6,
+{id:"labneh",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Labneh01.jpg/500px-Labneh01.jpg",title:"Labneh with Za'atar",origin:"Levantine",effort:"easy",time:"10 min + overnight",serves:6,
 ing:[i("Greek yogurt","1 kg"),i("Za'atar","3 tbsp"),i("Olive oil","80 ml"),i("Sea salt","1 tsp"),i("Pita","4")],
 steps:["Salt the yogurt, tip into a cheesecloth-lined sieve.","Hang over a bowl in the fridge 24 hours — longer for a firmer curd.","Spread on a plate, make a well with the back of a spoon.","Flood with oil and cover with za'atar."]},
 
-{id:"sfiha",title:"Sfiha — Lamb Flatbreads",origin:"Levantine",effort:"special",time:"2 h",serves:6,
+{id:"sfiha",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Sfiha2.jpg/500px-Sfiha2.jpg",title:"Sfiha — Lamb Flatbreads",origin:"Levantine",effort:"special",time:"2 h",serves:6,
 ing:[i("Bread flour","500 g"),i("Dry yeast","7 g"),i("Ground lamb","600 g"),i("Tomatoes","3"),i("Onion","1"),i("Pomegranate molasses","2 tbsp"),i("Pine nuts","50 g"),i("Allspice","2 tsp"),i("Yogurt","100 g")],
 steps:["Make a soft dough with flour, yeast, water and oil. Rise 1 hour.","Mix lamb with finely diced tomato and onion, molasses, allspice and yogurt.","Roll small discs, spread a thin layer of meat right to the edge.","Bake at 250°C for 8 minutes. Scatter pine nuts."]},
 
-{id:"spanakopita",title:"Spanakopita",origin:"Greek",effort:"special",time:"1 h 20",serves:6,
+{id:"spanakopita",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Spanakopita.jpg/500px-Spanakopita.jpg",title:"Spanakopita",origin:"Greek",effort:"special",time:"1 h 20",serves:6,
 ing:[i("Phyllo pastry","500 g"),i("Spinach","1 kg"),i("Feta","400 g"),i("Ricotta","200 g"),i("Eggs","3"),i("Scallions","6"),i("Dill","1 bunch"),i("Butter","150 g"),i("Nutmeg","pinch")],
 steps:["Wilt spinach, cool, wring it out in a towel until genuinely dry.","Mix with crumbled feta, ricotta, eggs, scallions, dill and nutmeg.","Layer 8 buttered phyllo sheets, add filling, top with 8 more.","Score the top into diamonds before baking — cutting after tears it.","Bake at 180°C for 45 minutes until uniformly gold."]},
 
-{id:"greek-lemon-chicken",title:"Greek Lemon Chicken & Potatoes",origin:"Greek",effort:"easy",time:"1 h 15",serves:4,
+{id:"greek-lemon-chicken",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Grk2020.jpg/500px-Grk2020.jpg",title:"Greek Lemon Chicken & Potatoes",origin:"Greek",effort:"easy",time:"1 h 15",serves:4,
 ing:[i("Chicken legs","6"),i("Yukon potatoes","1 kg"),i("Lemons","3"),i("Garlic cloves","6"),i("Dried oregano","2 tbsp"),i("Olive oil","100 ml"),i("Chicken stock","250 ml")],
 steps:["Toss potato wedges and chicken with lemon, oil, crushed garlic and oregano.","Arrange in one layer, pour stock around, season heavily.","Roast at 200°C for 50 minutes, turning the potatoes once.","Finish under the broiler 5 minutes for crisp skin."]},
 
-{id:"moussaka",title:"Moussaka",origin:"Greek",effort:"special",time:"2 h",serves:6,
+{id:"moussaka",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/MussakasMeMelitsanesKePatates01.JPG/500px-MussakasMeMelitsanesKePatates01.JPG",title:"Moussaka",origin:"Greek",effort:"special",time:"2 h",serves:6,
 ing:[i("Eggplant","3"),i("Ground lamb","800 g"),i("Onions","2"),i("Crushed tomatoes","600 g"),i("Cinnamon","1 tsp"),i("Whole milk","800 ml"),i("Butter","80 g"),i("Flour","80 g"),i("Kefalotyri","150 g"),i("Eggs","2")],
 steps:["Salt eggplant slices 30 minutes, pat dry, roast at 200°C until golden.","Brown the lamb with onions, add tomatoes and cinnamon, simmer 30 minutes.","Make a thick béchamel, temper in the eggs and half the cheese.","Layer eggplant, meat, eggplant, béchamel. Top with cheese.","Bake 45 minutes at 180°C. Rest 20 minutes or it will slide."]},
 
-{id:"gigantes",title:"Gigantes Plaki",origin:"Greek",effort:"easy",time:"1 h 30",serves:6,
+{id:"gigantes",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Gigandes_plaki.jpg/500px-Gigandes_plaki.jpg",title:"Gigantes Plaki",origin:"Greek",effort:"easy",time:"1 h 30",serves:6,
 ing:[i("Butter beans","500 g"),i("Crushed tomatoes","700 g"),i("Onions","2"),i("Carrots","2"),i("Garlic cloves","4"),i("Dill","1 bunch"),i("Dried oregano","1 tbsp"),i("Olive oil","120 ml")],
 steps:["Soak beans overnight, boil 45 minutes until just tender.","Soften onion, carrot and garlic in generous oil.","Add tomatoes and oregano, simmer 15 minutes, fold in the beans.","Bake uncovered at 180°C for 45 minutes. Dill at the end, and don't skimp on the oil."]},
 
-{id:"souvlaki",title:"Chicken Souvlaki",origin:"Greek",effort:"easy",time:"35 min + marinade",serves:4,
+{id:"souvlaki",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/%CE%95%CE%BB%CE%BB%CE%B7%CE%BD%CE%B9%CE%BA%CF%8C_%CE%A3%CE%BF%CF%85%CE%B2%CE%BB%CE%AC%CE%BA%CE%B9_-_panoramio.jpg/500px-%CE%95%CE%BB%CE%BB%CE%B7%CE%BD%CE%B9%CE%BA%CF%8C_%CE%A3%CE%BF%CF%85%CE%B2%CE%BB%CE%AC%CE%BA%CE%B9_-_panoramio.jpg",title:"Chicken Souvlaki",origin:"Greek",effort:"easy",time:"35 min + marinade",serves:4,
 ing:[i("Chicken thighs","1 kg"),i("Lemons","2"),i("Dried oregano","2 tbsp"),i("Garlic cloves","4"),i("Greek yogurt","300 g"),i("Cucumber","1"),i("Dill","small bunch"),i("Pita","6"),i("Olive oil","80 ml")],
 steps:["Marinate cubed thighs in lemon, oil, oregano and garlic at least 2 hours.","Grate and squeeze the cucumber, mix into yogurt with dill and garlic for tzatziki.","Thread on skewers, grill hard 12 minutes, turning.","Warm the pita over the flame and wrap everything together."]},
 
-{id:"avgolemono",title:"Avgolemono",origin:"Greek",effort:"easy",time:"40 min",serves:4,note:"Temper the eggs slowly or you'll get soup with scrambled egg in it.",
+{id:"avgolemono",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Avgolemono_soup.jpg/500px-Avgolemono_soup.jpg",title:"Avgolemono",origin:"Greek",effort:"easy",time:"40 min",serves:4,note:"Temper the eggs slowly or you'll get soup with scrambled egg in it.",
 ing:[i("Chicken stock","1.5 L"),i("Chicken breasts","2"),i("Short-grain rice","150 g"),i("Eggs","3"),i("Lemons","2"),i("Dill","small bunch")],
 steps:["Poach the chicken in stock 20 minutes, shred it, keep the broth at a bare simmer.","Cook the rice in the broth 15 minutes.","Whisk eggs with lemon juice, then ladle in hot broth one spoon at a time.","Return to the pot off the heat. Never let it boil again."]},
 
-{id:"horiatiki",title:"Horiatiki",origin:"Greek",effort:"easy",time:"15 min",serves:4,
+{id:"horiatiki",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Greece_Food_Horiatiki.JPG/500px-Greece_Food_Horiatiki.JPG",title:"Horiatiki",origin:"Greek",effort:"easy",time:"15 min",serves:4,
 ing:[i("Tomatoes","6"),i("Cucumber","1"),i("Red onion","1"),i("Green bell pepper","1"),i("Feta","250 g"),i("Kalamata olives","150 g"),i("Dried oregano","1 tbsp"),i("Olive oil","80 ml")],
 steps:["Cut tomatoes into thick wedges, cucumber into half-moons, onion into rings.","Layer with olives and pepper. No lettuce, ever.","Set a whole slab of feta on top.","Oregano, heavy oil, sea salt. Let it sit 10 minutes before eating."]},
-{id:"pasta-norma",title:"Pasta alla Norma",origin:"Italian",effort:"easy",time:"40 min",serves:4,
+{id:"pasta-norma",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Pasta_alla_Norma_-_Wiki_Loves_Sicilia.jpg/500px-Pasta_alla_Norma_-_Wiki_Loves_Sicilia.jpg",title:"Pasta alla Norma",origin:"Italian",effort:"easy",time:"40 min",serves:4,
 ing:[i("Rigatoni","500 g"),i("Eggplant","2"),i("Crushed tomatoes","700 g"),i("Garlic cloves","3"),i("Basil","1 bunch"),i("Ricotta salata","150 g"),i("Olive oil","150 ml")],
 steps:["Fry cubed eggplant in generous oil until collapsed and golden. Drain.","Simmer tomatoes with smashed garlic 20 minutes, salt well.","Toss drained pasta with the sauce and most of the eggplant.","Top with the rest, torn basil, and a snowfall of ricotta salata."]},
 
-{id:"cacio-e-pepe",title:"Cacio e Pepe",origin:"Italian",effort:"easy",time:"20 min",serves:2,note:"Four ingredients, no margin for error. Keep the pan off the heat.",
+{id:"cacio-e-pepe",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Cacio_e_pepe.jpg/500px-Cacio_e_pepe.jpg",title:"Cacio e Pepe",origin:"Italian",effort:"easy",time:"20 min",serves:2,note:"Four ingredients, no margin for error. Keep the pan off the heat.",
 ing:[i("Tonnarelli","250 g"),i("Pecorino Romano","180 g"),i("Black peppercorns","1 tbsp")],
 steps:["Toast cracked pepper in a dry pan 30 seconds.","Cook pasta in minimal water so the starch concentrates.","Grate pecorino fine, mix with a splash of cool pasta water into a paste.","Off the heat, toss pasta with pepper, then the cheese paste, loosening as needed."]},
 
-{id:"risotto-funghi",title:"Risotto ai Funghi",origin:"Italian",effort:"easy",time:"45 min",serves:4,
+{id:"risotto-funghi",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Risotto_with_speck_and_goat_cheese_%286101067436%29.jpg/500px-Risotto_with_speck_and_goat_cheese_%286101067436%29.jpg",title:"Risotto ai Funghi",origin:"Italian",effort:"easy",time:"45 min",serves:4,
 ing:[i("Carnaroli rice","350 g"),i("Cremini mushrooms","500 g"),i("Dried porcini","20 g"),i("Shallots","2"),i("Dry white wine","150 ml"),i("Chicken stock","1.5 L"),i("Parmesan","100 g"),i("Butter","80 g")],
 steps:["Soak porcini in hot water; add the liquid to the stock.","Brown the fresh mushrooms hard, set aside. Don't crowd the pan.","Sweat shallots, toast the rice 2 minutes, deglaze with wine.","Add hot stock a ladle at a time, stirring, 18 minutes.","Off the heat, beat in cold butter and parmesan until it ripples."]},
 
-{id:"milanese",title:"Chicken Milanese with Arugula",origin:"Italian",effort:"easy",time:"30 min",serves:4,
+{id:"milanese",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Milanesa_con_fritas.png/500px-Milanesa_con_fritas.png",title:"Chicken Milanese with Arugula",origin:"Italian",effort:"easy",time:"30 min",serves:4,
 ing:[i("Chicken breasts","4"),i("Breadcrumbs","200 g"),i("Eggs","3"),i("Flour","100 g"),i("Parmesan","80 g"),i("Arugula","150 g"),i("Lemon","2"),i("Cherry tomatoes","250 g"),i("Neutral oil","300 ml")],
 steps:["Butterfly and pound the breasts to 5 mm.","Flour, egg, then breadcrumbs mixed with parmesan. Press firmly.","Shallow-fry 3 minutes a side until deep gold.","Top with arugula and tomatoes dressed in lemon and oil."]},
 
-{id:"lasagna",title:"Lasagna alla Bolognese",origin:"Italian",effort:"special",time:"4 h",serves:8,note:"Beef and veal only. The ragù wants three hours — start early.",
+{id:"lasagna",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Lasagne_-_stonesoup.jpg/500px-Lasagne_-_stonesoup.jpg",title:"Lasagna alla Bolognese",origin:"Italian",effort:"special",time:"4 h",serves:8,note:"Beef and veal only. The ragù wants three hours — start early.",
 ing:[i("Ground beef","600 g"),i("Ground veal","400 g"),i("Lasagna sheets","500 g"),i("Whole milk","1 L"),i("Crushed tomatoes","700 g"),i("Carrots","2"),i("Celery stalks","2"),i("Onion","1"),i("Dry white wine","200 ml"),i("Butter","100 g"),i("Flour","100 g"),i("Parmesan","200 g"),i("Nutmeg","pinch")],
 steps:["Soften finely diced carrot, celery and onion 15 minutes.","Add the meat, brown properly, deglaze with wine, then tomatoes and 300 ml milk.","Simmer barely covered 3 hours, stirring occasionally.","Make béchamel with butter, flour, remaining milk and nutmeg.","Layer pasta, ragù, béchamel, parmesan — six times. Bake 40 minutes at 180°C."]},
 
-{id:"ossobuco",title:"Ossobuco alla Milanese",origin:"Italian",effort:"special",time:"2 h 30",serves:4,
+{id:"ossobuco",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Ossobuco.jpg/500px-Ossobuco.jpg",title:"Ossobuco alla Milanese",origin:"Italian",effort:"special",time:"2 h 30",serves:4,
 ing:[i("Veal shanks","4"),i("Carrots","2"),i("Celery stalks","2"),i("Onion","1"),i("Dry white wine","250 ml"),i("Chicken stock","750 ml"),i("Flour","60 g"),i("Butter","60 g"),i("Lemon","1"),i("Parsley","1 bunch"),i("Garlic cloves","2")],
 steps:["Tie each shank around the middle. Flour and brown in butter.","Soften the diced vegetables, deglaze with wine.","Return the shanks, add stock two-thirds up, cover, braise 2 hours at 160°C.","Chop lemon zest, garlic and parsley together for gremolata.","Scatter over just before serving."]},
 
-{id:"pomodoro",title:"Pasta al Pomodoro",origin:"Italian",effort:"easy",time:"35 min",serves:4,
+{id:"pomodoro",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Spaghettata.JPG/500px-Spaghettata.JPG",title:"Pasta al Pomodoro",origin:"Italian",effort:"easy",time:"35 min",serves:4,
 ing:[i("Spaghetti","500 g"),i("San Marzano tomatoes","800 g"),i("Garlic cloves","3"),i("Basil","1 bunch"),i("Butter","50 g"),i("Olive oil","60 ml"),i("Parmesan","80 g")],
 steps:["Warm smashed garlic in oil until it perfumes, don't let it colour.","Crush the tomatoes in by hand. Simmer 25 minutes with a basil stalk.","Finish the sauce with cold butter for gloss.","Toss the pasta in the pan with a splash of its water."]},
 
-{id:"aglio-olio",title:"Spaghetti Aglio e Olio",origin:"Italian",effort:"easy",time:"15 min",serves:2,
+{id:"aglio-olio",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Aglio_e_olio.jpg/500px-Aglio_e_olio.jpg",title:"Spaghetti Aglio e Olio",origin:"Italian",effort:"easy",time:"15 min",serves:2,
 ing:[i("Spaghetti","250 g"),i("Garlic cloves","6"),i("Chili flakes","1 tsp"),i("Parsley","1 bunch"),i("Olive oil","100 ml")],
 steps:["Slice garlic paper-thin, warm slowly in oil with chili until pale gold.","Cook the pasta one minute short.","Finish it in the pan with a ladle of pasta water, tossing hard to emulsify.","Parsley off the heat."]},
 
-{id:"cacciatora",title:"Pollo alla Cacciatora",origin:"Italian",effort:"easy",time:"1 h",serves:4,
+{id:"cacciatora",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Flickr_preppybyday_4618397089--Chicken_cacciatore.jpg/500px-Flickr_preppybyday_4618397089--Chicken_cacciatore.jpg",title:"Pollo alla Cacciatora",origin:"Italian",effort:"easy",time:"1 h",serves:4,
 ing:[i("Chicken thighs","8"),i("Crushed tomatoes","600 g"),i("Red bell peppers","2"),i("Onion","1"),i("Black olives","150 g"),i("Rosemary","3 sprigs"),i("Dry white wine","150 ml"),i("Garlic cloves","3")],
 steps:["Brown the chicken skin-side down, remove.","Soften onion and peppers, add garlic and rosemary, deglaze with wine.","Add tomatoes, return the chicken, simmer uncovered 35 minutes.","Stir in olives for the last 5 minutes."]},
 
-{id:"parmigiana",title:"Melanzane alla Parmigiana",origin:"Italian",effort:"special",time:"1 h 45",serves:6,
+{id:"parmigiana",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Parmigiana_di_melanzane.jpg/500px-Parmigiana_di_melanzane.jpg",title:"Melanzane alla Parmigiana",origin:"Italian",effort:"special",time:"1 h 45",serves:6,
 ing:[i("Eggplant","4"),i("Crushed tomatoes","800 g"),i("Mozzarella","400 g"),i("Parmesan","150 g"),i("Basil","1 bunch"),i("Garlic cloves","2"),i("Neutral oil","500 ml"),i("Flour","100 g")],
 steps:["Salt eggplant slices 45 minutes, press dry. This decides everything.","Flour lightly, fry until golden, drain on paper.","Simmer tomatoes with garlic and basil 25 minutes.","Layer eggplant, sauce, torn mozzarella, parmesan. Repeat four times.","Bake 40 minutes at 180°C, rest 20 before cutting."]},
 
-{id:"risotto-milanese",title:"Risotto alla Milanese",origin:"Italian",effort:"easy",time:"35 min",serves:4,
+{id:"risotto-milanese",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Risotto_with_speck_and_goat_cheese_%286101067436%29.jpg/500px-Risotto_with_speck_and_goat_cheese_%286101067436%29.jpg",title:"Risotto alla Milanese",origin:"Italian",effort:"easy",time:"35 min",serves:4,
 ing:[i("Carnaroli rice","350 g"),i("Saffron","1 g"),i("Beef stock","1.5 L"),i("Onion","1"),i("Dry white wine","150 ml"),i("Butter","100 g"),i("Parmesan","100 g"),i("Bone marrow","50 g")],
 steps:["Steep the saffron in a ladle of hot stock.","Sweat onion in butter, toast the rice, deglaze with wine.","Add stock gradually, stirring, 18 minutes. Saffron at the halfway point.","Mantecare off the heat with cold butter and parmesan until glossy."]},
 
-{id:"gnocchi",title:"Gnocchi al Pomodoro",origin:"Italian",effort:"special",time:"1 h 30",serves:4,
+{id:"gnocchi",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Gnocchi_di_ricotta_burro_e_salvia.jpg/500px-Gnocchi_di_ricotta_burro_e_salvia.jpg",title:"Gnocchi al Pomodoro",origin:"Italian",effort:"special",time:"1 h 30",serves:4,
 ing:[i("Russet potatoes","1 kg"),i("Flour","250 g"),i("Egg","1"),i("Crushed tomatoes","600 g"),i("Basil","1 bunch"),i("Parmesan","80 g"),i("Butter","50 g")],
 steps:["Bake the potatoes whole — boiling makes them wet and needs more flour.","Rice the hot flesh, cool slightly, work in egg and flour to a soft dough. Don't knead.","Roll ropes, cut pillows, ridge on a fork.","Boil 90 seconds until they float, then finish in the tomato sauce with butter."]},
 
-{id:"panzanella",title:"Panzanella",origin:"Italian",effort:"easy",time:"25 min",serves:4,
+{id:"panzanella",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Italian_Panzanella.jpg/500px-Italian_Panzanella.jpg",title:"Panzanella",origin:"Italian",effort:"easy",time:"25 min",serves:4,
 ing:[i("Stale sourdough","400 g"),i("Tomatoes","800 g"),i("Red onion","1"),i("Cucumber","1"),i("Basil","1 bunch"),i("Red wine vinegar","4 tbsp"),i("Olive oil","100 ml")],
 steps:["Tear the bread, toast until dry but not hard.","Grate half the tomatoes over it and let it drink for 10 minutes.","Add the rest chopped, with onion, cucumber and basil.","Dress heavily and rest 20 minutes before serving."]},
 
-{id:"minestrone",title:"Minestrone",origin:"Italian",effort:"easy",time:"1 h",serves:6,
+{id:"minestrone",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Minestrone_soup_%285%29.jpg/500px-Minestrone_soup_%285%29.jpg",title:"Minestrone",origin:"Italian",effort:"easy",time:"1 h",serves:6,
 ing:[i("Cannellini beans","400 g"),i("Carrots","3"),i("Celery stalks","3"),i("Onion","1"),i("Zucchini","2"),i("Savoy cabbage","1/2"),i("Crushed tomatoes","400 g"),i("Ditalini","150 g"),i("Parmesan rind","1"),i("Olive oil","80 ml")],
 steps:["Sweat the diced soffritto in oil 15 minutes — this is the whole flavour base.","Add tomatoes, beans, 2 L water and the parmesan rind. Simmer 30 minutes.","Add cabbage and zucchini, then the pasta.","Finish with raw oil and grated parmesan."]},
 
-{id:"tiramisu",title:"Tiramisù",origin:"Italian",effort:"easy",time:"30 min + chill",serves:8,
+{id:"tiramisu",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Tiramisu_-_Raffaele_Diomede.jpg/500px-Tiramisu_-_Raffaele_Diomede.jpg",title:"Tiramisù",origin:"Italian",effort:"easy",time:"30 min + chill",serves:8,
 ing:[i("Mascarpone","500 g"),i("Eggs","4"),i("Sugar","100 g"),i("Savoiardi","300 g"),i("Espresso","400 ml"),i("Cocoa powder","3 tbsp"),i("Marsala","50 ml")],
 steps:["Beat yolks with sugar until pale, fold in mascarpone and marsala.","Whip the whites to soft peaks, fold through in three additions.","Dip the savoiardi in cool espresso for one second each. One second.","Layer twice, chill 6 hours, dust with cocoa at the table."]},
 
-{id:"panna-cotta",title:"Panna Cotta",origin:"Italian",effort:"easy",time:"15 min + chill",serves:6,
+{id:"panna-cotta",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Panna_Cotta_with_cream_and_garnish.jpg/500px-Panna_Cotta_with_cream_and_garnish.jpg",title:"Panna Cotta",origin:"Italian",effort:"easy",time:"15 min + chill",serves:6,
 ing:[i("Heavy cream","600 ml"),i("Whole milk","200 ml"),i("Sugar","90 g"),i("Gelatin sheets","4"),i("Vanilla bean","1"),i("Raspberries","250 g")],
 steps:["Soak gelatin in cold water 5 minutes.","Warm cream, milk, sugar and split vanilla to just below a simmer.","Squeeze the gelatin, dissolve it in off the heat.","Strain into moulds, chill 4 hours. Serve with crushed raspberries."]},
 
-{id:"tortilla",title:"Tortilla Española",origin:"Spanish",effort:"easy",time:"50 min",serves:6,note:"Confit the potatoes in oil. Frying them crisp is a different dish.",
+{id:"tortilla",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Tortilla_de_patata_-_San_Sebasti%C3%A1n.jpg/500px-Tortilla_de_patata_-_San_Sebasti%C3%A1n.jpg",title:"Tortilla Española",origin:"Spanish",effort:"easy",time:"50 min",serves:6,note:"Confit the potatoes in oil. Frying them crisp is a different dish.",
 ing:[i("Waxy potatoes","800 g"),i("Eggs","8"),i("Onions","2"),i("Olive oil","400 ml"),i("Sea salt","to taste")],
 steps:["Slice potatoes thin, cook gently in oil with the onions 25 minutes until tender, never browned.","Drain, keeping 3 tbsp oil. Fold into beaten eggs, rest 10 minutes.","Cook in the pan over medium-low 6 minutes.","Flip onto a plate and slide back for 4 minutes. The centre should stay just runny."]},
 
-{id:"pollo-ajillo",title:"Pollo al Ajillo",origin:"Spanish",effort:"easy",time:"40 min",serves:4,
+{id:"pollo-ajillo",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Gambas_al_ajillo_en_madrid.jpg/500px-Gambas_al_ajillo_en_madrid.jpg",title:"Pollo al Ajillo",origin:"Spanish",effort:"easy",time:"40 min",serves:4,
 ing:[i("Chicken thighs","1 kg"),i("Garlic cloves","12"),i("Dry sherry","150 ml"),i("Bay leaf","2"),i("Parsley","1 bunch"),i("Olive oil","100 ml"),i("Smoked paprika","1 tsp")],
 steps:["Brown the chicken hard in oil, remove.","Fry whole peeled garlic cloves until soft and sweet, 5 minutes.","Deglaze with sherry, add paprika and bay, return the chicken.","Simmer 20 minutes uncovered until the sauce is syrupy. Parsley over."]},
 
-{id:"gazpacho",title:"Gazpacho",origin:"Spanish",effort:"easy",time:"20 min + chill",serves:6,
+{id:"gazpacho",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Gazpacho_Malague%C3%B1o_con_su_%E2%80%9Cpica%C3%ADto%E2%80%9D_-_Moreno%2C_Playa_Burriana_%28cropped%29.jpg/500px-Gazpacho_Malague%C3%B1o_con_su_%E2%80%9Cpica%C3%ADto%E2%80%9D_-_Moreno%2C_Playa_Burriana_%28cropped%29.jpg",title:"Gazpacho",origin:"Spanish",effort:"easy",time:"20 min + chill",serves:6,
 ing:[i("Ripe tomatoes","1.5 kg"),i("Cucumber","1"),i("Green bell pepper","1"),i("Garlic clove","1"),i("Stale sourdough","100 g"),i("Sherry vinegar","3 tbsp"),i("Olive oil","150 ml")],
 steps:["Soak the bread in water, squeeze out.","Blend everything except the oil until completely smooth.","With the motor running, stream in the oil until it turns pale and creamy.","Chill 3 hours. Season again cold — it needs more salt than you think."]},
 
-{id:"albondigas",title:"Albóndigas en Salsa",origin:"Spanish",effort:"easy",time:"1 h",serves:4,
+{id:"albondigas",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Soup_with_meatballs-01.jpg/500px-Soup_with_meatballs-01.jpg",title:"Albóndigas en Salsa",origin:"Spanish",effort:"easy",time:"1 h",serves:4,
 ing:[i("Ground beef","500 g"),i("Ground veal","300 g"),i("Breadcrumbs","60 g"),i("Egg","1"),i("Onions","2"),i("Garlic cloves","4"),i("Crushed tomatoes","400 g"),i("Dry white wine","150 ml"),i("Smoked paprika","2 tsp"),i("Almonds","50 g")],
 steps:["Mix meats with breadcrumbs, egg, grated onion and garlic. Roll and brown.","Soften the second onion, add paprika and wine, reduce.","Add tomatoes and a picada of ground almonds with garlic.","Return the meatballs, simmer 25 minutes."]},
 
-{id:"pisto",title:"Pisto Manchego",origin:"Spanish",effort:"easy",time:"50 min",serves:4,
+{id:"pisto",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Pisto.jpg/500px-Pisto.jpg",title:"Pisto Manchego",origin:"Spanish",effort:"easy",time:"50 min",serves:4,
 ing:[i("Zucchini","3"),i("Red bell peppers","2"),i("Green bell pepper","1"),i("Onions","2"),i("Tomatoes","6"),i("Eggs","4"),i("Olive oil","100 ml"),i("Garlic cloves","3")],
 steps:["Cook onions and peppers slowly in oil, 20 minutes.","Add zucchini, then grated tomato, and reduce until no liquid remains, 20 minutes.","Fry the eggs separately in hot oil with lacy edges.","Set them on top and break the yolks into the vegetables."]},
 
-{id:"patatas-bravas",title:"Patatas Bravas",origin:"Spanish",effort:"easy",time:"45 min",serves:4,
+{id:"patatas-bravas",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Patatas_bravas_madrid.jpg/500px-Patatas_bravas_madrid.jpg",title:"Patatas Bravas",origin:"Spanish",effort:"easy",time:"45 min",serves:4,
 ing:[i("Waxy potatoes","1 kg"),i("Crushed tomatoes","400 g"),i("Smoked paprika","2 tsp"),i("Cayenne","1/2 tsp"),i("Sherry vinegar","2 tbsp"),i("Garlic cloves","3"),i("Neutral oil","500 ml"),i("Mayonnaise","150 g")],
 steps:["Cut potatoes into irregular chunks, boil 8 minutes, dry completely.","Fry at 180°C until deeply crusted.","Cook tomatoes with paprika, cayenne, garlic and vinegar, then blend smooth.","Serve both sauces over the top, brava first, garlic mayo after."]},
 
-{id:"shepherds-pie",title:"Shepherd's Pie",origin:"British",effort:"easy",time:"1 h 20",serves:6,
+{id:"shepherds-pie",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Homerton_College_-_Shepherd%27s_pie_%28cropped%29.jpg/500px-Homerton_College_-_Shepherd%27s_pie_%28cropped%29.jpg",title:"Shepherd's Pie",origin:"British",effort:"easy",time:"1 h 20",serves:6,
 ing:[i("Ground lamb","1 kg"),i("Yukon potatoes","1.2 kg"),i("Carrots","3"),i("Onion","1"),i("Frozen peas","200 g"),i("Beef stock","400 ml"),i("Tomato paste","2 tbsp"),i("Worcestershire sauce","2 tbsp"),i("Butter","100 g"),i("Whole milk","150 ml")],
 steps:["Brown the lamb, drain excess fat, add onion and carrot.","Stir in tomato paste, Worcestershire and stock, simmer 25 minutes until thick.","Mash the potatoes with butter and warm milk. Season hard.","Fold peas into the meat, top with mash, rake with a fork.","Bake 30 minutes at 200°C until the ridges catch."]},
 
-{id:"tikka-masala",title:"Chicken Tikka Masala",origin:"Indian",effort:"easy",time:"1 h + marinade",serves:4,
+{id:"tikka-masala",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Chicken_tikka_masala_%28cropped%29.jpg/500px-Chicken_tikka_masala_%28cropped%29.jpg",title:"Chicken Tikka Masala",origin:"Indian",effort:"easy",time:"1 h + marinade",serves:4,
 ing:[i("Chicken thighs","1 kg"),i("Yogurt","250 g"),i("Garam masala","2 tbsp"),i("Ginger","30 g"),i("Garlic cloves","6"),i("Crushed tomatoes","700 g"),i("Heavy cream","200 ml"),i("Butter","60 g"),i("Turmeric","1 tsp"),i("Cilantro","1 bunch")],
 steps:["Marinate the chicken in yogurt, half the spices, ginger and garlic — 4 hours minimum.","Broil on a rack until charred at the edges, 12 minutes.","Cook the rest of the aromatics in butter, add tomatoes, simmer 25 minutes, blend.","Add cream and the chicken, simmer 10 minutes. Cilantro to finish."]},
 
-{id:"dal-tadka",title:"Dal Tadka",origin:"Indian",effort:"easy",time:"45 min",serves:4,note:"The tempering at the end is not a garnish. It's the dish.",
+{id:"dal-tadka",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/3_types_of_lentil.png/500px-3_types_of_lentil.png",title:"Dal Tadka",origin:"Indian",effort:"easy",time:"45 min",serves:4,note:"The tempering at the end is not a garnish. It's the dish.",
 ing:[i("Toor dal","300 g"),i("Turmeric","1 tsp"),i("Tomatoes","2"),i("Ghee","4 tbsp"),i("Cumin seeds","2 tsp"),i("Dried red chilies","3"),i("Garlic cloves","6"),i("Ginger","20 g"),i("Asafoetida","pinch"),i("Cilantro","1 bunch")],
 steps:["Boil the dal with turmeric and chopped tomato until collapsing, 35 minutes. Whisk it smooth.","Heat ghee, crackle cumin seeds, add sliced garlic, chilies and asafoetida.","When the garlic is gold, pour the whole thing into the dal — it should hiss.","Stir once, cover for 2 minutes, then cilantro."]},
 
-{id:"chana-masala",title:"Chana Masala",origin:"Indian",effort:"easy",time:"40 min",serves:4,
+{id:"chana-masala",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Chana_masala.jpg/500px-Chana_masala.jpg",title:"Chana Masala",origin:"Indian",effort:"easy",time:"40 min",serves:4,
 ing:[i("Chickpeas","800 g"),i("Onions","2"),i("Tomatoes","4"),i("Ginger","30 g"),i("Garlic cloves","5"),i("Garam masala","1 tbsp"),i("Cumin","2 tsp"),i("Coriander","2 tsp"),i("Amchur","1 tsp"),i("Cilantro","1 bunch")],
 steps:["Brown the onions properly — 15 minutes, until they're genuinely dark.","Add ginger-garlic paste, then the ground spices, then tomatoes. Cook until oil separates.","Add chickpeas with 200 ml water, simmer 15 minutes, crushing some against the pan.","Finish with amchur and cilantro."]},
 
-{id:"butter-chicken",title:"Butter Chicken",origin:"Indian",effort:"easy",time:"1 h",serves:4,
+{id:"butter-chicken",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Butter_Chicken_%26_Butter_Naan_-_Home_-_Chandigarh_-_India_-_0006.jpg/500px-Butter_Chicken_%26_Butter_Naan_-_Home_-_Chandigarh_-_India_-_0006.jpg",title:"Butter Chicken",origin:"Indian",effort:"easy",time:"1 h",serves:4,
 ing:[i("Chicken thighs","1 kg"),i("Yogurt","200 g"),i("Butter","100 g"),i("Heavy cream","250 ml"),i("Crushed tomatoes","700 g"),i("Cashews","60 g"),i("Ginger","30 g"),i("Garlic cloves","6"),i("Garam masala","2 tsp"),i("Kashmiri chili","2 tsp"),i("Fenugreek leaves","1 tbsp")],
 steps:["Marinate chicken in yogurt, chili and ginger-garlic 2 hours, then broil until charred.","Simmer tomatoes with cashews and aromatics 20 minutes, blend until silk-smooth.","Melt in butter and cream, then add the chicken.","Crush dried fenugreek between your palms over the pot at the end."]},
 
-{id:"green-curry",title:"Thai Green Curry with Chicken",origin:"Thai",effort:"easy",time:"35 min",serves:4,note:"Soy in place of fish sauce — the balance still works.",
+{id:"green-curry",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Thai_green_chicken_curry_and_roti.jpg/500px-Thai_green_chicken_curry_and_roti.jpg",title:"Thai Green Curry with Chicken",origin:"Thai",effort:"easy",time:"35 min",serves:4,note:"Soy in place of fish sauce — the balance still works.",
 ing:[i("Chicken thighs","800 g"),i("Green curry paste","4 tbsp"),i("Coconut milk","800 ml"),i("Thai eggplant","200 g"),i("Bamboo shoots","150 g"),i("Thai basil","1 bunch"),i("Soy sauce","3 tbsp"),i("Palm sugar","1 tbsp"),i("Lime","2")],
 steps:["Crack the thick coconut cream in a hot pan and fry the paste in it 3 minutes until it splits.","Add the chicken, coat well, then the rest of the coconut milk.","Simmer 15 minutes with eggplant and bamboo.","Season with soy, palm sugar and lime. Thai basil off the heat."]},
 
-{id:"katsu-curry",title:"Chicken Katsu Curry",origin:"Japanese",effort:"easy",time:"50 min",serves:4,
+{id:"katsu-curry",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Beef_curry_rice_003.jpg/500px-Beef_curry_rice_003.jpg",title:"Chicken Katsu Curry",origin:"Japanese",effort:"easy",time:"50 min",serves:4,
 ing:[i("Chicken breasts","4"),i("Panko","200 g"),i("Eggs","2"),i("Flour","100 g"),i("Onions","2"),i("Carrots","2"),i("Curry powder","3 tbsp"),i("Chicken stock","800 ml"),i("Soy sauce","2 tbsp"),i("Honey","1 tbsp"),i("Neutral oil","400 ml")],
 steps:["Soften onion and carrot, add curry powder and flour, cook 2 minutes.","Add stock slowly, simmer 20 minutes, then blend smooth with soy and honey.","Flour, egg and panko the flattened breasts.","Fry 4 minutes a side, slice thick, pour the sauce alongside rice."]},
 
-{id:"mapo-tofu",title:"Mapo Tofu",origin:"Chinese",effort:"easy",time:"30 min",serves:4,note:"Made with beef instead of the usual pork.",
+{id:"mapo-tofu",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Chen_Mapo_Tofu.jpg/500px-Chen_Mapo_Tofu.jpg",title:"Mapo Tofu",origin:"Chinese",effort:"easy",time:"30 min",serves:4,note:"Made with beef instead of the usual pork.",
 ing:[i("Silken tofu","600 g"),i("Ground beef","250 g"),i("Doubanjiang","3 tbsp"),i("Fermented black beans","1 tbsp"),i("Sichuan peppercorns","2 tsp"),i("Garlic cloves","4"),i("Ginger","20 g"),i("Scallions","4"),i("Cornstarch","2 tbsp"),i("Chicken stock","300 ml")],
 steps:["Slip cubed tofu into salted hot water and hold it there while you cook.","Brown the beef hard, add doubanjiang and black beans, fry until the oil turns red.","Add stock, garlic and ginger, then the drained tofu. Don't stir — push gently.","Thicken with cornstarch slurry in three additions. Ground Sichuan pepper over the top."]},
 
-{id:"bulgogi",title:"Beef Bulgogi",origin:"Korean",effort:"easy",time:"25 min + marinade",serves:4,
+{id:"bulgogi",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Bulgogi_2.jpg/500px-Bulgogi_2.jpg",title:"Beef Bulgogi",origin:"Korean",effort:"easy",time:"25 min + marinade",serves:4,
 ing:[i("Ribeye, thinly sliced","800 g"),i("Asian pear","1"),i("Soy sauce","100 ml"),i("Sesame oil","2 tbsp"),i("Brown sugar","3 tbsp"),i("Garlic cloves","6"),i("Scallions","4"),i("Sesame seeds","2 tbsp"),i("Ginger","20 g")],
 steps:["Blend pear, soy, sugar, garlic and ginger into a marinade.","Steep the sliced beef at least 4 hours.","Sear in a screaming-hot pan in small batches — steam is the enemy of char.","Scallions and sesame at the end, with rice and lettuce leaves."]},
 
-{id:"fried-rice",title:"Chicken Fried Rice",origin:"Chinese",effort:"easy",time:"20 min",serves:4,note:"Day-old cold rice or don't bother.",
+{id:"fried-rice",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Koh_Mak%2C_Thailand%2C_Fried_rice_with_seafood%2C_Thai_fried_rice.jpg/500px-Koh_Mak%2C_Thailand%2C_Fried_rice_with_seafood%2C_Thai_fried_rice.jpg",title:"Chicken Fried Rice",origin:"Chinese",effort:"easy",time:"20 min",serves:4,note:"Day-old cold rice or don't bother.",
 ing:[i("Cold cooked rice","800 g"),i("Chicken thighs","400 g"),i("Eggs","3"),i("Scallions","5"),i("Frozen peas","150 g"),i("Soy sauce","3 tbsp"),i("Sesame oil","1 tbsp"),i("Garlic cloves","3"),i("Neutral oil","3 tbsp")],
 steps:["Get the wok genuinely hot. Sear the diced chicken, remove.","Scramble the eggs briefly, remove.","Fry the rice hard, breaking clumps, 4 minutes until it starts to pop.","Return everything with peas, soy and sesame. Scallions last."]},
 
-{id:"kung-pao",title:"Kung Pao Chicken",origin:"Chinese",effort:"easy",time:"30 min",serves:4,
+{id:"kung-pao",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Kung-pao-shanghai.jpg/500px-Kung-pao-shanghai.jpg",title:"Kung Pao Chicken",origin:"Chinese",effort:"easy",time:"30 min",serves:4,
 ing:[i("Chicken thighs","700 g"),i("Peanuts","100 g"),i("Dried red chilies","10"),i("Sichuan peppercorns","1 tsp"),i("Soy sauce","3 tbsp"),i("Black vinegar","2 tbsp"),i("Sugar","1 tbsp"),i("Cornstarch","2 tbsp"),i("Scallions","5"),i("Garlic cloves","4")],
 steps:["Velvet the diced chicken in cornstarch, soy and water 15 minutes.","Mix the sauce: soy, vinegar, sugar, cornstarch and a splash of water.","Fry chilies and peppercorns in oil until fragrant, add the chicken, sear hard.","Add the sauce, let it glaze, then peanuts and scallions off the heat."]},
 
-{id:"chili",title:"Beef Chili",origin:"American",effort:"easy",time:"2 h",serves:6,
+{id:"chili",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Bowl_of_chili.jpg/500px-Bowl_of_chili.jpg",title:"Beef Chili",origin:"American",effort:"easy",time:"2 h",serves:6,
 ing:[i("Ground beef","1 kg"),i("Kidney beans","800 g"),i("Crushed tomatoes","800 g"),i("Onions","2"),i("Chipotle in adobo","3 tbsp"),i("Cumin","2 tbsp"),i("Chili powder","2 tbsp"),i("Dark chocolate 70%","20 g"),i("Beef stock","500 ml"),i("Garlic cloves","5")],
 steps:["Brown the beef in batches until it's actually browned, not grey.","Add onions and garlic, then the dry spices, and toast 2 minutes.","Add tomatoes, stock, chipotle and chocolate. Simmer 90 minutes uncovered.","Beans for the last 30 minutes."]},
 
-{id:"fajitas",title:"Chicken Fajitas",origin:"Mexican",effort:"easy",time:"30 min",serves:4,
+{id:"fajitas",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Chicken_fajita_platter%2C_Lone_Star_Texas_Grill%2C_Windsor%2C_Ontario%2C_2025-06-14_03.jpg/500px-Chicken_fajita_platter%2C_Lone_Star_Texas_Grill%2C_Windsor%2C_Ontario%2C_2025-06-14_03.jpg",title:"Chicken Fajitas",origin:"Mexican",effort:"easy",time:"30 min",serves:4,
 ing:[i("Chicken breasts","800 g"),i("Red bell peppers","3"),i("Onions","2"),i("Limes","3"),i("Cumin","2 tsp"),i("Smoked paprika","2 tsp"),i("Tortillas","8"),i("Avocado","2"),i("Cilantro","1 bunch"),i("Sour cream","200 g")],
 steps:["Toss sliced chicken with lime, cumin and paprika, rest 20 minutes.","Sear in a cast-iron pan until charred in spots, remove.","Blister the peppers and onions in the same pan.","Warm the tortillas directly over the flame. Serve with mashed avocado."]},
 
-{id:"huevos-rancheros",title:"Huevos Rancheros",origin:"Mexican",effort:"easy",time:"25 min",serves:2,
+{id:"huevos-rancheros",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Mmm...huevos_rancheros.jpg/500px-Mmm...huevos_rancheros.jpg",title:"Huevos Rancheros",origin:"Mexican",effort:"easy",time:"25 min",serves:2,
 ing:[i("Eggs","4"),i("Corn tortillas","4"),i("Black beans","400 g"),i("Tomatoes","4"),i("Jalapeño","1"),i("Onion","1"),i("Cilantro","1 bunch"),i("Feta","100 g"),i("Lime","1")],
 steps:["Char tomatoes, onion and jalapeño in a dry pan, then blend into a rough salsa.","Warm the beans with cumin, mash slightly.","Fry the tortillas until they blister.","Stack tortilla, beans, fried egg, hot salsa, crumbled cheese, cilantro."]},
 
-{id:"pho",title:"Beef Pho",origin:"Vietnamese",effort:"special",time:"5 h",serves:6,note:"Char the aromatics. It's what separates real pho from beef noodle soup.",
+{id:"pho",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Bowl_of_Meatball_pho.jpg/500px-Bowl_of_Meatball_pho.jpg",title:"Beef Pho",origin:"Vietnamese",effort:"special",time:"5 h",serves:6,note:"Char the aromatics. It's what separates real pho from beef noodle soup.",
 ing:[i("Beef bones","2 kg"),i("Beef brisket","800 g"),i("Onions","3"),i("Ginger","100 g"),i("Star anise","6"),i("Cinnamon stick","2"),i("Cloves","5"),i("Rice noodles","500 g"),i("Thai basil","1 bunch"),i("Bean sprouts","250 g"),i("Lime","3")],
 steps:["Parboil the bones 10 minutes, rinse them clean. This is what makes the broth clear.","Char halved onions and ginger over a flame until blackened.","Simmer bones, brisket and charred aromatics 4 hours, skimming. Add toasted spices for the last hour.","Season with salt and a little sugar. Strain.","Assemble over noodles with sliced brisket, herbs, sprouts and lime."]},
 
-{id:"mousse-chocolat",title:"Mousse au Chocolat",origin:"French",effort:"easy",time:"20 min + chill",serves:6,
+{id:"mousse-chocolat",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Chocolate_coffee_mousse.jpg/500px-Chocolate_coffee_mousse.jpg",title:"Mousse au Chocolat",origin:"French",effort:"easy",time:"20 min + chill",serves:6,
 ing:[i("Dark chocolate 70%","200 g"),i("Eggs","6"),i("Sugar","40 g"),i("Butter","30 g"),i("Sea salt","pinch")],
 steps:["Melt chocolate with butter over a bain-marie, cool slightly.","Beat in the yolks one at a time.","Whip whites with salt to soft peaks, add sugar, whip to glossy.","Fold into the chocolate in three additions. Chill 4 hours."]},
 
-{id:"clafoutis",title:"Clafoutis aux Cerises",origin:"French",effort:"easy",time:"1 h",serves:6,
+{id:"clafoutis",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Clafoutis3.jpg/500px-Clafoutis3.jpg",title:"Clafoutis aux Cerises",origin:"French",effort:"easy",time:"1 h",serves:6,
 ing:[i("Cherries","600 g"),i("Eggs","4"),i("Whole milk","400 ml"),i("Flour","100 g"),i("Sugar","100 g"),i("Butter","20 g"),i("Vanilla extract","1 tsp")],
 steps:["Butter a dish and dust with sugar. Fill with cherries in one layer.","Whisk eggs, sugar, flour, milk and vanilla into a loose batter.","Pour over and bake at 180°C for 40 minutes until puffed and set.","Serve warm — it deflates, and that's expected."]},
 
-{id:"tarte-tatin",title:"Tarte Tatin",origin:"French",effort:"special",time:"1 h 30",serves:8,
+{id:"tarte-tatin",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Franse_tarte_tatin.jpg/500px-Franse_tarte_tatin.jpg",title:"Tarte Tatin",origin:"French",effort:"special",time:"1 h 30",serves:8,
 ing:[i("Apples","1.5 kg"),i("Sugar","200 g"),i("Butter","100 g"),i("Puff pastry sheet","1"),i("Vanilla bean","1")],
 steps:["Make a dry caramel, whisk in butter, pour into an oven-safe pan.","Pack halved apples in tight, cut-side up — they shrink a lot.","Cook on the stove 20 minutes until the caramel darkens.","Lay pastry over, tuck the edges down, bake 30 minutes at 190°C.","Rest 10 minutes, then invert in one confident motion."]},
 
-{id:"creme-caramel",title:"Crème Caramel",origin:"French",effort:"easy",time:"1 h + chill",serves:6,
+{id:"creme-caramel",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Cremecaramel.jpg/500px-Cremecaramel.jpg",title:"Crème Caramel",origin:"French",effort:"easy",time:"1 h + chill",serves:6,
 ing:[i("Whole milk","600 ml"),i("Eggs","4"),i("Egg yolks","2"),i("Sugar","250 g"),i("Vanilla bean","1")],
 steps:["Cook 150 g sugar to a deep amber caramel, pour into ramekins.","Infuse the milk with split vanilla, whisk into eggs and remaining sugar.","Strain, fill the ramekins, bake in a bain-marie at 150°C for 40 minutes.","Chill overnight. Run a knife round and invert."]},
 
-{id:"tarte-citron",title:"Tarte au Citron",origin:"French",effort:"special",time:"1 h 30",serves:8,
+{id:"tarte-citron",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Lemon_tart_-_star5112.jpg/500px-Lemon_tart_-_star5112.jpg",title:"Tarte au Citron",origin:"French",effort:"special",time:"1 h 30",serves:8,
 ing:[i("Shortcrust pastry","1"),i("Lemons","5"),i("Eggs","4"),i("Sugar","180 g"),i("Butter","180 g"),i("Heavy cream","50 ml")],
 steps:["Blind-bake the shell at 180°C for 25 minutes until properly dry.","Whisk lemon juice, zest, eggs and sugar over a bain-marie until thick, 10 minutes.","Off the heat, beat in cold cubed butter a little at a time.","Pour into the shell, bake 8 minutes at 160°C to set, then chill."]},
 
-{id:"far-breton",title:"Far Breton",origin:"French",effort:"easy",time:"1 h",serves:6,
+{id:"far-breton",img:"https://upload.wikimedia.org/wikipedia/commons/9/9e/Far-breton.jpg",title:"Far Breton",origin:"French",effort:"easy",time:"1 h",serves:6,
 ing:[i("Prunes","250 g"),i("Whole milk","750 ml"),i("Eggs","4"),i("Flour","150 g"),i("Sugar","120 g"),i("Butter","30 g"),i("Rum","50 ml")],
 steps:["Soak the prunes in warm rum 30 minutes.","Whisk eggs, sugar and flour, then loosen with the milk to a thin batter.","Butter a dish, scatter the prunes, pour the batter over.","Bake at 190°C for 45 minutes until deeply set and burnished."]},
 
-{id:"madeleines",title:"Madeleines",origin:"French",effort:"easy",time:"30 min + chill",serves:24,note:"The cold batter into a hot tin is what gives you the bump.",
+{id:"madeleines",img:"https://upload.wikimedia.org/wikipedia/commons/1/10/Madeleines_pic.jpg",title:"Madeleines",origin:"French",effort:"easy",time:"30 min + chill",serves:24,note:"The cold batter into a hot tin is what gives you the bump.",
 ing:[i("Eggs","3"),i("Sugar","130 g"),i("Flour","150 g"),i("Butter","150 g"),i("Baking powder","1 tsp"),i("Lemon","1"),i("Honey","1 tbsp")],
 steps:["Brown the butter until it smells of hazelnuts, cool.","Whisk eggs, sugar, honey and zest until pale and thick.","Fold in flour and baking powder, then the butter. Chill 3 hours minimum.","Fill buttered moulds two-thirds, bake at 210°C for 9 minutes."]},
 
-{id:"ile-flottante",title:"Île Flottante",origin:"French",effort:"special",time:"1 h",serves:6,
+{id:"ile-flottante",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Ujuvad_saarekesed.jpg/500px-Ujuvad_saarekesed.jpg",title:"Île Flottante",origin:"French",effort:"special",time:"1 h",serves:6,
 ing:[i("Eggs","6"),i("Whole milk","750 ml"),i("Sugar","200 g"),i("Vanilla bean","1"),i("Almonds","50 g")],
 steps:["Make a crème anglaise with yolks, sugar and vanilla-infused milk. Stop at 82°C.","Whip the whites with sugar to firm, glossy peaks.","Poach spoonfuls in barely-simmering milk, 2 minutes a side.","Float them on the cold custard, top with caramel and toasted almonds."]},
 
-{id:"gateau-yaourt",title:"Gâteau au Yaourt",origin:"French",effort:"easy",time:"45 min",serves:8,note:"The yogurt pot is the measuring cup. Every French child knows this cake.",
+{id:"gateau-yaourt",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Pound_cake_2.jpg/500px-Pound_cake_2.jpg",title:"Gâteau au Yaourt",origin:"French",effort:"easy",time:"45 min",serves:8,note:"The yogurt pot is the measuring cup. Every French child knows this cake.",
 ing:[i("Plain yogurt","1 pot"),i("Eggs","3"),i("Flour","3 pots"),i("Sugar","2 pots"),i("Neutral oil","1/2 pot"),i("Baking powder","1 sachet"),i("Lemon","1")],
 steps:["Empty the yogurt into a bowl, then use the pot to measure everything else.","Whisk in eggs, sugar, oil, then flour, baking powder and zest.","Pour into a buttered tin.","Bake at 180°C for 35 minutes. A skewer should come out clean."]},
 ];
@@ -1127,6 +1166,7 @@ function renderList() {
   var el = document.getElementById('listBody');
   var active = S.items.filter(function (x) { return !x.done; });
   var done = S.items.filter(function (x) { return x.done; });
+  document.getElementById('shareBar').style.display = active.length ? '' : 'none';
   if (!S.items.length) {
     el.innerHTML = '<div class="empty"><span class="ei">🛒</span><p>Nothing on the list yet.<br/>Add something above, or send a recipe over from Recipes.</p></div>';
     return;
@@ -1154,6 +1194,55 @@ function itemHTML(it) {
     (it.from.length ? '<div class="item-from">for ' + esc(it.from.join(' · ')) + '</div>' : '') + '</div>' +
     '<div class="item-qty">' + esc(it.qty) + '</div>' +
     '<button class="item-x" data-del="' + it.id + '">×</button></div>';
+}
+
+
+/* ── getting the list out of the app ────────────────────── */
+function listAsText() {
+  var out = [], any = false;
+  AISLES.forEach(function (a) {
+    var rows = S.items.filter(function (x) { return !x.done && x.aisle === a[0]; });
+    if (!rows.length) return;
+    any = true;
+    out.push(a[1].replace(/^\S+\s/, '').toUpperCase());
+    rows.forEach(function (it) { out.push('  • ' + it.name + (it.qty ? ' — ' + it.qty : '')); });
+    out.push('');
+  });
+  return any ? out.join('\n').trim() : 'The list is empty.';
+}
+
+function shareList(how) {
+  var text = listAsText();
+  var subject = 'Shopping list — ' + new Date().toLocaleDateString();
+  if (how === 'share' && navigator.share) {
+    navigator.share({ title: subject, text: text }).catch(function () {});
+    return;
+  }
+  if (how === 'mail') { window.location.href = 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(text); return; }
+  if (how === 'sms') {
+    var sep = /iPhone|iPad|Mac/.test(navigator.userAgent) ? '&' : '?';
+    window.location.href = 'sms:' + sep + 'body=' + encodeURIComponent(text);
+    return;
+  }
+  var done = function () { toast('Copied — paste it into your shared note'); };
+  if (navigator.clipboard) navigator.clipboard.writeText(text).then(done, function () { fallbackCopy(text, done); });
+  else fallbackCopy(text, done);
+}
+
+function fallbackCopy(text, done) {
+  var ta = document.createElement('textarea');
+  ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); done(); } catch (e) { toast('Copy failed — select the text manually'); }
+  document.body.removeChild(ta);
+}
+
+function toast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('on');
+  clearTimeout(t._h);
+  t._h = setTimeout(function () { t.classList.remove('on'); }, 2600);
 }
 
 /* ── pantry & freshness ─────────────────────────────────── */
@@ -1210,7 +1299,7 @@ function renderCookMatches() {
       var pills = (x.saves ? '<span class="tagpill save">saves ' + x.saves + '</span>' : '') +
         (x.missing.length === 0 ? '<span class="tagpill have">you have it all</span>' : '');
       return '<div class="rec" data-recipe="' + x.r.id + '">' +
-        '<div class="rec-thumb">' + (x.r.effort === 'special' ? '✨' : '⚡') + '</div>' +
+        (x.r.img ? '<img class="rec-thumb" src="' + esc(x.r.img) + '" alt="" loading="lazy" />' : '<div class="rec-thumb">' + (x.r.effort === 'special' ? '✨' : '⚡') + '</div>') +
         '<div class="rec-body"><div class="rec-title">' + esc(x.r.title) + '</div>' +
         '<div class="rec-meta">' + pills + (x.missing.length ? 'missing ' + esc(x.missing.slice(0, 3).map(function (m) { return m.name.toLowerCase(); }).join(', ')) + (x.missing.length > 3 ? ' +' + (x.missing.length - 3) : '') : '') + '</div></div>' +
         '<div class="item-qty">' + x.hits + '/' + x.r.ing.length + '</div></div>';
@@ -1293,12 +1382,14 @@ function renderRecipes() {
   el.innerHTML = html;
 }
 function recRow(r) {
-  var pill = r.house ? '<span class="tagpill">house</span>' : r.generated ? '<span class="tagpill save">new</span>' : '';
+  var img = r.img || r.thumb;
+  var pill = r.house ? '' : r.generated ? '<span class="tagpill save">new</span>' : '<span class="tagpill">web</span>';
   return '<div class="rec" data-recipe="' + r.id + '">' +
-    (r.thumb ? '<img class="rec-thumb" src="' + esc(r.thumb) + '" alt="" />'
-             : '<div class="rec-thumb">' + (r.effort === 'special' ? '✨' : '⚡') + '</div>') +
+    (img ? '<img class="rec-thumb" src="' + esc(img) + '" alt="" loading="lazy" />'
+         : '<div class="rec-thumb">' + (r.effort === 'special' ? '✨' : '⚡') + '</div>') +
     '<div class="rec-body"><div class="rec-title">' + esc(r.title) + '</div>' +
-    '<div class="rec-meta">' + pill + esc(r.origin) + (r.time ? ' · ' + esc(r.time) : '') + ' · ' + r.ing.length + ' ingredients</div></div></div>';
+    '<div class="rec-meta">' + pill + esc(r.origin) + (r.time ? ' · ' + esc(r.time) : '') +
+    ' · ' + (r.effort === 'special' ? '✨ special' : '⚡ weeknight') + '</div></div></div>';
 }
 
 function findRecipe(id) {
@@ -1325,7 +1416,7 @@ function drawSheet() {
     '<div class="sheet-head"><div><div class="grab"></div></div>' +
       '<button class="btn-sm" data-close="1" style="background:var(--border);color:var(--text)">Close</button></div>' +
     '<div class="sheet-body">' +
-      (r.thumb ? '<img src="' + esc(r.thumb) + '" class="prod-img" alt="" />' : '') +
+      ((r.img || r.thumb) ? '<img src="' + esc(r.img || r.thumb) + '" class="hero" alt="" />' : '') +
       '<h2 style="font-size:24px;font-weight:800;line-height:1.25;margin-bottom:6px">' + esc(r.title) + '</h2>' +
       '<div style="font-size:13px;color:var(--muted)">' + esc(r.origin) + (r.time ? ' · ' + esc(r.time) : '') + (r.category ? ' · ' + esc(r.category) : '') + '</div>' +
       (r.note ? '<div class="banner" style="margin-top:14px">💡 ' + esc(r.note) + '</div>' : '') +
@@ -1621,6 +1712,7 @@ function boot() {
     }
     if (c('[data-prodadd]')) { addItems([{ name: c('[data-prodadd]').dataset.prodadd, qty: '' }], null); return setTab('list'); }
 
+    if (c('[data-share]')) return shareList(c('[data-share]').dataset.share);
     if (t.id === 'listAdd') return submitList();
     if (t.id === 'pantryAdd') return submitPantry();
     if (t.id === 'btnWeb') return askClaude('web');
