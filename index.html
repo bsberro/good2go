@@ -6,23 +6,24 @@
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Kitchen" />
-<meta name="theme-color" content="#d81f26" />
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23d81f26'/%3E%3Ctext x='50' y='68' font-size='52' text-anchor='middle'%3E🍳%3C/text%3E%3C/svg%3E" />
+<meta name="theme-color" content="#b23a34" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23b23a34'/%3E%3Ctext x='50' y='68' font-size='52' text-anchor='middle'%3E🍳%3C/text%3E%3C/svg%3E" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <meta name="apple-mobile-web-app-title" content="Kitchen" />
 <title>Kitchen — list, recipes & food safety</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet" />
 <style>
 :root{
-  --bg:#fffaf6;--card-bg:#ffffff;--border:#f0e3d8;--text:#1c1310;--muted:#8a7266;
-  --green:#12996b;--yellow:#e8890c;--red:#d81f26;--blue:#3b82f6;
-  --primary:#d81f26;--accent:#ff7a1a;--primary-soft:rgba(216,31,38,.07);
+  --bg:#fdf8f2;--card-bg:#ffffff;--border:#ede0d2;--text:#241812;--muted:#95806f;
+  --green:#2e7d5b;--yellow:#dd8a1c;--red:#b23a34;--blue:#3b82f6;
+  --primary:#b23a34;--accent:#d97b3f;--primary-soft:rgba(178,58,52,.07);
+  --serif:'Fraunces',Georgia,serif;
 }
 @media (prefers-color-scheme:dark){
-  :root{--bg:#0f1012;--card-bg:#1a1b21;--border:#2d2e33;--text:#f4f4f5;--muted:#9ca3af;--primary-soft:rgba(216,31,38,.14)}
+  :root{--bg:#0f1012;--card-bg:#1a1b21;--border:#2d2e33;--text:#f4f4f5;--muted:#9ca3af;--primary-soft:rgba(178,58,52,.14)}
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
@@ -37,7 +38,7 @@ input,select,textarea,button{font-family:inherit;font-size:16px}
 .container{max-width:480px;margin:0 auto;padding:20px}
 .header{text-align:center;margin-bottom:18px;padding-top:6px;animation:slideUp .5s cubic-bezier(.16,1,.3,1) both}
 .logo{font-size:34px;margin-bottom:4px;display:inline-block;animation:celebrate 1s cubic-bezier(.68,-.55,.265,1.55) .2s both}
-h1{font-size:27px;font-weight:700;letter-spacing:-.035em;margin-bottom:3px}
+h1{font-family:var(--serif);font-size:27px;font-weight:700;letter-spacing:-.01em;margin-bottom:3px}
 .tagline{color:var(--muted);font-size:13.5px;font-weight:500}
 
 .card{
@@ -78,7 +79,7 @@ h1{font-size:27px;font-weight:700;letter-spacing:-.035em;margin-bottom:3px}
   border-radius:12px;color:var(--text);outline:none;-webkit-appearance:none;appearance:none;
   transition:all .2s cubic-bezier(.4,0,.2,1)
 }
-.field:focus{border-color:var(--primary);transform:translateY(-2px);box-shadow:0 6px 16px rgba(216,31,38,.15)}
+.field:focus{border-color:var(--primary);transform:translateY(-2px);box-shadow:0 6px 16px rgba(178,58,52,.15)}
 .row{display:flex;gap:8px}
 .row .btn-ghost{flex:1}
 .row .field{flex:1}
@@ -87,10 +88,10 @@ h1{font-size:27px;font-weight:700;letter-spacing:-.035em;margin-bottom:3px}
 
 .btn{
   width:100%;padding:15px;background:var(--primary);color:#fff;border:none;border-radius:14px;
-  font-size:15.5px;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(216,31,38,.22);letter-spacing:-.01em;
+  font-size:15.5px;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(178,58,52,.22);letter-spacing:-.01em;
   transition:all .2s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden
 }
-.btn:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 8px 24px rgba(216,31,38,.4)}
+.btn:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 8px 24px rgba(178,58,52,.4)}
 .btn:active{transform:scale(.97)}
 .btn:disabled{opacity:.45;transform:none;box-shadow:none;cursor:default}
 .btn-ghost{
@@ -113,7 +114,7 @@ h1{font-size:27px;font-weight:700;letter-spacing:-.035em;margin-bottom:3px}
   transition:all .25s cubic-bezier(.68,-.55,.265,1.55)
 }
 .chip:hover{transform:translateY(-2px)}
-.chip.on{background:var(--primary);border-color:var(--primary);color:#fff;box-shadow:0 3px 10px rgba(216,31,38,.3)}
+.chip.on{background:var(--primary);border-color:var(--primary);color:#fff;box-shadow:0 3px 10px rgba(178,58,52,.3)}
 .chip.warn{border-color:var(--yellow);color:var(--yellow)}
 
 /* ── list ───────────────────────────────────────────── */
@@ -127,7 +128,7 @@ h1{font-size:27px;font-weight:700;letter-spacing:-.035em;margin-bottom:3px}
   border:1px solid var(--border);border-radius:13px;margin-bottom:7px;cursor:pointer;
   transition:all .2s cubic-bezier(.4,0,.2,1)
 }
-.item:hover{transform:translateX(4px);box-shadow:0 3px 10px rgba(216,31,38,.1)}
+.item:hover{transform:translateX(4px);box-shadow:0 3px 10px rgba(178,58,52,.1)}
 .item:active{transform:scale(.98)}
 .item.done{opacity:.45}
 .item.done .item-name{text-decoration:line-through}
@@ -180,7 +181,7 @@ h1{font-size:27px;font-weight:700;letter-spacing:-.035em;margin-bottom:3px}
 
 .banner{
   border-radius:14px;padding:14px 16px;margin-bottom:14px;font-size:14px;line-height:1.5;
-  background:var(--primary-soft);border:1px solid rgba(216,31,38,.25)
+  background:var(--primary-soft);border:1px solid rgba(178,58,52,.25)
 }
 .banner.hot{background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.3)}
 .banner.err{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.25)}
@@ -312,7 +313,7 @@ h1{font-size:27px;font-weight:700;letter-spacing:-.035em;margin-bottom:3px}
   transition:all .2s cubic-bezier(.4,0,.2,1)
 }
 .share-grid button span{font-size:22px}
-.share-grid button:hover{transform:translateY(-3px);border-color:var(--primary);box-shadow:0 6px 16px rgba(216,31,38,.18)}
+.share-grid button:hover{transform:translateY(-3px);border-color:var(--primary);box-shadow:0 6px 16px rgba(178,58,52,.18)}
 .share-grid button:active{transform:scale(.94)}
 .toast{
   position:fixed;left:50%;bottom:96px;transform:translate(-50%,20px);z-index:80;
@@ -329,6 +330,32 @@ h1{font-size:27px;font-weight:700;letter-spacing:-.035em;margin-bottom:3px}
 }
 img.rec-thumb{object-fit:cover}
 .rec{overflow:hidden}
+
+/* ── home ───────────────────────────────────────────── */
+.home-head{margin:4px 0 18px}
+.home-head i{font-style:normal;font-size:13px;font-weight:600;color:var(--muted);display:block}
+.home-head b{font-family:var(--serif);font-size:29px;font-weight:700;display:block;margin-top:2px;line-height:1.15}
+.home-head span{font-size:13px;font-weight:600;color:var(--accent);display:block;margin-top:4px;font-variant-numeric:tabular-nums}
+.home-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.09em;margin:18px 0 10px}
+.home-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+.home-tile{
+  padding:16px 15px;border-radius:16px;border:1px solid var(--border);background:var(--card-bg);
+  text-align:left;cursor:pointer;box-shadow:0 1px 2px rgba(36,24,18,.04);transition:all .2s
+}
+.home-tile:active{transform:scale(.97)}
+.home-tile span{font-size:23px;display:block;margin-bottom:8px}
+.home-tile b{font-size:14.5px;font-weight:700;display:block}
+.home-tile i{font-style:normal;font-size:12px;color:var(--muted);display:block;margin-top:2px}
+.dayhero-go{
+  position:absolute;top:12px;right:12px;padding:7px 13px;border-radius:999px;
+  background:rgba(255,255,255,.94);color:var(--primary);font-size:12.5px;font-weight:800
+}
+
+/* ── nutrition ──────────────────────────────────────── */
+.nut{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:10px}
+.nut div{padding:11px 6px;border-radius:12px;background:var(--card-bg);border:1px solid var(--border);text-align:center}
+.nut b{display:block;font-size:14.5px;font-weight:800}
+.nut i{font-style:normal;font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em}
 
 /* ── great-pass components ──────────────────────────── */
 .moment{
@@ -355,7 +382,7 @@ img.rec-thumb{object-fit:cover}
   background:linear-gradient(to top,rgba(0,0,0,.92),rgba(0,0,0,.4) 60%,transparent)
 }
 .dayhero-cap i{font-style:normal;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;opacity:.85;display:block}
-.dayhero-cap b{font-size:21px;font-weight:800;letter-spacing:-.02em;display:block;margin:2px 0 3px}
+.dayhero-cap b{font-family:var(--serif);font-size:21px;font-weight:700;display:block;margin:2px 0 3px}
 .dayhero-cap span{font-size:12px;opacity:.85}
 
 .list-prog{margin:2px 0 12px}
@@ -395,10 +422,10 @@ img.rec-thumb{object-fit:cover}
   font-size:16px;font-weight:700;color:var(--text);cursor:pointer
 }
 .cook-nav button:disabled{opacity:.35}
-.cook-nav .fwd{background:var(--primary);border-color:var(--primary);color:#fff;box-shadow:0 3px 12px rgba(216,31,38,.3)}
+.cook-nav .fwd{background:var(--primary);border-color:var(--primary);color:#fff;box-shadow:0 3px 12px rgba(178,58,52,.3)}
 .cook-done{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
 .cook-done span{font-size:60px;margin-bottom:14px;animation:bounce .6s cubic-bezier(.68,-.55,.265,1.55)}
-.cook-done b{font-size:30px;font-weight:800;letter-spacing:-.03em}
+.cook-done b{font-family:var(--serif);font-size:30px;font-weight:700}
 .cook-done i{font-style:normal;color:var(--muted);margin-top:6px}
 
 .foot-row{display:flex;gap:10px}
@@ -452,7 +479,7 @@ img.rec-thumb{object-fit:cover}
   background:linear-gradient(135deg,var(--primary),var(--accent))
 }
 .coll-head span{font-size:28px;display:block;margin-bottom:6px}
-.coll-head b{display:block;font-size:19px;font-weight:800;letter-spacing:-.02em}
+.coll-head b{font-family:var(--serif);display:block;font-size:19px;font-weight:700}
 .coll-head i{font-style:normal;font-size:13px;opacity:.9;display:block;margin-top:4px;line-height:1.45}
 .tile-flag.fam{background:#7c3aed}
 .tile-flag.sh{background:#1d4ed8}
@@ -512,7 +539,7 @@ img.rec-thumb{object-fit:cover}
   position:absolute;left:0;right:0;bottom:0;padding:40px 20px 18px;color:#fff;
   background:linear-gradient(to top,rgba(0,0,0,.9),rgba(0,0,0,.35) 60%,transparent)
 }
-.hero-cap h2{font-size:25px;font-weight:800;line-height:1.15;letter-spacing:-.02em}
+.hero-cap h2{font-family:var(--serif);font-size:25px;font-weight:700;line-height:1.18;letter-spacing:0}
 .hero-cap span{font-size:12.5px;opacity:.9}
 .x-btn{
   width:36px;height:36px;border-radius:50%;border:none;background:var(--border);
@@ -546,7 +573,7 @@ img.rec-thumb{object-fit:cover}
 
 @media (hover:none){
   .item:hover,.rec:hover,.chip:hover,.btn:hover,.btn-ghost:hover,.opt:hover,.picker:hover{transform:none;box-shadow:none}
-  .btn:hover{box-shadow:0 2px 8px rgba(216,31,38,.25)}
+  .btn:hover{box-shadow:0 2px 8px rgba(178,58,52,.25)}
 }
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
@@ -564,7 +591,11 @@ img.rec-thumb{object-fit:cover}
   </div>
 
   <!-- ═══ LIST ═══ -->
-  <div class="panel active" data-panel="list">
+  <div class="panel active" data-panel="home">
+    <div id="homeBody"></div>
+  </div>
+
+  <div class="panel" data-panel="list">
     <div class="card">
       <div class="row">
         <input class="field" id="listInput" placeholder="2 lemons, olive oil, feta…" />
@@ -728,7 +759,8 @@ img.rec-thumb{object-fit:cover}
 </div>
 
 <div class="nav">
-  <button class="active" data-tab="list"><span class="ico">🛒</span>List<span class="badge" id="listBadge" style="display:none">0</span></button>
+  <button class="active" data-tab="home"><span class="ico">🏠</span>Home</button>
+  <button data-tab="list"><span class="ico">🛒</span>List<span class="badge" id="listBadge" style="display:none">0</span></button>
   <button data-tab="cook"><span class="ico">🍳</span>Tonight</button>
   <button data-tab="fresh"><span class="ico">🥗</span>Still good?</button>
   <button data-tab="recipes"><span class="ico">📖</span>Recipes</button>
@@ -827,7 +859,7 @@ steps:["Beat the eggs just until streaky — over-beating makes them tough.","Me
 ing:[i("Yellow onions","1.5 kg"),i("Butter","60 g"),i("Beef stock","1.5 L"),i("Dry white wine","200 ml"),i("Baguette","1"),i("Gruyère","250 g"),i("Bay leaf","2")],
 steps:["Slice onions thin. Cook in butter over medium-low 50–60 minutes to deep mahogany.","Deglaze with wine, scraping the pan, reduce by half.","Add stock and bay, simmer 30 minutes uncovered.","Top with toasted baguette and a thick blanket of gruyère.","Broil until the cheese blisters and runs down the sides."]},
 
-{id:"poulet-basquaise",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Pinchos_txaka_bonito.jpg/500px-Pinchos_txaka_bonito.jpg",title:"Poulet Basquaise",origin:"French",effort:"easy",time:"55 min",serves:4,
+{id:"poulet-basquaise",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Poulet_basquaise_01.jpg/500px-Poulet_basquaise_01.jpg",title:"Poulet Basquaise",origin:"French",effort:"easy",time:"55 min",serves:4,
 ing:[i("Chicken thighs","8"),i("Red bell peppers","3"),i("Onions","2"),i("Garlic cloves","4"),i("Crushed tomatoes","400 g"),i("Espelette pepper","1 tsp"),i("Olive oil","3 tbsp"),i("Bay leaf","1")],
 steps:["Brown the thighs skin-side down in oil, 8 minutes. Set aside.","Soften sliced peppers and onions in the same pan, 12 minutes.","Add garlic, tomatoes, bay and Espelette. Return the chicken.","Cover, simmer 30 minutes. Serve with rice."]},
 
@@ -871,7 +903,7 @@ steps:["Blanch the cubed veal 5 minutes, drain, rinse. This keeps the sauce whit
 ing:[i("Pain de mie","4 slices"),i("Roast turkey breast","200 g"),i("Gruyère","200 g"),i("Whole milk","300 ml"),i("Butter","40 g"),i("Flour","40 g"),i("Dijon mustard","2 tsp"),i("Nutmeg","pinch")],
 steps:["Make a tight béchamel with butter, flour, milk, mustard and nutmeg.","Spread on the bread, layer turkey and gruyère, close the sandwiches.","Top with more béchamel and a heavy handful of cheese.","Bake at 200°C for 12 minutes, then broil until blistered."]},
 
-{id:"poulet-vinaigre",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Lyon_3e_lesHalles_pain.jpg/500px-Lyon_3e_lesHalles_pain.jpg",title:"Poulet au Vinaigre",origin:"French",effort:"easy",time:"50 min",serves:4,note:"Lyonnais. The vinegar cooks down into something round and sweet.",
+{id:"poulet-vinaigre",img:"https://upload.wikimedia.org/wikipedia/fr/thumb/0/0b/Poulet_au_vinaigre.png/500px-Poulet_au_vinaigre.png",title:"Poulet au Vinaigre",origin:"French",effort:"easy",time:"50 min",serves:4,note:"Lyonnais. The vinegar cooks down into something round and sweet.",
 ing:[i("Chicken thighs","8"),i("Red wine vinegar","150 ml"),i("Shallots","4"),i("Tomato paste","1 tbsp"),i("Heavy cream","150 ml"),i("Butter","50 g"),i("Tarragon","small bunch"),i("Chicken stock","200 ml")],
 steps:["Brown the thighs in butter, remove.","Soften chopped shallots, add tomato paste, then the vinegar. Reduce almost dry.","Add stock, return the chicken, simmer 25 minutes.","Stir cream and tarragon into the sauce off the heat."]},
 
@@ -883,7 +915,7 @@ steps:["Marinate the beef overnight in wine with orange peel, thyme and bay.","B
 ing:[i("Goat cheese log","200 g"),i("Baguette","1/2"),i("Mixed greens","150 g"),i("Walnuts","60 g"),i("Honey","1 tbsp"),i("Dijon mustard","1 tsp"),i("Red wine vinegar","2 tbsp"),i("Olive oil","5 tbsp")],
 steps:["Slice the baguette, top each round with a disc of goat cheese, drizzle honey.","Broil 4 minutes until the cheese slumps and colours.","Whisk mustard, vinegar and oil into a sharp vinaigrette.","Dress the greens, add toasted walnuts, set the hot toasts on top."]},
 
-{id:"gigot",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Lamb_meat_%281%29.jpg/500px-Lamb_meat_%281%29.jpg",title:"Gigot d'Agneau aux Flageolets",origin:"French",effort:"special",time:"2 h",serves:8,
+{id:"gigot",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Sunday_roast_lamb_Cock_Inn_Henham_Essex_England_01.jpg/500px-Sunday_roast_lamb_Cock_Inn_Henham_Essex_England_01.jpg",title:"Gigot d'Agneau aux Flageolets",origin:"French",effort:"special",time:"2 h",serves:8,
 ing:[i("Leg of lamb","2.5 kg"),i("Flageolet beans","500 g"),i("Garlic cloves","8"),i("Rosemary","4 sprigs"),i("Black olive tapenade","2 tbsp"),i("Olive oil","4 tbsp"),i("Onion","1"),i("Carrots","2")],
 steps:["Stud the lamb with slivers of garlic and rosemary. Salt heavily, rest at room temperature 1 hour.","Roast at 240°C for 20 minutes, then 170°C for 15 minutes per 500 g for pink.","Simmer soaked flageolets with onion, carrot and garlic 1 hour.","Rest the lamb 25 minutes. Serve the beans in the roasting juices."]},
 
@@ -899,19 +931,19 @@ steps:["Brown the beef with onions and garlic, add tomato paste and stock, reduc
 ing:[i("Eggs","6"),i("Red bell peppers","3"),i("Green bell pepper","1"),i("Onions","2"),i("Tomatoes","4"),i("Garlic cloves","3"),i("Espelette pepper","1 tsp"),i("Olive oil","4 tbsp")],
 steps:["Cook sliced peppers and onions slowly in oil, 20 minutes.","Add garlic, tomatoes and Espelette, reduce until jammy.","Beat the eggs and stir them through over low heat until barely set.","Serve straight from the pan with bread."]},
 
-{id:"vallee-auge",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Chickens_in_market.jpg/500px-Chickens_in_market.jpg",title:"Poulet Vallée d'Auge",origin:"French",effort:"easy",time:"1 h",serves:4,note:"Normandy: cider, cream, apples.",
+{id:"vallee-auge",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/18-10-20_MG_4656.jpg/500px-18-10-20_MG_4656.jpg",title:"Poulet Vallée d'Auge",origin:"French",effort:"easy",time:"1 h",serves:4,note:"Normandy: cider, cream, apples.",
 ing:[i("Chicken, jointed","1.6 kg"),i("Dry cider","400 ml"),i("Apples","3"),i("Shallots","3"),i("Heavy cream","200 ml"),i("Butter","60 g"),i("Calvados","50 ml"),i("Thyme","3 sprigs")],
 steps:["Brown the chicken in butter, flame with calvados if you're feeling brave.","Add shallots, cider and thyme. Simmer covered 35 minutes.","Sauté apple wedges in butter until caramelised.","Reduce the sauce, stir in cream, add the apples at the last minute."]},
 
-{id:"navarin",title:"Navarin d'Agneau",origin:"French",effort:"special",time:"2 h",serves:6,
+{id:"navarin",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Navarin_01.jpg/500px-Navarin_01.jpg",title:"Navarin d'Agneau",origin:"French",effort:"special",time:"2 h",serves:6,
 ing:[i("Lamb shoulder","1.5 kg"),i("Turnips","400 g"),i("Carrots","4"),i("Pearl onions","250 g"),i("Frozen peas","200 g"),i("Tomato paste","2 tbsp"),i("Flour","2 tbsp"),i("Chicken stock","1 L"),i("Garlic cloves","3"),i("Thyme","1 bunch")],
 steps:["Brown the cubed lamb hard, sprinkle with flour and sugar, let it catch.","Add tomato paste, garlic, stock and thyme. Simmer covered 1 hour.","Add turnips, carrots and onions, cook 40 minutes more.","Stir in peas for the final 5 minutes."]},
 
-{id:"oeufs-meurette",title:"Œufs en Meurette",origin:"French",effort:"special",time:"1 h",serves:4,
+{id:"oeufs-meurette",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/%C5%92uf_en_meurette.jpg/500px-%C5%92uf_en_meurette.jpg",title:"Œufs en Meurette",origin:"French",effort:"special",time:"1 h",serves:4,
 ing:[i("Eggs","8"),i("Red wine","750 ml"),i("Shallots","4"),i("Cremini mushrooms","250 g"),i("Beef stock","300 ml"),i("Butter","80 g"),i("Flour","2 tbsp"),i("Baguette","1"),i("Garlic clove","1")],
 steps:["Reduce wine with shallots and stock by half, 30 minutes.","Whisk in a beurre manié of butter and flour to thicken.","Sauté mushrooms, add to the sauce.","Poach the eggs in the sauce itself, 3 minutes, and serve on garlic-rubbed toast."]},
 
-{id:"blanquette-legumes",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Chard_%28Beta_vulgaris_var_cicla%29.jpg/500px-Chard_%28Beta_vulgaris_var_cicla%29.jpg",title:"Gratin de Blettes",origin:"French",effort:"easy",time:"50 min",serves:4,
+{id:"blanquette-legumes",img:"https://upload.wikimedia.org/wikipedia/commons/0/0b/Gratin-Dauphinois.jpg",title:"Gratin de Blettes",origin:"French",effort:"easy",time:"50 min",serves:4,
 ing:[i("Swiss chard","1 kg"),i("Whole milk","500 ml"),i("Butter","50 g"),i("Flour","50 g"),i("Gruyère","150 g"),i("Garlic clove","1"),i("Nutmeg","pinch")],
 steps:["Separate stalks from leaves. Boil stalks 8 minutes, wilt leaves 2 minutes, drain both hard.","Make a béchamel with butter, flour, milk, garlic and nutmeg.","Fold the chard through, pour into a dish, cover with gruyère.","Bake 25 minutes at 190°C."]},
 {id:"shakshuka",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Shakshuka_by_Calliopejen1.jpg/500px-Shakshuka_by_Calliopejen1.jpg",title:"Shakshuka",origin:"Levantine",effort:"easy",time:"30 min",serves:3,
@@ -1232,7 +1264,7 @@ note:"Made with turkey Italian sausage instead of pork, to keep it inside the ho
 ing:[i("Sourdough, torn and dried overnight","10 cups"),i("Unsalted butter","3/4 cup"),i("Olive oil","2 tbsp + 1/4 cup"),i("Roasted chestnuts, chopped","1/2 cup"),i("Sweet Italian turkey sausage, casings removed","1 lb"),i("Onions, chopped","2 medium"),i("Celery stalks, chopped","4"),i("Chiles de árbol","2"),i("Pink Lady apple, thinly sliced","1 large"),i("Garlic cloves, finely chopped","2"),i("Fresh sage, finely chopped","1/4 cup"),i("Very dry sherry","1/2 cup"),i("Eggs","2 large"),i("Chicken stock","3 cups")],
 steps:["Heat the oven to 350°F. Butter a shallow 3-quart dish and a sheet of foil. Put the bread in a very large bowl.","Heat 2 tbsp oil in a small pan over medium. Add the chestnuts, season, and cook, stirring often, until golden and crisp, about 5 minutes. Lift into the bread bowl with a slotted spoon.","Heat the remaining 1/4 cup oil in a large skillet over medium-high. Add the sausage and cook, breaking it into small pieces, until browned through, 8–10 minutes. Transfer to the bowl.","Add onions, celery and chiles to the skillet, season, and cook until the onions are translucent, 5–7 minutes. Add the apple, garlic and sage and cook until the onions are golden and the apple is soft, about 5 minutes. Discard the chiles and add the rest to the bowl.","Reduce to medium and cook the sherry in the skillet, scraping up the browned bits, until almost evaporated, about 1 minute. Add 1/2 cup butter and stir until melted. Drizzle over the bread.","Whisk the eggs with 2 cups stock and pour over. Season and toss, adding more stock a quarter-cup at a time until the bread is hydrated — you may not need it all. Transfer to the dish and dot with the remaining 1/4 cup butter.","Cover with the buttered foil and bake until a knife inserted in the centre comes out hot, 30–35 minutes.","Raise the oven to 450°F. Uncover and bake until the top is golden and crisp, 20–25 minutes. Rest 10 minutes before serving.","Ahead: it can be assembled a day early. Cover and chill."]},
 
-{id:"fam-rosh-brisket",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Brisketphoto.jpg/500px-Brisketphoto.jpg",coll:"family",title:"Instant Pot Rosh Hashanah Brisket with Apples & Pomegranate",origin:"Family",effort:"special",time:"2 h",serves:8,category:"Holiday",
+{id:"fam-rosh-brisket",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Sweet_Potato_Pear_Tzimmes_%28140491615%29.jpeg/500px-Sweet_Potato_Pear_Tzimmes_%28140491615%29.jpeg",coll:"family",title:"Instant Pot Rosh Hashanah Brisket with Apples & Pomegranate",origin:"Family",effort:"special",time:"2 h",serves:8,category:"Holiday",
 note:"Seventy-five minutes under pressure and a twenty-minute natural release — rushing the release is what makes brisket tough.",
 ing:[i("Beef brisket, first cut, trimmed","3.5 lb"),i("Olive oil","2 tbsp"),i("Onions, sliced","2"),i("Garlic cloves, smashed","4"),i("Carrots, in chunks","2"),i("Apples (Honeycrisp or Granny Smith), sliced","2"),i("Pitted prunes","1/2 cup"),i("Dried apricots","1/2 cup"),i("Pitted dates, halved","1/2 cup"),i("Pomegranate juice","1 cup"),i("Beef stock","1/2 cup"),i("Tomato paste","2 tbsp"),i("Honey","2 tbsp"),i("Sweet paprika","1 tsp"),i("Cinnamon","1/2 tsp"),i("Ground cumin","1 tsp"),i("Bay leaf","1"),i("Pomegranate seeds, to garnish","1/2 cup"),i("Parsley, to garnish","small bunch")],
 steps:["Set the Instant Pot to Sauté and add the oil. Season the brisket generously and sear 5 minutes a side until browned. Remove and set aside.","Add the onions, garlic and carrots and sauté 5–7 minutes until softened. Stir in the tomato paste, paprika, cumin and cinnamon and cook 1 minute.","Add the apple slices, prunes, apricots, dates, pomegranate juice, stock and honey. Stir, then nestle the brisket back in with the bay leaf.","Lock the lid and set to Manual / High Pressure for 75 minutes. Let the pressure release naturally for 20 minutes, then quick-release the rest.","Remove the brisket and rest 15 minutes before slicing against the grain. Skim the fat from the liquid; if it's thin, simmer on Sauté for 5–10 minutes to thicken.","Arrange the slices with the fruit, spoon the sauce over, and finish with pomegranate seeds and parsley."]},
@@ -1271,12 +1303,12 @@ note:"Blanch the cauliflower to just-tender and no further — it keeps cooking 
 ing:[i("Cauliflower, in large florets","3 lb head"),i("Unsalted butter","4 tbsp"),i("All-purpose flour","3 tbsp"),i("Hot milk","2 cups"),i("Black pepper","1/2 tsp"),i("Grated nutmeg","1/4 tsp"),i("Gruyère, grated","3/4 cup"),i("Parmesan, grated","1/2 cup"),i("Fresh breadcrumbs","1/4 cup"),i("Kosher salt","to taste")],
 steps:["Heat the oven to 375°F. Boil the florets in well-salted water 5–6 minutes, until tender but still firm, then drain thoroughly.","Melt 2 tbsp of the butter in a saucepan over low heat, stir in the flour and cook 2 minutes, stirring constantly.","Pour in the hot milk and stir until it comes to a boil, then whisk hard for a minute until thickened.","Off the heat, season with a teaspoon of salt, the pepper and nutmeg, then melt in half the Gruyère and all the Parmesan.","Spread a third of the sauce in an 8 × 11 dish, lay the cauliflower over it, and cover with the rest.","Mix the breadcrumbs with the remaining Gruyère and scatter on top. Melt the last 2 tbsp butter and drizzle over. Season again.","Bake 25–30 minutes until browned. Good hot or at room temperature."]},
 
-{id:"fam-pate-tarte",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Vegan_Meat_Pie_01_Pengo.jpg/500px-Vegan_Meat_Pie_01_Pengo.jpg",coll:"family",title:"Pâte à Tarte",origin:"Family",effort:"easy",time:"15 min + 1 h chill",serves:8,category:"Base",
+{id:"fam-pate-tarte",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Raspberry_tart.jpg/500px-Raspberry_tart.jpg",coll:"family",title:"Pâte à Tarte",origin:"Family",effort:"easy",time:"15 min + 1 h chill",serves:8,category:"Base",
 note:"The family pastry — one egg makes it richer and more forgiving than a plain pâte brisée. Enough for one large tart.",
 ing:[i("Butter, cold and cubed","125 g"),i("Flour","250 g"),i("Egg","1"),i("Cold water","2–3 tbsp"),i("Sea salt","1 pinch")],
 steps:["Rub the cold butter into the flour and salt with your fingertips until it looks like coarse sand.","Add the egg and just enough cold water to bring it together. Work it as little as possible — handling it is what makes pastry tough.","Flatten into a disc, wrap, and chill at least an hour.","Roll out cold on a floured surface and line the tin. Chill again 20 minutes before baking to stop it shrinking."]},
 
-{id:"fam-navets",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Rutabaga%2C_variety_nadmorska.JPG/500px-Rutabaga%2C_variety_nadmorska.JPG",coll:"family",also:["shabbat"],title:"Salade de Navets",origin:"Tunisian",effort:"easy",time:"20 min + overnight",serves:8,category:"Starter",
+{id:"fam-navets",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/GiardinieraSpicy.JPG/500px-GiardinieraSpicy.JPG",coll:"family",also:["shabbat"],title:"Salade de Navets",origin:"Tunisian",effort:"easy",time:"20 min + overnight",serves:8,category:"Starter",
 note:"From La Cuisine Juive Tunisienne, par Lily. Make it the day before — the turnips are only better for it. Lily prefers grated red pepper to harissa, plus half a hot chilli. Works just as well with long white radish.",
 ing:[i("Purple turnips, heavy and long","1 kg"),i("Lemons","2"),i("Bitter orange (or a third lemon)","1"),i("Green bell pepper","1"),i("Red bell pepper","1"),i("Garlic cloves","4"),i("Harissa (optional)","1 tsp"),i("Olive oil","4 tbsp"),i("Sea salt","2 tsp")],
 steps:["Peel the turnips but leave the purple edge on. Slice them, rinse, and put in a large bowl.","Add 2 tsp salt and the juice of one lemon.","Cut the green pepper into thin strips, chop the garlic fine, and coarsely grate the red pepper and the bitter orange (or the second lemon).","Mix everything together, several times over, and leave to macerate 2–3 hours. Add the harissa now if you're using it, or half a hot chilli.","Set a weight on top of the turnips so they soften overnight.","The next day, add a thread of olive oil. That's it — a delight."]},
@@ -1310,7 +1342,7 @@ note:"Nothing sweet in it — no dried fruit. Tomato paste gives the broth its r
 ing:[i("Couscous","600 g"),i("Chicken thighs","8"),i("Ground beef","500 g"),i("Merguez, lamb","8"),i("Chickpeas, soaked","250 g"),i("Onions, chopped","2"),i("Tomato paste","4 tbsp"),i("Carrots, in chunks","4"),i("Turnips, quartered","2"),i("Courgettes, in chunks","3"),i("Potatoes, halved","3"),i("Harissa","2 tbsp"),i("Ground caraway","1 tsp"),i("Ground coriander","2 tsp"),i("Sweet paprika","1 tbsp"),i("Turmeric","1 tsp"),i("Olive oil","100 ml"),i("Parsley","1 bunch")],
 steps:["Brown the chicken in oil in the base of a couscoussier, then add the onions and cook until soft.","Stir in the tomato paste, paprika, turmeric, coriander and caraway and fry a full 2 minutes until the paste darkens — this is where the colour comes from.","Add the chickpeas and water to cover generously. Simmer 45 minutes.","Mix the ground beef with grated onion, parsley and a little harissa, roll into small meatballs, and brown them separately.","Add carrots, turnips and potatoes to the broth and cook 25 minutes, then the courgettes for a final 15.","Steam the couscous over the broth twice, fluffing with oil and a little broth between steamings.","Grill the merguez. Serve the grain mounded, broth in a bowl, meats on a separate plate, harissa loosened with broth on the side."]},
 
-{id:"sh-mechouia",coll:"shabbat",title:"Slata Mechouia",origin:"Tunisian",effort:"easy",time:"50 min",serves:6,category:"Starter",
+{id:"sh-mechouia",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Salade_Mechouwya%2C_Tunisie%2C_juin_2021.jpg/500px-Salade_Mechouwya%2C_Tunisie%2C_juin_2021.jpg",coll:"shabbat",title:"Slata Mechouia",origin:"Tunisian",effort:"easy",time:"50 min",serves:6,category:"Starter",
 note:"The cornerstone of the kemia — the spread of small cooked salads that opens a Tunisian Friday night.",
 ing:[i("Red bell peppers","4"),i("Green bell peppers","2"),i("Tomatoes","4"),i("Garlic cloves","4"),i("Olive oil","80 ml"),i("Ground caraway","1 tsp"),i("Ground coriander","1 tsp"),i("Lemon","1"),i("Hard-boiled eggs","2"),i("Sea salt","to taste")],
 steps:["Char the peppers, tomatoes and unpeeled garlic directly over a flame or under a hot broiler until the skins blacken all over.","Seal in a bowl under a plate for 10 minutes, then slip off the skins and remove the seeds.","Chop everything by hand, fine but not to a purée — texture matters here.","Work in the crushed garlic, caraway, coriander, salt, lemon and a heavy hand of olive oil.","Rest at room temperature an hour. Top with quartered eggs."]},
@@ -1553,7 +1585,7 @@ function displayQty(qty, f) {
 }
 
 /* ── state & storage ────────────────────────────────────── */
-var S = { tab: 'list', items: [], pantry: [], mood: 'easy', fresh: 'leftovers',
+var S = { tab: 'home', items: [], pantry: [], mood: 'easy', fresh: 'leftovers',
           eff: 'all', src: 'all', cuisine: 'All', course: 'all', weight: 'all', coll: 'all', diet: 'all', q: '', limit: 30,
           found: [], kind: 'use_by', scanning: false, sheet: null };
 
@@ -1701,6 +1733,61 @@ function todaysMoment() {
   if ((day === 6 || day === 0) && h < 14) return { coll: 'brunch', icon: '🥐', title: 'Weekend morning', line: 'Brunch — pancakes, brik, baked eggs.' };
   return null;
 }
+
+
+/* ── home: day, time, and one honest suggestion ─────────── */
+function parseMinutes(t) {
+  if (!t) return 60;
+  var h = t.match(/(\d+)\s*h/), m = t.match(/(\d+)\s*min/);
+  return (h ? Number(h[1]) * 60 : 0) + (m ? Number(m[1]) : 0) || 60;
+}
+
+function simpleOfTheDay() {
+  var pool = ALL.filter(function (r) {
+    return r.effort === 'easy' && courseOf(r) === 'main' && (r.img || r.thumb) &&
+      r.ing.length <= 12 && parseMinutes(r.time) <= 50 &&
+      r.coll !== 'brunch' && !r.exempt && ['Bread', 'Base', 'Side'].indexOf(r.category) === -1;
+  });
+  // prefer the curated ones but keep enough variety for a different dish most days
+  var housePool = pool.filter(function (r) { return r.house; });
+  var use = housePool.length >= 15 ? housePool : pool;
+  return use[todaySeed() % use.length];
+}
+
+function greeting() {
+  var h = new Date().getHours();
+  return h < 5 ? 'Up late' : h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
+}
+
+function renderHome() {
+  var d = new Date();
+  var date = d.toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' });
+  var time = d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+  var sd = simpleOfTheDay();
+  var mo = todaysMoment();
+  var openItems = S.items.filter(function (x) { return !x.done; }).length;
+  var mins = parseMinutes(sd.time);
+
+  document.getElementById('homeBody').innerHTML =
+    '<div class="home-head"><i>' + greeting() + '</i><b>' + date + '</b><span id="homeClock">' + time + '</span></div>' +
+    (mo ? '<button class="moment" data-gocoll="' + mo.coll + '"><span>' + mo.icon + '</span><div><b>' + mo.title + '</b><i>' + mo.line + '</i></div><em>›</em></button>' : '') +
+    '<div class="home-label">Tonight, keep it simple</div>' +
+    '<div class="dayhero" data-recipe="' + sd.id + '">' +
+      '<img src="' + esc(sd.img || sd.thumb) + '" alt="" />' +
+      '<div class="dayhero-cap"><b>' + esc(sd.title) + '</b>' +
+      '<span>' + mins + ' min · ' + sd.ing.length + ' ingredients · ~' + estimateKcal(sd) + ' kcal</span></div>' +
+      '<span class="dayhero-go">Cook it ›</span></div>' +
+    '<div class="home-grid">' +
+      '<button class="home-tile" data-goto="list"><span>🛒</span><b>The list</b><i>' + (openItems ? openItems + ' to buy' : 'empty') + '</i></button>' +
+      '<button class="home-tile" data-goto="cook"><span>🍳</span><b>What can I make?</b><i>' + S.pantry.length + ' in the kitchen</i></button>' +
+      '<button class="home-tile" data-goto="fresh"><span>🥗</span><b>Still good?</b><i>leftovers & dates</i></button>' +
+      '<button class="home-tile" data-goto="recipes"><span>📖</span><b>Recipes</b><i>' + ALL.length + ' dishes</i></button>' +
+    '</div>';
+}
+setInterval(function () {
+  var c = document.getElementById('homeClock');
+  if (c) c.textContent = new Date().toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+}, 20000);
 
 /* ── what's in season ──────────────────────────────────── */
 var SEASON = {
@@ -2042,7 +2129,7 @@ function renderRecipes() {
     var dd = dishOfTheDay();
     if (dd) html += '<div class="dayhero" data-recipe="' + dd.id + '">' +
       '<img src="' + esc(dd.img || dd.thumb) + '" alt="" />' +
-      '<div class="dayhero-cap"><i>Tonight, why not</i><b>' + esc(dd.title) + '</b>' +
+      '<div class="dayhero-cap"><i>Feeling ambitious</i><b>' + esc(dd.title) + '</b>' +
       '<span>' + esc(dd.origin) + (dd.time ? ' · ' + esc(dd.time) : '') + ' · ~' + estimateKcal(dd) + ' kcal</span></div></div>';
     var picks = seasonalPicks(6);
     if (picks.length) {
@@ -2156,28 +2243,43 @@ function courseOf(r) {
 }
 
 /* rough kcal per 100 g, enough to band a dish honestly */
-var KCAL = [
-  [['oil','ghee','lard'],884],[['buttermilk'],60],[['peanut butter'],590],[['butter'],717],[['nuts','almond','walnut','cashew','pistachio','pine nut','peanut'],600],
-  [['sugar','honey','syrup','molasses'],380],[['chocolate'],540],[['cream','crème fra','creme fra','mascarpone'],340],
-  [['cheese','parmesan','gruy','feta','mozzarella','pecorino','comt','halloumi','kefalotyri'],370],
-  [['flour','breadcrumb','panko','semolina','couscous','bulgur','oats','polenta'],360],
-  [['pasta','spaghetti','rigatoni','noodle','lasagna','macaroni','vermicelli','tonnarelli','ditalini'],360],
-  [['rice','quinoa','barley'],355],[['lentil','chickpea','bean'],330],
-  [['pastry','phyllo','filo','savoiardi','biscuit','cracker'],420],
-  [['bread','baguette','pita','brioche','bun','tortilla','sourdough','bagel'],270],
-  [['lamb','beef','duck','ribeye','steak','brisket','chuck','merguez','sausage'],250],
-  [['veal','turkey','chicken'],170],[['egg'],143],[['tofu','tempeh'],150],
-  [['potato','plantain','cassava'],80],[['yogurt','yoghurt','milk','labneh'],70],
-  [['wine','cider','sherry','stock','broth','passata'],40],
-  [['tomato','onion','carrot','pepper','zucchini','courgette','eggplant','aubergine','mushroom','spinach',
-    'lettuce','cucumber','cabbage','celery','leek','herb','parsley','cilantro','basil','mint','garlic',
-    'lemon','lime','greens','salad','radish','fennel','broccoli','cauliflower','kale','squash','pumpkin'],30]
+var NUTR = [
+[['buttermilk'],60,3.3,4.9,1.5,0,4.9,105],
+[['peanut butter'],590,25,20,50,6,9,400],
+[['oil','ghee','lard'],884,0,0,100,0,0,0],
+[['butter'],717,0.9,0.1,81,0,0.1,11],
+[['nuts','almond','walnut','cashew','pistachio','pine nut','peanut'],600,20,21,52,8,4,5],
+[['sugar','erythritol','syrup','honey','molasses'],380,0.2,96,0,0,93,3],
+[['chocolate','cocoa'],540,5.5,57,32,7,48,20],
+[['cream','crème fra','creme fra','mascarpone'],340,2.5,3.5,35,0,3,30],
+[['cheese','parmesan','gruy','feta','mozzarella','pecorino','comt','halloumi','kefalotyri'],370,25,2.5,29,0,1,700],
+[['flour','breadcrumb','panko','semolina','oats','polenta'],360,10,74,1.5,3,1,3],
+[['couscous','bulgur','freekeh','farro','quinoa','barley'],355,12,72,2,5,1,5],
+[['pasta','spaghetti','rigatoni','noodle','lasagna','macaroni','vermicelli','tonnarelli','ditalini'],360,12,72,1.5,3,2,5],
+[['rice'],355,7,78,0.8,1.5,0.1,2],
+[['lentil','chickpea','bean'],330,22,55,2,12,2,12],
+[['pastry','phyllo','filo','savoiardi','biscuit','cracker'],420,6,46,24,2,4,320],
+[['bread','baguette','pita','brioche','bun','tortilla','sourdough','bagel'],270,9,50,3.2,3,4,450],
+[['lamb','beef','duck','ribeye','steak','brisket','chuck','merguez','sausage'],250,26,0,16,0,0,72],
+[['veal','turkey','chicken'],170,25,0,7.5,0,0,78],
+[['egg'],143,12.6,0.9,9.5,0,0.4,140],
+[['tofu','tempeh'],150,15,4,8.5,1.5,0.5,10],
+[['potato','plantain','cassava'],80,2,17,0.1,2.2,0.9,6],
+[['yogurt','yoghurt','milk','labneh'],70,4,5,3.5,0,5,45],
+[['wine','cider','sherry','vermouth'],80,0.1,2.5,0,0,0.8,5],
+[['stock','broth','passata'],25,1.5,2.5,0.5,0,1.5,330],
+[['tomato','onion','carrot','pepper','zucchini','courgette','eggplant','aubergine','mushroom','spinach',
+  'lettuce','cucumber','cabbage','celery','leek','herb','parsley','cilantro','basil','mint','garlic',
+  'lemon','lime','greens','salad','radish','fennel','broccoli','cauliflower','kale','squash','pumpkin','turnip'],30,1.5,5,0.3,2.2,3,15],
+[['apple','pear','date','prune','apricot','fig','raisin','pomegranate','orange','grape','banana','berr'],75,0.6,18,0.2,2.5,14,2]
 ];
-function kcalPer100(name) {
+function nutrRow(name) {
   var n = name.toLowerCase();
-  for (var i = 0; i < KCAL.length; i++) if (KCAL[i][0].some(function (w) { return n.indexOf(w) > -1; })) return KCAL[i][1];
-  return 120;
+  for (var i = 0; i < NUTR.length; i++) if (NUTR[i][0].some(function (w) { return n.indexOf(w) > -1; })) return NUTR[i];
+  return [null, 120, 5, 12, 5, 1, 3, 90];
 }
+function kcalPer100(name) { return nutrRow(name)[1]; }
+
 var UNIT_G = { g: 1, kg: 1000, ml: 1, l: 1000, tbsp: 15, tbs: 15, tsp: 5, cup: 200, oz: 28, lb: 454, pinch: 1 };
 
 function gramsOf(qty, name) {
@@ -2207,6 +2309,24 @@ function estimateKcal(r) {
   r._kcal = per;
   return per;
 }
+function nutritionOf(r) {
+  if (r._nut) return r._nut;
+  var t = [0, 0, 0, 0, 0, 0, 0]; // kcal p c f fib sug na
+  r.ing.forEach(function (x) {
+    var g = gramsOf(x.qty, x.name);
+    if (/oil/i.test(x.name) && g > 150) g = 40;
+    if (/wine|stock|broth|water|milk/i.test(x.name) && g > 800) g = 800;
+    var row = nutrRow(x.name);
+    for (var k = 0; k < 7; k++) t[k] += g * row[k + 1] / 100;
+  });
+  var per = (r.serves || 4);
+  var o = { kcal: Math.round(t[0] / per / 10) * 10, protein: Math.round(t[1] / per), carbs: Math.round(t[2] / per),
+            fat: Math.round(t[3] / per), fibre: Math.round(t[4] / per), sugar: Math.round(t[5] / per),
+            salt: Math.round(t[6] / per * 2.5 / 100) / 10 };
+  r._nut = o;
+  return o;
+}
+
 function weightOf(r) {
   var k = estimateKcal(r);
   return k < 480 ? 'light' : k < 820 ? 'mid' : 'heavy';
@@ -2291,7 +2411,14 @@ function drawSheet() {
         '<div class="stat"><b>~' + kcal + '</b><i>kcal each</i></div>' +
         '<div class="stat"><b>' + (courseOf(r) === 'dessert' ? '🍰' : courseOf(r) === 'starter' ? '🥗' : '🍽️') + '</b><i>' + courseOf(r) + '</i></div>' +
       '</div>' +
-      '<p class="est">Calories estimated from the ingredient list — a guide, not a label.</p>' +
+      (function () {
+        var nu = nutritionOf(r);
+        return '<div class="nut">' +
+          [['Protein', nu.protein + ' g'], ['Carbs', nu.carbs + ' g'], ['Sugar', nu.sugar + ' g'],
+           ['Fat', nu.fat + ' g'], ['Fibre', nu.fibre + ' g'], ['Salt', nu.salt + ' g']]
+          .map(function (x) { return '<div><b>' + x[1] + '</b><i>' + x[0] + '</i></div>'; }).join('') +
+        '</div><p class="est">Per serving, estimated from the ingredients — a guide, not a lab report.</p>';
+      })() +
 
       ((canVeg || canKeto) ? '<div class="swaps">' +
         (canVeg ? '<button class="swap ' + (sheetState.mode === 'veg' ? 'on veg' : '') + '" data-mode="veg">' +
@@ -2562,13 +2689,15 @@ function setTab(t) {
   S.tab = t;
   document.querySelectorAll('.panel').forEach(function (p) { p.classList.toggle('active', p.dataset.panel === t); });
   document.querySelectorAll('.nav button').forEach(function (b) { b.classList.toggle('active', b.dataset.tab === t); });
-  var titles = { list: ['🛒', 'The list', "Shared between the two of you"],
+  var titles = { home: ['🍳', 'Kitchen', new Date().toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' })],
+                 list: ['🛒', 'The list', "Shared between the two of you"],
                  cook: ['🍳', 'Tonight', "Cook what's already in the kitchen"],
                  fresh: ['🥗', 'Still good?', 'Before you cook it or bin it'],
                  recipes: ['📖', 'Recipes', ALL.length + ' dishes · in season now'] };
   document.getElementById('logo').textContent = titles[t][0];
   document.getElementById('title').textContent = titles[t][1];
   document.getElementById('tagline').textContent = titles[t][2];
+  if (t === 'home') renderHome();
   if (t !== 'fresh' && S.scanning) stopScanner();
   window.scrollTo(0, 0);
 }
@@ -2613,6 +2742,13 @@ function boot() {
       S.mood = c('[data-mood]').dataset.mood;
       document.querySelectorAll('[data-mood]').forEach(function (b) { b.classList.toggle('on', b.dataset.mood === S.mood); });
       return;
+    }
+    if (c('[data-goto]')) return setTab(c('[data-goto]').dataset.goto);
+    if (c('[data-gocoll]')) {
+      S.coll = c('[data-gocoll]').dataset.gocoll;
+      setTab('recipes');
+      document.querySelectorAll('[data-coll]').forEach(function (b) { b.classList.toggle('on', b.dataset.coll === S.coll); });
+      return renderRecipes();
     }
     if (c('[data-coll]')) {
       S.coll = c('[data-coll]').dataset.coll; S.limit = 30;
@@ -2777,6 +2913,7 @@ function boot() {
   document.getElementById('codeInput').addEventListener('keydown', function (e) { if (e.key === 'Enter') document.getElementById('codeGo').click(); });
 
   setTab('list');
+  setTab('home');
 }
 
 function submitList() {
