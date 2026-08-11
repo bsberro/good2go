@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#faf6ef" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#131110" media="(prefers-color-scheme: dark)" />
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Crect width=%27100%27 height=%27100%27 rx=%2722%27 fill=%27%23b23a34%27/%3E%3Ctext x=%2750%27 y=%2768%27 font-size=%2752%27 text-anchor=%27middle%27%3E%F0%9F%8D%B3%3C/text%3E%3C/svg%3E" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Kitchen" />
@@ -686,6 +689,89 @@ img.rec-thumb{object-fit:cover}
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
 }
+
+/* ── plan quick actions, print ─────────────────────── */
+.plan-quick{display:flex;gap:8px;margin-bottom:14px}
+.plan-quick button{
+  flex:1;padding:11px 6px;border-radius:12px;border:1.5px solid var(--border);background:var(--card-bg);
+  font-size:12.5px;font-weight:700;color:var(--text);cursor:pointer;font-family:inherit
+}
+.plan-quick button:active{transform:scale(.95)}
+#printMenu{display:none}
+@media print{
+  body>*{display:none !important}
+  #printMenu{display:block !important;font-family:Georgia,serif;color:#000;padding:40px}
+  #printMenu h1{font-size:34px;margin-bottom:2px}
+  #printMenu p{color:#666;margin-bottom:26px;font-style:italic}
+  #printMenu table{width:100%;border-collapse:collapse;font-size:17px}
+  #printMenu td{padding:13px 6px;border-bottom:1px solid #ddd}
+  #printMenu td:first-child{width:38%;color:#666}
+  #printMenu footer{margin-top:34px;text-align:center;font-style:italic;color:#999}
+}
+
+/* ── pro finish ─────────────────────────────────────────
+   A paid-product coat: real dark theme, depth, focus states,
+   quieter chrome. Appended last so it wins the cascade.     */
+:root{
+  --bg:#faf6ef; --card-bg:#ffffff; --text:#241d17; --muted:#8b7f73;
+  --primary:#b23a34; --primary-soft:rgba(178,58,52,.07);
+  --accent:#c96f2e; --border:rgba(36,29,23,.09);
+  --shadow:0 1px 2px rgba(36,29,23,.04),0 8px 24px rgba(36,29,23,.06);
+  --shadow-lift:0 2px 4px rgba(36,29,23,.06),0 14px 34px rgba(36,29,23,.11);
+  --ring:0 0 0 3px rgba(178,58,52,.18)
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#131110; --card-bg:#1d1a17; --text:#f2ece3; --muted:#9b9188;
+    --primary:#e2695f; --primary-soft:rgba(226,105,95,.12);
+    --accent:#e39a58; --border:rgba(242,236,227,.09);
+    --green:#7fc98f; --yellow:#e3b45a;
+    --shadow:0 1px 2px rgba(0,0,0,.25),0 10px 28px rgba(0,0,0,.35);
+    --shadow-lift:0 2px 6px rgba(0,0,0,.3),0 18px 44px rgba(0,0,0,.5);
+    --ring:0 0 0 3px rgba(226,105,95,.28)
+  }
+}
+body{background:
+  radial-gradient(1200px 500px at 50% -200px, var(--primary-soft), transparent 60%),
+  var(--bg)}
+.card{border-radius:19px;border:1px solid var(--border);box-shadow:var(--shadow)}
+.tile{border-radius:17px;box-shadow:var(--shadow);transition:transform .25s cubic-bezier(.22,.9,.3,1),box-shadow .25s}
+.tile:hover{transform:translateY(-3px);box-shadow:var(--shadow-lift)}
+.tile::after{content:'';position:absolute;inset:0;border-radius:inherit;
+  background:linear-gradient(to top, rgba(0,0,0,.62) 0%, rgba(0,0,0,.12) 45%, transparent 65%);pointer-events:none}
+.tile .tile-name{z-index:2;text-shadow:0 1px 8px rgba(0,0,0,.4)}
+.dayhero{border-radius:22px;box-shadow:var(--shadow-lift)}
+.dayhero::after{content:'';position:absolute;inset:0;border-radius:inherit;
+  background:linear-gradient(to top, rgba(0,0,0,.68) 0%, rgba(0,0,0,.14) 50%, transparent 70%);pointer-events:none}
+.dayhero>*:not(img){z-index:2}
+img{background:var(--border)}
+.btn{border-radius:15px;box-shadow:0 6px 18px rgba(178,58,52,.24);
+  background:linear-gradient(180deg, color-mix(in srgb, var(--primary) 94%, white), var(--primary))}
+.btn:active{transform:scale(.97);box-shadow:0 3px 10px rgba(178,58,52,.2)}
+.btn-ghost{border-radius:15px}
+.chip{border-radius:999px;border:1.5px solid var(--border);background:var(--card-bg)}
+.chip.on{background:var(--primary);border-color:var(--primary);color:#fff;box-shadow:0 4px 14px rgba(178,58,52,.3)}
+.field{border-radius:14px;border:1.5px solid var(--border);background:var(--card-bg);transition:border-color .2s, box-shadow .2s}
+.field:focus{outline:none;border-color:var(--primary);box-shadow:var(--ring)}
+.nav{background:color-mix(in srgb, var(--card-bg) 86%, transparent);backdrop-filter:blur(18px) saturate(1.4);
+  -webkit-backdrop-filter:blur(18px) saturate(1.4);border-top:1px solid var(--border)}
+.nav button{position:relative}
+.nav button.active::after{content:'';position:absolute;top:2px;left:50%;transform:translateX(-50%);
+  width:18px;height:3px;border-radius:2px;background:var(--primary)}
+.section-title,.home-label{letter-spacing:.11em}
+.item{border-radius:13px;transition:background .18s}
+.item:hover{background:var(--primary-soft)}
+.sheet{border-radius:26px 26px 0 0;box-shadow:0 -18px 60px rgba(0,0,0,.35)}
+.grab{background:var(--border)}
+#toast{border-radius:999px;box-shadow:var(--shadow-lift);backdrop-filter:blur(10px)}
+.pchip{border-radius:999px;border:1px solid var(--border);box-shadow:var(--shadow)}
+.pfood{margin-left:2px}
+.usefirst{box-shadow:var(--shadow)}
+.hero-acts button{box-shadow:var(--shadow)}
+.week .day.today{box-shadow:var(--ring)}
+.header h1{letter-spacing:-.01em}
+::selection{background:var(--primary-soft)}
+
 </style>
 </head>
 <body>
@@ -1777,44 +1863,72 @@ function pantryHas(pantry, ingName) {
 
 /* ── an emoji for anything you can buy ──────────────────── */
 var EMOJI = [
-[['tomato','passata','marinara'],'🍅'],[['lemon'],'🍋'],[['lime'],'🍈'],[['orange','clementine','mandarin'],'🍊'],[['apple'],'🍎'],[['pear'],'🍐'],
-[['banana'],'🍌'],[['grape'],'🍇'],[['strawberr'],'🍓'],[['cherr'],'🍒'],[['peach','nectarine'],'🍑'],
-[['pineapple'],'🍍'],[['melon','watermelon'],'🍉'],[['mango'],'🥭'],[['avocado'],'🥑'],[['coconut'],'🥥'],
-[['blueberr','blackberr','raspberr','berries','berry'],'🫐'],[['fig','date','prune','raisin','apricot'],'🫒'],
-[['tomato','passata','marinara'],'🍅'],[['potato'],'🥔'],[['sweet potato','yam'],'🍠'],[['carrot'],'🥕'],
-[['corn','sweetcorn','polenta','cornmeal'],'🌽'],[['pepper','capsicum','espelette','paprika','chilli','chili','jalape','cayenne','harissa','aleppo'],'🌶️'],
-[['eggplant','aubergine'],'🍆'],[['zucchini','courgette','squash','pumpkin'],'🥒'],[['cucumber','pickle','gherkin'],'🥒'],
-[['broccoli','cauliflower'],'🥦'],[['lettuce','cabbage','salad','greens','spinach','arugula','rocket','kale','chard','romaine','endive'],'🥬'],
-[['onion','shallot','scallion','leek','chive'],'🧅'],[['garlic'],'🧄'],[['mushroom','porcini','portobello','cremini'],'🍄'],
-[['ginger','turmeric'],'🫚'],[['olive','tapenade'],'🫒'],[['herb','parsley','cilantro','coriander leaf','basil','mint','thyme','rosemary','sage','dill','tarragon','bay','oregano','marjoram'],'🌿'],
-[['pea','green bean','bean','lentil','chickpea','dal'],'🫘'],[['peanut','almond','walnut','cashew','pistachio','pine nut','nuts','hazelnut'],'🥜'],
+[['blossom water','rose water','rosewater','geranium','orange blossom'],'🌸'],
+[['sausage','merguez','kielbasa','hot dog'],'🌭'],
+[['doughnut','donut','beignet','yoyo','churro'],'🍩'],
+[['cucumber','pickle','gherkin','cornichon'],'🥒'],
+[['watermelon','melon','cantaloupe','honeydew'],'🍉'],
+[['peach','nectarine','apricot'],'🍑'],
+[['tomato','passata','marinara'],'🍅'],[['lemon','lime','citron'],'🍋'],[['orange','clementine','mandarin','kumquat'],'🍊'],
+[['apple'],'🍎'],[['pear','quince'],'🍐'],[['banana','plantain'],'🍌'],[['grape'],'🍇'],
+[['strawberr'],'🍓'],[['cherr'],'🍒'],[['pineapple'],'🍍'],[['mango'],'🥭'],[['avocado'],'🥑'],
+[['coconut'],'🥥'],[['kiwi'],'🥝'],[['pomegranate'],'🍎'],
+[['blueberr','blackberr','raspberr','berries','berry','cranberr'],'🫐'],
+[['fig','date','prune','raisin','sultana'],'🌰'],
+[['sweet potato','yam'],'🍠'],[['potato'],'🥔'],[['carrot'],'🥕'],
+[['corn','sweetcorn','polenta','cornmeal'],'🌽'],
+[['pepper','capsicum','espelette','paprika','chilli','chili','jalape','cayenne','harissa','aleppo'],'🌶️'],
+[['eggplant','aubergine'],'🍆'],[['zucchini','courgette','squash','pumpkin'],'🥒'],
+[['broccoli','cauliflower'],'🥦'],
+[['lettuce','cabbage','salad','greens','spinach','arugula','rocket','kale','chard','romaine','endive','asparagus','artichoke','fennel','celery','leaf'],'🥬'],
+[['onion','shallot','scallion','chive'],'🧅'],[['leek'],'🧅'],[['garlic'],'🧄'],
+[['mushroom','porcini','portobello','cremini'],'🍄'],[['ginger','turmeric'],'🫚'],
+[['olive','tapenade'],'🫒'],
+[['herb','parsley','cilantro','coriander leaf','basil','mint','thyme','rosemary','sage','dill','tarragon','bay','oregano','marjoram'],'🌿'],
+[['peanut','almond','walnut','cashew','pistachio','pine nut','hazelnut','pecan','nuts'],'🥜'],
+[['pea','green bean','bean','lentil','chickpea','dal','fava','loubia'],'🫘'],
 [['chicken','poultry','turkey','duck','drumstick','thigh','breast','wing'],'🍗'],
-[['beef','steak','lamb','veal','ribeye','brisket','chuck','mince','ground','merguez','shank','roast'],'🥩'],
-[['bacon','pork','ham'],'🥓'],[['egg'],'🥚'],[['milk','cream','crème','creme'],'🥛'],[['butter','margarine','ghee'],'🧈'],
-[['cheese','parmesan','gruy','feta','mozzarella','ricotta','pecorino','comt','mascarpone','halloumi','brie','cheddar'],'🧀'],
-[['yogurt','yoghurt','labneh'],'🥣'],[['bread','baguette','sourdough','pain de mie','bun','roll','pita','loaf'],'🥖'],
+[['beef','steak','lamb','veal','ribeye','brisket','chuck','mince','shank','salami'],'🥩'],
+[['bacon','pork','ham'],'🥓'],[['egg'],'🥚'],
+[['butter','margarine','ghee'],'🧈'],[['milk','cream','crème','creme'],'🥛'],
+[['cheese','parm','gruy','feta','mozzarella','ricotta','pecorino','comt','mascarpone','halloumi','brie','cheddar','perlini','parmcrisp'],'🧀'],
+[['yogurt','yoghurt','labneh'],'🥣'],
+[['rolled oats','oats','oatmeal','muesli','granola'],'🌾'],
+[['bread','baguette','sourdough','pain de mie','bun','roll','pita','loaf','matzah','muffin'],'🥖'],
 [['croissant','brioche','pastry','phyllo','filo','puff'],'🥐'],[['bagel'],'🥯'],[['tortilla','wrap','flatbread'],'🫓'],
-[['rice','basmati','carnaroli','risotto'],'🍚'],[['pasta','spaghetti','noodle','rigatoni','lasagna','macaroni','couscous','bulgur','quinoa','orzo'],'🍝'],
-[['flour','yeast','baking','semolina','oats','barley'],'🌾'],[['sugar','erythritol','syrup','honey','molasses'],'🍯'],
-[['chocolate','cocoa'],'🍫'],[['vanilla','extract','essence'],'🍦'],[['salt'],'🧂'],[['peppercorn','black pepper'],'🧂'],
-[['spice','cumin','cinnamon','saffron','nutmeg','cardamom','clove','sumac','za','ras el','garam','allspice','anise','fenugreek','caraway','curry'],'🫙'],
-[['oil'],'🫗'],[['vinegar'],'🧴'],[['wine','burgundy','marsala','sherry','vermouth'],'🍷'],
-[['beer','lager','cider','stout'],'🍺'],[['cognac','calvados','rum','brandy','vodka','whisky','liqueur'],'🥃'],
-[['stock','broth','soup'],'🍲'],[['tahini','hummus','mustard','ketchup','mayonnaise','sauce','pesto','salsa','dressing','molasses'],'🫙'],
-[['tofu','tempeh'],'🧊'],[['ice cream'],'🍨'],[['cake','tart','madeleine','biscuit','cookie'],'🍰'],
-[['coffee','espresso'],'☕'],[['tea'],'🍵'],[['water'],'💧'],[['frozen','peas'],'🧊']
+[['rice','basmati','carnaroli','risotto'],'🍚'],
+[['pasta','spaghetti','noodle','rigatoni','lasagna','macaroni','couscous','bulgur','quinoa','orzo','nwasser'],'🍝'],
+[['flour','yeast','baking','semolina','barley'],'🌾'],
+[['sugar','erythritol','syrup','honey','molasses'],'🍯'],
+[['chocolate','cocoa'],'🍫'],[['vanilla','extract','essence'],'🍦'],
+[['cake','tart','madeleine','biscuit','cookie','bredele','macaron','sabl','crumble'],'🍰'],
+[['peppercorn','black pepper'],'🧂'],[['salt'],'🧂'],
+[['spice','cumin','cinnamon','saffron','nutmeg','cardamom','clove','sumac','za','ras el','garam','allspice','anise','fenugreek','caraway','curry','sesame'],'🫙'],
+[['vinegar'],'🧴'],[['oil'],'🫗'],
+[['wine','burgundy','marsala','sherry','vermouth'],'🍷'],
+[['beer','lager','cider','stout'],'🍺'],[['cognac','calvados','rum','brandy','vodka','whisky','liqueur','boukha'],'🥃'],
+[['stock','broth','soup'],'🍲'],
+[['tahini','hummus','mustard','ketchup','mayonnaise','sauce','pesto','salsa','dressing'],'🫙'],
+[['tofu','tempeh'],'⬜'],[['ice cream','sorbet','gelato'],'🍨'],
+[['coffee','espresso'],'☕'],[['tea'],'🍵'],
+[['sparkling','pellegrino','perrier','seltzer','water'],'💧'],[['frozen'],'🧊'],
+[['crisps','chips','cracker'],'🥨']
 ];
 var AISLE_EMOJI = { produce:'🥬', butcher:'🥩', dairy:'🧀', bakery:'🥖', pantry:'🫙', spices:'🧂', frozen:'🧊', other:'🛒' };
 
 function emojiFor(name, aisle) {
   var n = String(name || '').toLowerCase();
+  var hit = function (w) {
+    if (w.length >= 6 || w.indexOf(' ') > -1) return n.indexOf(w) > -1;
+    return new RegExp('(^|[^a-zà-ÿ])' + w + '([^a-zà-ÿ]|s\\b|$)').test(n);
+  };
   for (var i = 0; i < EMOJI.length; i++)
-    if (EMOJI[i][0].some(function (w) { return n.indexOf(w) > -1; })) return EMOJI[i][1];
+    if (EMOJI[i][0].some(hit)) return EMOJI[i][1];
   return AISLE_EMOJI[aisle || guessAisle(n)] || '🛒';
 }
 
 /* ── options the two of you can set ─────────────────────── */
-var OPT = { units: 'metric', serves: 6, south: false };
+var OPT = { units: 'metric', serves: 6, south: false, fam: '' };
 function loadOpts() {
   try { var o = JSON.parse(localStorage.getItem('kitchen.opts') || '{}');
         for (var k in o) OPT[k] = o[k]; } catch (e) {}
@@ -1846,7 +1960,7 @@ function save() {
     localStorage.setItem('kitchen.items', JSON.stringify(S.items));
     localStorage.setItem('kitchen.pantry', JSON.stringify(S.pantry));
     return true;
-  } catch (e) { return false; }
+   backupNow(); } catch (e) { return false; }
 }
 function load() {
   try {
@@ -1991,7 +2105,7 @@ function todaysMoment() {
 /* ── the week plan ──────────────────────────────────────── */
 var PLAN = {};
 function loadPlan() { try { PLAN = JSON.parse(localStorage.getItem('kitchen.plan') || '{}'); } catch (e) { PLAN = {}; } }
-function savePlan() { try { localStorage.setItem('kitchen.plan', JSON.stringify(PLAN)); } catch (e) {} }
+function savePlan() { try { localStorage.setItem('kitchen.plan', JSON.stringify(PLAN)); } catch (e) {} backupNow(); }
 
 function dkey(d) {
   return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
@@ -2017,15 +2131,20 @@ function renderWeek() {
   var planned = days.filter(function (d) { return PLAN[d.key] && findRecipe(PLAN[d.key]); });
   return '<div class="home-label">This week</div>' +
     '<div class="week">' + days.map(function (d) {
-      var r = PLAN[d.key] && findRecipe(PLAN[d.key]);
-      return '<button class="day ' + (d.today ? 'today' : '') + (r ? ' set' : '') + '" data-plan="' + d.key + '">' +
+      var v = PLAN[d.key];
+      var sp = v === '@leftovers' ? ['🍱', 'Leftovers'] : v === '@out' ? ['🍽️', 'Eating out'] : null;
+      var r = v && !sp && findRecipe(v);
+      return '<button class="day ' + (d.today ? 'today' : '') + ((r || sp) ? ' set' : '') + '" data-plan="' + d.key + '">' +
         '<i>' + d.label + (d.friday ? ' 🕯️' : '') + '</i><em>' + d.num + '</em>' +
-        (r ? ((r.img || r.thumb) ? '<img src="' + esc(r.img || r.thumb) + '" alt="" loading="lazy" />' : '<b>🍽️</b>') +
+        (sp ? '<b>' + sp[0] + '</b><span>' + sp[1] + '</span>'
+           : r ? ((r.img || r.thumb) ? '<img src="' + esc(r.img || r.thumb) + '" alt="" loading="lazy" />' : '<b>🍽️</b>') +
              '<span>' + esc(r.title) + '</span>'
            : '<b>+</b><span class="ghost">plan</span>') +
       '</button>';
     }).join('') + '</div>' +
-    (planned.length ? '<button class="btn-ghost week-send" data-weeklist="1">🛒 Send the week to the list · ' + planned.length + ' dinner' + (planned.length > 1 ? 's' : '') + '</button>' : '');
+    (planned.length ? '<button class="btn-ghost week-send" data-weeklist="1">🛒 Send the week to the list · ' + planned.length + ' dinner' + (planned.length > 1 ? 's' : '') + '</button>' : '') +
+    (Object.keys(PLAN).some(function (k) { return days.some(function (d) { return d.key === k; }); })
+      ? '<button class="btn-ghost" data-printweek="1" style="margin-top:8px">🖨️ Print this week for the fridge</button>' : '');
 }
 
 function openPlanPicker(key) {
@@ -2035,6 +2154,11 @@ function openPlanPicker(key) {
   var cur = PLAN[key] && findRecipe(PLAN[key]);
   document.getElementById('sheetBg').classList.add('on');
   var el = document.getElementById('sheet');
+  var quick = '<div class="plan-quick">' +
+    '<button data-planspecial="leftovers" data-plankey="' + key + '">🍱 Leftovers</button>' +
+    '<button data-planspecial="out" data-plankey="' + key + '">🍽️ Eating out</button>' +
+    (PLAN[key] ? '<button data-planspecial="clear" data-plankey="' + key + '">✕ Clear day</button>' : '') +
+  '</div>';
 
   function draw(q) {
     var list;
@@ -2053,6 +2177,7 @@ function openPlanPicker(key) {
       '<div class="sheet-head"><div class="grab"></div><button class="x-btn" data-close="1">✕</button></div>' +
       '<div class="sheet-body">' +
         '<h2 style="font-family:var(--serif);font-size:22px;font-weight:700;margin-bottom:4px">' + nice + '</h2>' +
+      quick +
         '<p style="font-size:13px;color:var(--muted);margin-bottom:14px">' + (cur ? 'Planned: <b>' + esc(cur.title) + '</b>' : 'What\'s for dinner?') + '</p>' +
         (cur ? '<button class="btn-ghost" data-planclear="' + key + '" style="margin-bottom:14px;color:var(--primary);border-color:var(--primary)">Remove ' + esc(cur.title) + '</button>' : '') +
         '<input class="field" id="planSearch" placeholder="Search the ' + ALL.length + ' recipes" value="' + esc(q || '') + '" />' +
@@ -2072,6 +2197,7 @@ function openPlanPicker(key) {
 }
 
 function sendWeekToList(){
+  /* '@leftovers' and '@out' days have no recipe and are skipped below */
   var days = weekDays(), added = 0, merged = 0;
   days.forEach(function (d) {
     var r = PLAN[d.key] && findRecipe(PLAN[d.key]);
@@ -2443,6 +2569,73 @@ function toastAction(msg, label, fn) {
   t._h = setTimeout(function () { t.classList.remove('on'); }, 6000);
 }
 
+
+
+function printWeek() {
+  var days = weekDays();
+  var name = OPT.fam ? 'The ' + OPT.fam + ' Table' : 'This Week';
+  var rows = days.map(function (d) {
+    var v = PLAN[d.key];
+    var label = v === '@leftovers' ? 'Leftovers' : v === '@out' ? 'Eating out' :
+                (v && findRecipe(v)) ? findRecipe(v).title : '—';
+    return '<tr><td>' + d.label + ' ' + d.num + (d.friday ? ' 🕯️' : '') + '</td><td>' + esc(label) + '</td></tr>';
+  }).join('');
+  var el = document.getElementById('printMenu');
+  el.innerHTML = '<h1>' + esc(name) + '</h1><p>' +
+    new Date().toLocaleDateString(undefined, { month: 'long', year: 'numeric' }) +
+    '</p><table>' + rows + '</table><footer>bon appétit</footer>';
+  window.print();
+}
+
+/* ── data safety net ────────────────────────────────────
+   Every save also writes one rolling backup blob. If the
+   main keys ever come back empty but the backup exists,
+   boot restores it. Options can export/import a file.     */
+function snapshot() {
+  return { v: 1, t: Date.now(), items: S.items, pantry: S.pantry, plan: PLAN, opts: OPT,
+           staples: STAP };
+}
+function backupNow() {
+  try { localStorage.setItem('kitchen.backup', JSON.stringify(snapshot())); } catch (e) {}
+}
+function applySnapshot(o) {
+  if (!o) return false;
+  S.items = o.items || []; S.pantry = o.pantry || [];
+  PLAN = o.plan || {}; STAP = o.staples || { hidden: [], custom: [] };
+  for (var k in (o.opts || {})) OPT[k] = o.opts[k];
+  save(); savePlan(); saveStaples(); saveOpts();
+  return true;
+}
+function maybeRestoreBackup() {
+  try {
+    var empty = !localStorage.getItem('kitchen.items') && !localStorage.getItem('kitchen.plan');
+    var bak = JSON.parse(localStorage.getItem('kitchen.backup') || 'null');
+    if (empty && bak && (bak.items.length || Object.keys(bak.plan || {}).length)) {
+      applySnapshot(bak);
+      setTimeout(function () { toast('Restored your saved data'); }, 600);
+    }
+  } catch (e) {}
+}
+function exportBackup() {
+  var blob = new Blob([JSON.stringify(snapshot(), null, 1)], { type: 'application/json' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'kitchen-backup-' + dkey(new Date()) + '.json';
+  document.body.appendChild(a); a.click(); a.remove();
+  toast('Backup downloaded');
+}
+function importBackup(file) {
+  var rd = new FileReader();
+  rd.onload = function () {
+    try {
+      applySnapshot(JSON.parse(rd.result));
+      renderBadge(); renderList(); renderPantry(); renderHome(); closeSheet();
+      toast('Backup restored');
+    } catch (e) { toast('That file is not a Kitchen backup'); }
+  };
+  rd.readAsText(file);
+}
+
 /* ── pantry & freshness ─────────────────────────────────── */
 function freshness() {
   return S.pantry.map(function (e, n) {
@@ -2459,7 +2652,7 @@ function renderPantry() {
     var cls = x.left === null ? '' : x.left < 0 ? 'dead' : x.left <= 2 ? 'hot' : '';
     return '<span class="pchip ' + cls + '">' +
       '<span class="store" data-store="' + x.n + '">' + (x.e.s === 'freezer' ? '🧊' : '❄️') + '</span>' +
-      esc(x.e.n) +
+      '<span class="pfood">' + emojiFor(x.e.n) + '</span> ' + esc(x.e.n) +
       (x.left === null ? '' : '<span class="days">' + (x.left < 0 ? 'past it' : x.left + 'd') + '</span>') +
       '<span class="x" data-pdel="' + x.n + '">×</span></span>';
   }).join('') : '<p style="font-size:14px;color:var(--muted)">Nothing yet. Add what you have and it will find dishes you can almost make.</p>';
@@ -3189,7 +3382,7 @@ function loadStaples() {
   try { var o = JSON.parse(localStorage.getItem('kitchen.staples') || '{}');
         STAP.hidden = o.hidden || []; STAP.custom = o.custom || []; } catch (e) {}
 }
-function saveStaples() { try { localStorage.setItem('kitchen.staples', JSON.stringify(STAP)); } catch (e) {} }
+function saveStaples() { try { localStorage.setItem('kitchen.staples', JSON.stringify(STAP)); } catch (e) {} backupNow(); }
 function activeStaples() {
   return STAPLES.filter(function (x) { return STAP.hidden.indexOf(x.n) === -1; })
     .concat(STAP.custom.filter(function (x) { return STAP.hidden.indexOf(x.n) === -1; }));
@@ -3270,8 +3463,18 @@ function openOptions() {
       '</div>' +
       '<p class="est" style="text-align:left">Which hemisphere your produce comes from.</p>' +
 
+      '<div class="section-title" style="margin-top:22px">Family name</div>' +
+      '<div class="stap-new"><input class="field" id="famName" value="' + esc(OPT.fam || '') + '" placeholder="e.g. Sberro" />' +
+      '<button class="stap-newbtn" id="famSave">Set</button></div>' +
+      '<p class="est" style="text-align:left">Puts your name over the door.</p>' +
+
       '<div class="section-title" style="margin-top:26px">Your data</div>' +
       '<div class="opt-stat">' + S.items.length + ' items on the list · ' + S.pantry.length + ' in the kitchen · ' + ALL.length + ' recipes</div>' +
+      '<div class="stap-new" style="margin-top:10px">' +
+        '<button class="btn-ghost" style="flex:1" data-bakout="1">⬇️ Save backup file</button>' +
+        '<button class="btn-ghost" style="flex:1" data-bakin="1">⬆️ Restore backup</button>' +
+      '</div>' +
+      '<input type="file" id="bakFile" accept="application/json" style="display:none" />' +
       '<button class="btn-ghost" data-reset="1" style="margin-top:10px;color:var(--primary);border-color:var(--primary)">Erase everything and start over</button>' +
       '<p class="est" style="text-align:left">Stored only in this browser. Nothing leaves your phone.</p>' +
     '</div>';
@@ -3282,7 +3485,8 @@ function setTab(t) {
   S.tab = t;
   document.querySelectorAll('.panel').forEach(function (p) { p.classList.toggle('active', p.dataset.panel === t); });
   document.querySelectorAll('.nav button').forEach(function (b) { b.classList.toggle('active', b.dataset.tab === t); });
-  var titles = { home: ['🍳', 'Kitchen', 'Plan it, shop it, cook it'],
+  var kitchenName = OPT.fam ? 'The ' + OPT.fam + ' Kitchen' : 'Kitchen';
+  var titles = { home: ['🍳', kitchenName, 'Plan it, shop it, cook it'],
                  staples: ['🔁', 'Staples', 'What your receipts say you rebuy'],
                  list: ['🛒', 'The list', "Shared between the two of you"],
                  cook: ['🍳', 'Tonight', "Cook what's already in the kitchen"],
@@ -3316,6 +3520,7 @@ function boot() {
   loadOpts();
   loadPlan();
   loadStaples();
+  maybeRestoreBackup();
   fetchWeather(function () { if (S.tab === 'home') renderHome(); });
   var ok = load();
   document.getElementById('syncNote').innerHTML = ok
@@ -3343,6 +3548,13 @@ function boot() {
       return;
     }
     if (c('[data-plan]')) return openPlanPicker(c('[data-plan]').dataset.plan);
+    if (c('[data-planspecial]')) {
+      var ps = c('[data-planspecial]');
+      if (ps.dataset.planspecial === 'clear') delete PLAN[ps.dataset.plankey];
+      else PLAN[ps.dataset.plankey] = '@' + ps.dataset.planspecial;
+      savePlan(); closeSheet(); renderHome();
+      return;
+    }
     if (c('[data-planpick]')) {
       PLAN[c('[data-planpick]').dataset.plankey] = c('[data-planpick]').dataset.planpick;
       savePlan(); closeSheet(); renderHome();
@@ -3353,6 +3565,7 @@ function boot() {
       savePlan(); closeSheet(); renderHome();
       return;
     }
+    if (c('[data-printweek]')) return printWeek();
     if (c('[data-weeklist]')) return sendWeekToList();
     if (c('[data-surprise]')) return surpriseTonight();
     if (c('[data-shuffle]')) {
@@ -3509,6 +3722,16 @@ function boot() {
       save(); renderBadge(); renderStaples();
       return toast(added ? added + ' staples added' : 'All already on the list');
     }
+    if (t.id === 'famSave') {
+      OPT.fam = document.getElementById('famName').value.trim();
+      saveOpts(); setTab(S.tab); return toast(OPT.fam ? 'Welcome, ' + OPT.fam + 's' : 'Name cleared');
+    }
+    if (c('[data-bakout]')) return exportBackup();
+    if (c('[data-bakin]')) {
+      var bf = document.getElementById('bakFile');
+      bf.onchange = function () { if (bf.files[0]) importBackup(bf.files[0]); };
+      return bf.click();
+    }
     if (t.id === 'optBtn') return openOptions();
     if (c('[data-opt]')) {
       var kv = c('[data-opt]').dataset.opt.split(':');
@@ -3597,5 +3820,6 @@ else boot();
 })();
 
 </script>
+  <div id="printMenu" aria-hidden="true"></div>
 </body>
 </html>
