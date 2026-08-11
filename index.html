@@ -690,6 +690,18 @@ img.rec-thumb{object-fit:cover}
   *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
 }
 
+/* ── auto-plan, holiday notes ─────────────────────── */
+.home-label-row{display:flex;align-items:center;justify-content:space-between;margin:20px 0 10px}
+.autoplan{
+  padding:7px 14px;border-radius:999px;border:1.5px solid var(--accent);background:rgba(217,123,63,.07);
+  color:var(--accent);font-size:12px;font-weight:800;cursor:pointer;font-family:inherit
+}
+.autoplan:active{transform:scale(.94)}
+.hol-note{
+  padding:11px 14px;border-radius:13px;background:var(--primary-soft);border:1px solid var(--border);
+  font-size:13px;margin-bottom:12px
+}
+
 /* ── plan quick actions, print ─────────────────────── */
 .plan-quick{display:flex;gap:8px;margin-bottom:14px}
 .plan-quick button{
@@ -2129,13 +2141,17 @@ function weekDays() {
 function renderWeek() {
   var days = weekDays();
   var planned = days.filter(function (d) { return PLAN[d.key] && findRecipe(PLAN[d.key]); });
-  return '<div class="home-label">This week</div>' +
+  var empty = days.filter(function (d) { return !PLAN[d.key]; }).length;
+  return '<div class="home-label-row"><div class="home-label" style="margin:0">This week</div>' +
+    (empty ? '<button class="autoplan" data-autoplan="1">✨ Plan it for me</button>' : '') + '</div>' +
     '<div class="week">' + days.map(function (d) {
       var v = PLAN[d.key];
       var sp = v === '@leftovers' ? ['🍱', 'Leftovers'] : v === '@out' ? ['🍽️', 'Eating out'] : null;
       var r = v && !sp && findRecipe(v);
+      var hol = holidayFor(d.key);
+      var hb = hol && HOLINFO[hol] ? HOLINFO[hol].e : (d.friday ? '🕯️' : '');
       return '<button class="day ' + (d.today ? 'today' : '') + ((r || sp) ? ' set' : '') + '" data-plan="' + d.key + '">' +
-        '<i>' + d.label + (d.friday ? ' 🕯️' : '') + '</i><em>' + d.num + '</em>' +
+        '<i>' + d.label + (hb ? ' ' + hb : '') + '</i><em>' + d.num + '</em>' +
         (sp ? '<b>' + sp[0] + '</b><span>' + sp[1] + '</span>'
            : r ? ((r.img || r.thumb) ? '<img src="' + esc(r.img || r.thumb) + '" alt="" loading="lazy" />' : '<b>🍽️</b>') +
              '<span>' + esc(r.title) + '</span>'
@@ -2154,7 +2170,14 @@ function openPlanPicker(key) {
   var cur = PLAN[key] && findRecipe(PLAN[key]);
   document.getElementById('sheetBg').classList.add('on');
   var el = document.getElementById('sheet');
-  var quick = '<div class="plan-quick">' +
+  var hol = holidayFor(key);
+  var hinf = hol && HOLINFO[hol];
+  var featured = hinf ? ALL.filter(function (r) {
+    return courseOf(r) === 'main' && hinf.pick.test(r.title) && !r.exempt;
+  }).slice(0, 4) : [];
+  var quick = (hinf ? '<div class="hol-note">' + hinf.e + ' <b>' + hinf.name + '</b>' +
+    (hinf.note ? ' — ' + hinf.note : '') + '</div>' : '') +
+  '<div class="plan-quick">' +
     '<button data-planspecial="leftovers" data-plankey="' + key + '">🍱 Leftovers</button>' +
     '<button data-planspecial="out" data-plankey="' + key + '">🍽️ Eating out</button>' +
     (PLAN[key] ? '<button data-planspecial="clear" data-plankey="' + key + '">✕ Clear day</button>' : '') +
@@ -2178,6 +2201,7 @@ function openPlanPicker(key) {
       '<div class="sheet-body">' +
         '<h2 style="font-family:var(--serif);font-size:22px;font-weight:700;margin-bottom:4px">' + nice + '</h2>' +
       quick +
+      (featured.length ? '<div class="section-title">' + hinf.e + ' For ' + hinf.name + '</div>' + featured.map(function (r) { return '<div class="rec" data-planpick="' + r.id + '" data-plankey="' + key + '">' + ((r.img || r.thumb) ? '<img src="' + esc(r.img || r.thumb) + '" alt="" />' : '<span class="rec-emoji">🍽️</span>') + '<div><b>' + esc(r.title) + '</b><i>' + esc(r.time) + ' · ' + esc(r.origin) + '</i></div></div>'; }).join('') : '') +
         '<p style="font-size:13px;color:var(--muted);margin-bottom:14px">' + (cur ? 'Planned: <b>' + esc(cur.title) + '</b>' : 'What\'s for dinner?') + '</p>' +
         (cur ? '<button class="btn-ghost" data-planclear="' + key + '" style="margin-bottom:14px;color:var(--primary);border-color:var(--primary)">Remove ' + esc(cur.title) + '</button>' : '') +
         '<input class="field" id="planSearch" placeholder="Search the ' + ALL.length + ' recipes" value="' + esc(q || '') + '" />' +
@@ -2236,11 +2260,14 @@ function fetchWeather(cb) {
   } catch (e) {}
   var go = function (lat, lon) {
     fetch('https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon +
-          '&current=temperature_2m,weather_code&timezone=auto')
+          '&current=temperature_2m,weather_code&daily=temperature_2m_max,weather_code&forecast_days=7&timezone=auto')
       .then(function (r) { return r.json(); })
       .then(function (d) {
         if (!d.current) return;
-        WX = { t: Date.now(), temp: Math.round(d.current.temperature_2m), code: d.current.weather_code };
+        WX = { t: Date.now(), temp: Math.round(d.current.temperature_2m), code: d.current.weather_code, daily: {} };
+        if (d.daily && d.daily.time) d.daily.time.forEach(function (dt, i2) {
+          WX.daily[dt] = { t: Math.round(d.daily.temperature_2m_max[i2]), c: d.daily.weather_code[i2] };
+        });
         try { sessionStorage.setItem('kitchen.wx', JSON.stringify(WX)); } catch (e) {}
         cb && cb();
       }).catch(function () {});
@@ -2290,6 +2317,121 @@ function surpriseTonight() {
   var pool = ALL.filter(function (r) { return courseOf(r) === 'main' && (r.img || r.thumb) && !r.exempt; });
   var r = pool[Math.floor(Math.random() * pool.length)];
   openSheet(r);
+}
+
+
+/* ── the calendar knows what week it is ─────────────────
+   Jewish holidays 2026-27 verified against Hebcal/Chabad
+   (5787 is a leap year, hence the late Pesach in 2027).
+   US holidays are computed. School breaks are approximate —
+   NYC-ish; the label says so.                              */
+var JHOL = {
+  '2026-04-01':'pesach','2026-04-02':'pesach','2026-04-03':'pesach','2026-04-04':'pesach','2026-04-05':'pesach','2026-04-06':'pesach','2026-04-07':'pesach','2026-04-08':'pesach','2026-04-09':'pesach',
+  '2026-05-21':'shavuot','2026-05-22':'shavuot','2026-05-23':'shavuot',
+  '2026-09-11':'rosh','2026-09-12':'rosh','2026-09-13':'rosh',
+  '2026-09-20':'erev-kippur','2026-09-21':'break-fast',
+  '2026-09-25':'sukkot','2026-09-26':'sukkot','2026-09-27':'sukkot',
+  '2026-10-03':'simhat','2026-10-04':'simhat',
+  '2026-12-04':'hanukkah','2026-12-05':'hanukkah','2026-12-06':'hanukkah','2026-12-07':'hanukkah','2026-12-08':'hanukkah','2026-12-09':'hanukkah','2026-12-10':'hanukkah','2026-12-11':'hanukkah',
+  '2027-03-22':'purim','2027-03-23':'purim',
+  '2027-04-21':'pesach','2027-04-22':'pesach','2027-04-23':'pesach','2027-04-24':'pesach','2027-04-25':'pesach','2027-04-26':'pesach','2027-04-27':'pesach','2027-04-28':'pesach','2027-04-29':'pesach',
+  '2027-06-10':'shavuot','2027-06-11':'shavuot','2027-06-12':'shavuot',
+  '2027-10-01':'rosh','2027-10-02':'rosh','2027-10-03':'rosh',
+  '2027-10-10':'erev-kippur','2027-10-11':'break-fast',
+  '2027-10-15':'sukkot','2027-10-16':'sukkot','2027-10-17':'sukkot',
+  '2027-12-24':'hanukkah','2027-12-25':'hanukkah','2027-12-26':'hanukkah','2027-12-27':'hanukkah','2027-12-28':'hanukkah','2027-12-29':'hanukkah','2027-12-30':'hanukkah','2027-12-31':'hanukkah'
+};
+function nthDow(y, m, dow, n) { var d = new Date(y, m, 1), add = (dow - d.getDay() + 7) % 7 + (n - 1) * 7; return new Date(y, m, 1 + add); }
+function lastDow(y, m, dow) { var d = new Date(y, m + 1, 0); while (d.getDay() !== dow) d.setDate(d.getDate() - 1); return d; }
+function holidayFor(key) {
+  if (JHOL[key]) return JHOL[key];
+  var d = new Date(key + 'T12:00:00'), y = d.getFullYear(), m = d.getMonth(), day = d.getDate();
+  if (m === 10 && dkey(nthDow(y, 10, 4, 4)) === key) return 'thanksgiving';
+  if (m === 11 && (day === 24 || day === 25)) return 'noel';
+  if (m === 11 && day === 31) return 'nye';
+  if (m === 6 && day === 4) return 'july4';
+  if (m === 1 && day === 14) return 'valentine';
+  if (m === 4 && dkey(lastDow(y, 4, 1)) === key) return 'grill-day';
+  if (m === 8 && dkey(nthDow(y, 8, 1, 1)) === key) return 'grill-day';
+  return null;
+}
+function schoolBreak(key) {
+  var d = new Date(key + 'T12:00:00'), y = d.getFullYear(), m = d.getMonth(), day = d.getDate();
+  if (m === 6 || m === 7) return 'summer';
+  if ((m === 11 && day >= 24) || (m === 0 && day === 1)) return 'winter';
+  var pm = nthDow(y, 1, 1, 3);
+  var diff = (d - pm) / 86400000;
+  if (m === 1 && diff >= 0 && diff < 5) return 'midwinter';
+  return null;
+}
+var HOLINFO = {
+  rosh:        { e: '🍎', name: 'Rosh Hashanah',   pick: /brisket|spatchcock|tzimmes|honey/i },
+  'erev-kippur': { e: '🕊️', name: 'Before the fast', pick: /roast chicken|poulet r|soup|chorba|nwasser/i },
+  'break-fast':  { e: '🥯', name: 'Break the fast',  pick: /shakshuka|frittata|minina|quiche|tajine tunisien|eggs/i },
+  sukkot:      { e: '🌿', name: 'Sukkot',          pick: /farcies|felfel|mehchi|stuffed|mafrum/i },
+  simhat:      { e: '📜', name: 'Simchat Torah',   pick: /couscous|nwasser|brisket/i },
+  hanukkah:    { e: '🕎', name: 'Hanukkah',        pick: /fricass|yoyo|beignet|debla|potato|latke/i, note: 'fried, as tradition demands' },
+  purim:       { e: '🎭', name: 'Purim',           pick: /boulette|couscous|makroudh/i },
+  pesach:      { e: '🫓', name: 'Passover',        pick: /msoki|brisket|roast|spatchcock/i,
+                 avoid: /pasta|couscous|bread|nwasser|fricass|pita|burger|sandwich|wrap|noodle|orzo|bulgur|semolina|barley|beer/i },
+  shavuot:     { e: '🧀', name: 'Shavuot',         pick: /gratin|tarte|cr\u00eapes|quiche|caprese|mhalbiya|cheese/i },
+  thanksgiving:{ e: '🦃', name: 'Thanksgiving',    pick: /roast turkey/i, note: 'the stuffing and Tommy\u2019s casserole are in Family' },
+  noel:        { e: '🎄', name: 'Christmas',       pick: /fancy brisket|roast|daube|poulet/i, note: 'the bredele tin is in No\u00ebl' },
+  nye:         { e: '🥂', name: 'New Year\u2019s Eve', pick: /brisket|beef bourguignon|daube|special/i },
+  july4:       { e: '🎆', name: 'July 4th',        pick: /burger|grill|kebab|skewer|ribs|corn/i },
+  'grill-day': { e: '🔥', name: 'Long weekend',    pick: /burger|grill|kebab|skewer|ribs/i },
+  valentine:   { e: '💘', name: 'Valentine\u2019s',  pick: /steak|risotto|special/i }
+};
+function holPick(hol, used) {
+  var inf = HOLINFO[hol]; if (!inf) return null;
+  var pool = ALL.filter(function (r) {
+    return courseOf(r) === 'main' && !r.exempt && inf.pick.test(r.title) &&
+           used.indexOf(r.id) === -1 && (!inf.avoid || !inf.avoid.test(r.title));
+  });
+  pool.sort(function (a, b) { return (b.coll ? 1 : 0) - (a.coll ? 1 : 0) || (b.house ? 1 : 0) - (a.house ? 1 : 0); });
+  return pool[0] || null;
+}
+
+/* ── auto-plan the week: calendar first, weather second ── */
+function autoPlanWeek() {
+  var days = weekDays(), used = [], filled = 0;
+  days.forEach(function (d) { var v = PLAN[d.key]; if (v && findRecipe(v)) used.push(v); });
+  days.forEach(function (d, idx) {
+    if (PLAN[d.key]) return;
+    var pickR = null;
+    var hol = holidayFor(d.key);
+    if (hol) pickR = holPick(hol, used);
+    if (!pickR && d.friday) {
+      var sh = ALL.filter(function (r) { return r.coll === 'shabbat' && courseOf(r) === 'main' && used.indexOf(r.id) === -1; });
+      pickR = sh[(todaySeed() + idx) % sh.length];
+    }
+    if (!pickR) {
+      var wxd = WX && WX.daily && WX.daily[d.key];
+      var hot = wxd ? wxd.t >= 27 : false;
+      var wet = wxd ? (wxd.c >= 51 && wxd.c <= 99) : false;
+      var cold = wxd ? wxd.t <= 8 : false;
+      var wk = (idx >= 5);
+      var brk = schoolBreak(d.key);
+      var pool = ALL.filter(function (r) {
+        if (courseOf(r) !== 'main' || r.exempt || used.indexOf(r.id) > -1 || !(r.img || r.thumb)) return false;
+        var pw = holidayFor(d.key) === null;
+        if (hot && WX_COMFORT.test(r.title)) return false;
+        if ((cold || wet) && !WX_COMFORT.test(r.title) && weightOf(r) === 'light') return false;
+        if (!wk && r.effort === 'special') return false;
+        if (brk && parseInt(r.time) > 45) return false;
+        return pw;
+      });
+      if (!pool.length) pool = ALL.filter(function (r) { return courseOf(r) === 'main' && used.indexOf(r.id) === -1; });
+      // vary cuisines across the week
+      var origins = used.map(function (id) { var r = findRecipe(id); return r && r.origin; });
+      var varied = pool.filter(function (r) { return origins.indexOf(r.origin) === -1; });
+      if (varied.length > 3) pool = varied;
+      pickR = pool[(todaySeed() * 7 + idx * 3) % pool.length];
+    }
+    if (pickR) { PLAN[d.key] = pickR.id; used.push(pickR.id); filled++; }
+  });
+  savePlan(); renderHome();
+  toast(filled ? 'Planned ' + filled + ' dinner' + (filled > 1 ? 's' : '') + ' — tap any day to change it' : 'The week is already planned');
 }
 
 /* ── home: day, time, and one honest suggestion ─────────── */
@@ -3565,6 +3707,7 @@ function boot() {
       savePlan(); closeSheet(); renderHome();
       return;
     }
+    if (c('[data-autoplan]')) return autoPlanWeek();
     if (c('[data-printweek]')) return printWeek();
     if (c('[data-weeklist]')) return sendWeekToList();
     if (c('[data-surprise]')) return surpriseTonight();
