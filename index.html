@@ -55,7 +55,7 @@ h1{font-family:var(--serif);font-size:27px;font-weight:700;letter-spacing:-.01em
 
 /* ── bottom nav ─────────────────────────────────────── */
 .nav{
-  position:fixed;left:0;right:0;bottom:0;z-index:50;display:grid;grid-template-columns:repeat(4,1fr);
+  position:fixed;left:50%;transform:translateX(-50%);width:100%;max-width:560px;bottom:0;z-index:50;display:grid;grid-template-columns:repeat(6,1fr);
   background:var(--card-bg);border-top:1px solid var(--border);
   padding-bottom:env(safe-area-inset-bottom);backdrop-filter:blur(12px)
 }
@@ -331,12 +331,113 @@ h1{font-family:var(--serif);font-size:27px;font-weight:700;letter-spacing:-.01em
 img.rec-thumb{object-fit:cover}
 .rec{overflow:hidden}
 
+/* ── staples ────────────────────────────────────────── */
+.stap{cursor:default}
+.item-meta{font-size:11px;color:var(--muted);margin-top:1px}
+.stap-add{
+  width:32px;height:32px;border-radius:50%;border:1.5px solid var(--primary);background:none;
+  color:var(--primary);font-size:16px;font-weight:800;cursor:pointer;flex-shrink:0;line-height:1
+}
+.stap-add:active{transform:scale(.93)}
+.stap-got{font-size:15px;font-weight:800;color:var(--green);flex-shrink:0;width:32px;text-align:center}
+.shoplink{text-decoration:none;color:var(--text)}
+.shoplink-go{font-size:12px;font-weight:800;color:var(--primary);flex-shrink:0}
+.stap-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
+.stap-edit{
+  padding:6px 14px;border-radius:999px;border:1.5px solid var(--border);background:none;
+  color:var(--muted);font-size:12px;font-weight:800;cursor:pointer
+}
+.stap-edit.on{border-color:var(--primary);color:var(--primary);background:var(--primary-soft)}
+.stap-new{display:flex;gap:8px;margin-top:10px}
+.stap-new .field{flex:1;margin:0}
+.stap-newbtn{
+  padding:0 18px;border-radius:12px;border:none;background:var(--text);color:var(--bg);
+  font-size:13.5px;font-weight:700;cursor:pointer;font-family:inherit
+}
+.stap-del{
+  width:32px;height:32px;border-radius:50%;border:1.5px solid var(--primary);background:var(--primary-soft);
+  color:var(--primary);font-size:13px;cursor:pointer;flex-shrink:0
+}
+.stap-src{font-size:12px;color:var(--muted);margin:-4px 0 12px;line-height:1.5}
+.nav button{font-size:8.5px;padding:9px 0 10px}
+.nav button .ico{font-size:17px}
+
+/* ── motion ─────────────────────────────────────────── */
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.panel.active>*{animation:rise .45s cubic-bezier(.22,.9,.3,1) both}
+.panel.active>*:nth-child(2){animation-delay:.05s}
+.panel.active>*:nth-child(3){animation-delay:.1s}
+.panel.active>*:nth-child(4){animation-delay:.15s}
+.panel.active>*:nth-child(5){animation-delay:.2s}
+.panel.active>*:nth-child(n+6){animation-delay:.25s}
+#homeBody>*{animation:rise .45s cubic-bezier(.22,.9,.3,1) both}
+#homeBody>*:nth-child(2){animation-delay:.06s}
+#homeBody>*:nth-child(3){animation-delay:.12s}
+#homeBody>*:nth-child(4){animation-delay:.18s}
+#homeBody>*:nth-child(5){animation-delay:.24s}
+#homeBody>*:nth-child(n+6){animation-delay:.3s}
+.tile img,.dayhero img{transition:transform .6s cubic-bezier(.22,.9,.3,1)}
+.tile:hover img,.dayhero:hover img{transform:scale(1.05)}
+.chip{transition:all .22s cubic-bezier(.4,0,.2,1)}
+.chip.on{transform:translateY(-1px)}
+.nav button.active .ico{display:block;transform:translateY(-2px) scale(1.12);transition:transform .25s cubic-bezier(.68,-.55,.265,1.55)}
+.sheet-bg{transition:opacity .25s;opacity:0;pointer-events:none}
+.sheet-bg.on{opacity:1;pointer-events:auto}
+.sheet-bg .sheet{transform:translateY(24px);transition:transform .3s cubic-bezier(.22,.9,.3,1)}
+.sheet-bg.on .sheet{transform:none}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001s !important;transition-duration:.001s !important}
+}
+
+/* ── hero actions, weather strip, use-first ─────────── */
+.hero-acts{display:flex;gap:8px;margin-top:10px}
+.hero-acts button{
+  flex:1;padding:12px 8px;border-radius:13px;border:1.5px solid var(--border);background:var(--card-bg);
+  font-size:13px;font-weight:700;color:var(--text);cursor:pointer;font-family:inherit;
+  transition:all .2s
+}
+.hero-acts button:active{transform:scale(.95)}
+.hero-acts button:last-child{border-color:var(--accent);color:var(--accent);background:rgba(217,123,63,.06)}
+.scroller.wx{margin:0 -20px;padding:0 20px 6px}
+.scroller.wx .tile{width:150px;aspect-ratio:3/4}
+.usefirst{
+  display:flex;align-items:center;gap:12px;width:100%;margin-top:18px;padding:14px 15px;
+  border:1.5px solid rgba(221,138,28,.5);border-radius:15px;background:rgba(221,138,28,.08);
+  cursor:pointer;text-align:left;transition:transform .2s
+}
+.usefirst:active{transform:scale(.98)}
+.usefirst span{font-size:22px}
+.usefirst b{display:block;font-size:13.5px;font-weight:800;color:var(--yellow)}
+.usefirst i{font-style:normal;font-size:11.5px;color:var(--muted);line-height:1.4}
+.usefirst em{margin-left:auto;font-style:normal;font-size:20px;color:var(--yellow);opacity:.7}
+.usefirst div{flex:1}
+
+/* ── week plan ──────────────────────────────────────── */
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.day{
+  position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;
+  padding:8px 2px 7px;border-radius:12px;border:1px solid var(--border);background:var(--card-bg);
+  cursor:pointer;min-height:82px;transition:all .2s;overflow:hidden
+}
+.day:active{transform:scale(.94)}
+.day i{font-style:normal;font-size:9.5px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
+.day em{font-style:normal;font-size:13px;font-weight:800}
+.day b{font-size:15px;color:var(--muted);font-weight:600;margin-top:4px}
+.day img{width:26px;height:26px;border-radius:50%;object-fit:cover;margin-top:3px}
+.day span{font-size:9px;line-height:1.2;font-weight:700;text-align:center;margin-top:2px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.day .ghost{color:var(--muted);font-weight:600}
+.day.today{border-color:var(--accent);background:rgba(217,123,63,.07)}
+.day.set{border-color:var(--border)}
+.day.today em{color:var(--accent)}
+.week-send{margin-top:12px}
+
 /* ── home ───────────────────────────────────────────── */
-.home-head{margin:4px 0 18px}
+.home-head{margin:2px 0 16px}
 .home-head i{font-style:normal;font-size:13px;font-weight:600;color:var(--muted);display:block}
 .home-head b{font-family:var(--serif);font-size:29px;font-weight:700;display:block;margin-top:2px;line-height:1.15}
 .home-head span{font-size:13px;font-weight:600;color:var(--accent);display:block;margin-top:4px;font-variant-numeric:tabular-nums}
-.home-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.09em;margin:18px 0 10px}
+.home-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.09em;margin:20px 0 10px}
 .home-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
 .home-tile{
   padding:16px 15px;border-radius:16px;border:1px solid var(--border);background:var(--card-bg);
@@ -346,6 +447,12 @@ img.rec-thumb{object-fit:cover}
 .home-tile span{font-size:23px;display:block;margin-bottom:8px}
 .home-tile b{font-size:14.5px;font-weight:700;display:block}
 .home-tile i{font-style:normal;font-size:12px;color:var(--muted);display:block;margin-top:2px}
+.dayhero-dice{
+  position:absolute;bottom:12px;right:12px;width:42px;height:42px;border-radius:50%;border:none;
+  background:rgba(255,255,255,.94);font-size:19px;cursor:pointer;
+  box-shadow:0 2px 10px rgba(0,0,0,.25);transition:transform .3s cubic-bezier(.68,-.55,.265,1.55)
+}
+.dayhero-dice:active{transform:rotate(200deg) scale(.9)}
 .dayhero-go{
   position:absolute;top:12px;right:12px;padding:7px 13px;border-radius:999px;
   background:rgba(255,255,255,.94);color:var(--primary);font-size:12.5px;font-weight:800
@@ -484,6 +591,7 @@ img.rec-thumb{object-fit:cover}
 .tile-flag.fam{background:#7c3aed}
 .tile-flag.sh{background:#1d4ed8}
 .tile-flag.br{background:var(--accent)}
+.tile-flag.no{background:#1f6f43}
 .tile-veg{position:absolute;top:9px;right:9px;font-size:15px;filter:drop-shadow(0 1px 3px rgba(0,0,0,.5))}
 
 /* ── options, emoji, detail ─────────────────────────── */
@@ -595,6 +703,10 @@ img.rec-thumb{object-fit:cover}
     <div id="homeBody"></div>
   </div>
 
+  <div class="panel" data-panel="staples">
+    <div id="staplesBody"></div>
+  </div>
+
   <div class="panel" data-panel="list">
     <div class="card">
       <div class="row">
@@ -610,6 +722,8 @@ img.rec-thumb{object-fit:cover}
         <button data-share="mail"><span>✉️</span>Email</button>
         <button data-share="sms"><span>💬</span>Text</button>
         <button data-share="copy"><span>📋</span>Copy</button>
+        <button data-shop="instacart" style="grid-column:span 2;flex-direction:row;gap:8px"><span style="font-size:17px">🥕</span>Shop on Instacart</button>
+        <button data-shop="freshdirect" style="grid-column:span 2;flex-direction:row;gap:8px"><span style="font-size:17px">🍏</span>Shop on FreshDirect</button>
         <button data-wipe="1" style="grid-column:span 4;flex-direction:row;color:var(--primary);border-color:var(--primary)"><span style="font-size:17px">🗑️</span>Clear the whole list</button>
       </div>
       <p style="margin-top:10px;font-size:12px;color:var(--muted)">Share sheet sends it straight into Messages, Mail or a shared Note.</p>
@@ -724,6 +838,7 @@ img.rec-thumb{object-fit:cover}
         <button class="chip" data-coll="family">👨‍👩‍👧‍👦 Family</button>
         <button class="chip" data-coll="shabbat">🕯️ Shabbat</button>
         <button class="chip" data-coll="brunch">🥐 Brunch</button>
+        <button class="chip" data-coll="noel">🎄 Noël</button>
       </div>
       <div class="chips" style="margin-top:8px">
         <button class="chip" data-diet="veg">🌱 Vegetarian</button>
@@ -762,7 +877,8 @@ img.rec-thumb{object-fit:cover}
   <button class="active" data-tab="home"><span class="ico">🏠</span>Home</button>
   <button data-tab="list"><span class="ico">🛒</span>List<span class="badge" id="listBadge" style="display:none">0</span></button>
   <button data-tab="cook"><span class="ico">🍳</span>Tonight</button>
-  <button data-tab="fresh"><span class="ico">🥗</span>Still good?</button>
+  <button data-tab="fresh"><span class="ico">🥗</span>Fresh?</button>
+  <button data-tab="staples"><span class="ico">🔁</span>Staples</button>
   <button data-tab="recipes"><span class="ico">📖</span>Recipes</button>
 </div>
 
@@ -1330,6 +1446,142 @@ steps:["Melt the chocolate and butter together in a saucepan, or 30 seconds in t
 ];
 
 
+/* ── NOËL — the Alsatian Christmas tin ─────────────────── */
+var NOEL = [
+{id:"no-petits-fours",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Petits.fours.wmt.jpg/500px-Petits.fours.wmt.jpg",coll:"noel",title:"Petits Fours aux Amandes",origin:"Alsatian",effort:"special",time:"45 min",serves:10,category:"Dessert",
+note:"Makes about 30. Half piped in little mounds with a star tip and crowned with candied cherry, half piped in S shapes and decorated with candied angelica.",
+ing:[i("Egg whites","2"),i("Sugar","75 g"),i("Ground almonds","100 g"),i("Bitter almond extract","2 drops"),i("Candied cherries, halved","15 halves"),i("Candied angelica","1 stick"),i("Butter, for the paper","10 g")],
+steps:["Heat the oven to 150°C and line a tray with buttered parchment.","Beat the whites very stiff, then whisk in the ground almonds and the extract little by little, still beating.","With a star tip, pipe half the mixture in small mounds. Switch to a plain tip and pipe the rest in S shapes.","Set a half cherry on each mound; decorate the S's with small pieces of angelica.","Bake in the middle of the oven about 20 minutes, until lightly golden. Cool on a rack."]},
+
+{id:"no-sables",coll:"noel",title:"Sablés Croquants",origin:"Alsatian",effort:"easy",time:"30 min + overnight",serves:10,category:"Dessert",
+note:"The log is rolled in coarse sugar before chilling, so every slice bakes with a sparkling edge. Take them out very pale blond.",
+ing:[i("Flour","300 g"),i("Granulated sugar","125 g + 2 spoonfuls"),i("Butter, softened","175 g"),i("Egg","1")],
+steps:["Mix the flour and sugar, work in the softened butter with your fingertips, then bring together with the egg. Knead no more than needed.","Sprinkle the board with granulated sugar and roll the dough into a log, coating it. Wrap in foil and refrigerate until the next day.","Cut slices 1 cm thick, space them on a tray, and bake in a medium oven 15 minutes — very pale blond, no darker."]},
+
+{id:"no-butterbredele",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/20201223_-_Bredele_2.jpg/500px-20201223_-_Bredele_2.jpg",coll:"noel",title:"Butterbredele",origin:"Alsatian",effort:"easy",time:"40 min + overnight",serves:12,category:"Dessert",
+note:"The family sheet is folded across the end of this method — everything after rolling to 3 mm is the standard finish: cut, glaze, bake. Tell me if yours does it differently.",
+ing:[i("Butter","250 g"),i("Sugar","315 g"),i("Eggs","2"),i("Baking powder","4 g"),i("Flour","625 g"),i("Egg yolk, to glaze","1")],
+steps:["Sift the flour into a well. Work the butter soft, add the sugar and eggs, mix well, and set in the middle of the well.","Knead to a smooth, fairly firm dough. Rest overnight in the fridge.","Roll out to 3 mm.","Cut shapes — stars, hearts, crescents — and set on a lined tray. Glaze with beaten egg yolk.","Bake at 180°C for 8–10 minutes, until the edges just colour. Cool on a rack; they keep for weeks in a tin."]},
+
+{id:"no-macarons",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Macaron_de_Nancy_-_IMG_2841.JPG/500px-Macaron_de_Nancy_-_IMG_2841.JPG",coll:"noel",title:"Macarons de Noël",origin:"Alsatian",effort:"special",time:"45 min",serves:10,category:"Dessert",
+note:"The old style — hand-rolled, dusted with icing sugar, slid onto a wet cloth to release. The sheet's proportions are partly hidden by the fold; 100 g of caster sugar against 125 g of almonds is the classic ratio. Confirm and I'll lock it.",
+ing:[i("Ground almonds","125 g"),i("Egg whites","2"),i("Vanilla sugar","1 sachet"),i("Caster sugar","100 g"),i("Icing sugar, to dust","3 tbsp")],
+steps:["Beat the whites lightly — not to a meringue. Work part into the ground almonds to a smooth paste.","Incorporate the caster sugar and a third of the remaining white; then the vanilla sugar and the rest of the white the same way. The paste should be soft but hold its shape — add a drop more white only if needed.","Brush oil over a sheet of parchment cut to the tray.","Roll walnut-sized balls by hand, set them staggered, and flatten slightly.","Brush with a little water and dust with icing sugar.","Bake 18–20 minutes at 220°C, tray set high. The moment they turn blond, take them out.","Slide paper and cakes together onto a damp cloth; lift them off after a few minutes."]},
+
+{id:"no-tranches-miel",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Lebkuchen-pile.jpg/500px-Lebkuchen-pile.jpg",coll:"noel",title:"Tranches au Miel",origin:"Alsatian",effort:"special",time:"50 min",serves:12,category:"Dessert",
+note:"Honey slab with walnuts, dates and figs, glazed with rum icing and cut into 3 × 10 cm bars. Closer to lebkuchen than to cake.",
+ing:[i("Butter, softened","100 g"),i("Honey","250 g"),i("Vanilla sugar","1 sachet"),i("Eggs","3"),i("Flour","250 g"),i("Baking powder","1/2 sachet"),i("Walnuts, roughly chopped","250 g"),i("Dates, in small pieces","200 g"),i("Figs, in small pieces","200 g"),i("Icing sugar","200 g"),i("Egg white","1"),i("Rum","1 tbsp")],
+steps:["Beat the softened butter and honey to a mousse. Add the vanilla sugar, then the eggs one at a time.","Fold in the flour sifted with the baking powder, then the walnuts, dates and figs.","Spread on a parchment-lined tray and bake 20–25 minutes in a medium oven.","Once completely cool, glaze with icing sugar beaten with the egg white and a little rum.","Cut into slices, 3 × 10 cm."]},
+
+{id:"no-spritz",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Spritzgeb%C3%A4ck.jpg/500px-Spritzgeb%C3%A4ck.jpg",coll:"noel",title:"Spritzbredele",origin:"Alsatian",effort:"easy",time:"45 min",serves:12,category:"Dessert",
+note:"A full quarter of an hour beating the butter, sugar and yolks — that's where the texture comes from, don't shortcut it.",
+ing:[i("Butter, softened","250 g"),i("Sugar","250 g"),i("Egg yolks","5"),i("Flour","500 g")],
+steps:["Beat the butter, sugar and yolks together for a quarter of an hour.","Add the flour.","Pipe or press onto a buttered tray in S shapes or small batons.","Bake in a hot oven about 20 minutes, watching closely."]},
+
+{id:"no-schwowebredele",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/20201223_-_Bredele_2.jpg/500px-20201223_-_Bredele_2.jpg",coll:"noel",title:"Schwowebredele",origin:"Alsatian",effort:"easy",time:"40 min + overnight",serves:12,category:"Dessert",
+note:"Marked with a cross on the family sheet — the favourite. Cinnamon, chopped almonds and lemon zest, cut in hearts and clovers, glazed with egg.",
+ing:[i("Butter, softened","270 g"),i("Sugar","250 g"),i("Eggs","2"),i("Cinnamon","20 g"),i("Almonds, chopped","150 g"),i("Flour","500 g"),i("Lemon zest","1 lemon"),i("Egg, to glaze","1")],
+steps:["Knead the butter and flour together, then add the eggs, almonds, cinnamon, sugar and lemon zest.","Work to a very smooth dough and rest overnight.","Roll out the next day to 1.5 cm.","Cut hearts and clovers. Glaze with beaten egg.","Set on a buttered, floured tray and bake 12 minutes in a hot oven."]},
+
+{id:"no-duchessle",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Meringues_9027.jpg/500px-Meringues_9027.jpg",coll:"noel",title:"Duchessle",origin:"Alsatian",effort:"special",time:"35 min",serves:10,category:"Dessert",
+note:"Hazelnut meringue wafers sandwiched in pairs with praline — about 100 g for the whole batch.",
+ing:[i("Egg whites","3"),i("Sugar","100 g"),i("Butter, melted","30 g"),i("Flour","30 g"),i("Hazelnuts, ground","60 g"),i("Praline paste","100 g")],
+steps:["Beat the three whites to snow, then fold in the sugar, melted butter, flour and ground hazelnuts.","Set small mounds on a buttered tray and bake 8–10 minutes in a medium oven.","Once cool, sandwich the wafers together in pairs with praline."]},
+
+{id:"no-anisbredele",coll:"noel",title:"Anisbredele",origin:"Alsatian",effort:"special",time:"30 min + overnight",serves:12,category:"Dessert",
+note:"Twenty minutes to the ribbon, then a night drying uncovered — that's what gives each one its little foot. The tops must not colour.",
+ing:[i("Sugar","500 g"),i("Eggs","6"),i("Flour","600 g"),i("Aniseed","25 g")],
+steps:["Whisk the sugar and whole eggs about 20 minutes, until a thick mousse falls in a ribbon from the whisk.","Fold in the sifted flour with a spatula, then the aniseed.","Pipe with a plain tip onto a buttered, floured tray.","Leave to dry overnight, uncovered.","Bake the next day at medium heat about 10 minutes. The tops must stay pale — they should puff and stand on a small base."]},
+
+{id:"no-spirales",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Cinnamon_roll_in_Stockholm.jpg/500px-Cinnamon_roll_in_Stockholm.jpg",coll:"noel",title:"Spirales à la Cannelle",origin:"Alsatian",effort:"easy",time:"45 min",serves:10,category:"Dessert",
+note:"The cinnamon sugar is pressed into the dough with the rolling pin before rolling up — it stays put instead of spilling out.",
+ing:[i("Flour","150 g"),i("Hazelnuts, grated","75 g"),i("Sugar","50 g + 50 g"),i("Butter, slightly softened","75 g"),i("Baking powder","1 sachet"),i("Milk","1/4 glass"),i("Cinnamon","2 tsp")],
+steps:["In a bowl: flour, hazelnuts, 50 g sugar, baking powder and the butter in pieces. Knead by hand, adding the milk little by little — the dough should roll out easily.","Sprinkle the board with sugar and roll into a rectangle 1/2 cm thick.","Mix the remaining 50 g sugar with the cinnamon, sprinkle over, and press in lightly with the rolling pin.","Roll into a long cylinder and chill 30 minutes.","Cut rounds 1 cm thick, space them on a buttered tray, and bake in a medium oven about 15 minutes."]},
+];
+
+/* ── FAMILY, batch three ───────────────────────────────── */
+var FAMILY3 = [
+{id:"fam-creme-renversee",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Cremecaramel.jpg/500px-Cremecaramel.jpg",coll:"family",title:"Crème Renversée au Caramel",origin:"Family",effort:"special",time:"1 h 15 + chilling",serves:8,category:"Dessert",
+note:"From a hand-annotated recipe card. The sugar is corrected by hand from 200 g down to 160 g, the milk goes in cooled rather than boiling, and the caramel lines the moulds 3 mm deep.",
+ing:[i("Whole milk","1 L"),i("Sugar","160 g"),i("Eggs","6"),i("Vanilla pod","1"),i("Sugar, for the caramel","200 g")],
+steps:["For the caramel, cook the 200 g sugar with a little water (or dry) to a deep blond caramel. Stop the cooking by dipping the base of the pan in cold water, then loosen with a little hot water.","Line the bottoms of the moulds with caramel, about 3 mm deep.","Boil the milk with the split vanilla pod, then let it cool.","Break the whole eggs into a bowl with the 160 g sugar and beat.","Pour in the cooled milk little by little, mixing well.","Fill the moulds in one pass and lift off the foam.","Set the moulds in a deep tray, pour boiling water around them, and bake in a gentle oven — 150°C, 45 minutes.","Cool completely, then turn out onto chilled plates."]},
+
+{id:"fam-boulettes-farcies",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/%D7%9E%D7%A4%D7%A8%D7%95%D7%9D_%D7%91%D7%99%D7%AA%D7%99_%D7%9E%D7%A1%D7%95%D7%A8%D7%AA%D7%99.jpg/500px-%D7%9E%D7%A4%D7%A8%D7%95%D7%9D_%D7%91%D7%99%D7%AA%D7%99_%D7%9E%D7%A1%D7%95%D7%A8%D7%AA%D7%99.jpg",coll:"family",also:["shabbat"],title:"Boulettes Farcies — Petite Recette",origin:"Tunisian",effort:"special",time:"1 h 30",serves:4,category:"Main",
+note:"The small family version — 250 g of meat for 8 boulettes, used to stuff potatoes and peppers. The cinnamon and rose petals are what make it the house's. Rinse the grated onion, parsley and celery under the tap so they lose their bite.",
+ing:[i("Ground beef","250 g"),i("Stale bread, soaked in water","1 piece"),i("Onion, grated","1"),i("Celery, small branch, chopped","1"),i("Cinnamon","1/2 tsp"),i("Dried rose petals","1 pinch"),i("Egg","1/2 + 1 for frying"),i("Tomato paste","1 tbsp"),i("Flour, for rolling","60 g"),i("Potatoes and peppers, to stuff","4"),i("Garlic cloves","2"),i("Canned tomato","200 g"),i("Neutral oil, for frying","300 ml"),i("Sea salt","to taste"),i("Black pepper","to taste")],
+steps:["Rinse the grated onion, parsley and celery under the tap and squeeze dry.","Mix the meat with the soaked, squeezed bread, the onion, celery, cinnamon, rose petals, salt, pepper and the half egg.","Fill the hollowed potatoes and peppers with the mixture.","For the coating, stir a little tomato paste into a little water, then beat in an egg.","Roll the stuffed pieces in flour, then in the tomato-egg, and fry until golden.","When all are fried, lay them in a cocotte and add water mixed with canned tomato and garlic, up to the brim.","Simmer gently until the liquid has been absorbed."]},
+
+{id:"fam-guisada",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Torta_caprese_with_confectioner%27s_sugar_and_chocolate_sauce_%287830104492%29_%28cropped%29.jpg/500px-Torta_caprese_with_confectioner%27s_sugar_and_chocolate_sauce_%287830104492%29_%28cropped%29.jpg",coll:"family",title:"Guisada",origin:"Family",effort:"easy",time:"1 h",serves:8,category:"Dessert",
+note:"Six eggs, sugar, almonds — nothing else, so it's naturally flourless. Bitter almonds aren't sold in the US; three drops of bitter almond extract stand in for the three almonds.",
+ing:[i("Eggs","6"),i("Sugar","250 g"),i("Ground almonds","250 g"),i("Bitter almond extract","3 drops")],
+steps:["Mix the six yolks with the sugar.","Add the ground almonds and the bitter almond extract.","Beat the six whites to snow and fold them in.","Bake at 150°C for three quarters of an hour."]},
+];
+
+
+/* ── TUNISIAN JEWISH — second wave ─────────────────────── */
+var TUNIS2 = [
+{id:"tj-omek-houria",coll:"shabbat",title:"Omek Houria",origin:"Tunisian",effort:"easy",time:"35 min",serves:6,category:"Starter",
+note:"The carrot mash of the kemia — garlic, caraway, harissa, sharpened with vinegar. Traditionally crowned with tuna; here it's hard egg, olives and capers instead, which is also classic.",
+ing:[i("Carrots","1 kg"),i("Garlic cloves","4"),i("Ground caraway","1.5 tsp"),i("Harissa","1 tbsp"),i("Red wine vinegar","2 tbsp"),i("Olive oil","5 tbsp"),i("Hard-boiled eggs","3"),i("Black olives","100 g"),i("Capers","2 tbsp"),i("Flat-leaf parsley","small bunch"),i("Sea salt","to taste")],
+steps:["Boil the carrots in salted water until fully tender, 20 minutes or so, and drain well.","Crush them with a fork to a coarse purée — rustic, not smooth.","Work in the crushed garlic, caraway, harissa, vinegar, salt and half the oil while still warm.","Taste: it should be warm from the harissa and bright from the vinegar. Adjust both.","Spread on a plate, flood with the remaining oil, and garnish with quartered eggs, olives, capers and parsley. Serve warm or at room temperature."]},
+
+{id:"tj-msoki",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Msuki.png/500px-Msuki.png",coll:"shabbat",title:"Msoki",origin:"Tunisian",effort:"special",time:"3 h",serves:10,category:"Holiday",
+note:"The great Tunisian Jewish Passover stew — lamb, a whole market of spring greens, and matzah broken in at the end to drink the sauce. Every family's version differs; this one is the common ground.",
+ing:[i("Lamb shoulder, cubed","1.2 kg"),i("Spinach","400 g"),i("Swiss chard","400 g"),i("Artichoke hearts, quartered","6"),i("Fresh peas","300 g"),i("Fava beans, shelled","300 g"),i("Fennel bulb, chopped","1"),i("Celery stalks","3"),i("Spring onions","6"),i("Carrots","3"),i("Fresh dill","1 bunch"),i("Fresh mint","1/2 bunch"),i("Flat-leaf parsley","1 bunch"),i("Cilantro","1 bunch"),i("Garlic cloves","8"),i("Harissa","1 tbsp"),i("Ground coriander","2 tsp"),i("Olive oil","100 ml"),i("Matzah sheets","4"),i("Lemon","1")],
+steps:["Brown the lamb in the oil in a very large pot, in batches.","Add the garlic, harissa and coriander and fry a minute.","Add the carrots, celery, fennel and artichokes with water to just cover, and simmer 1 hour.","Chop all the greens and herbs — the pot should look impossibly full; it collapses.","Add the chard and spinach in handfuls, then the peas, favas and spring onions, and simmer gently another hour, until everything has melted into a deep green stew.","Fifteen minutes before serving, break the matzah into pieces and push it into the stew to soak.","Finish with lemon. Traditionally the pot is started before the holiday and only gets better."]},
+
+{id:"tj-fricasse",coll:"shabbat",title:"Fricassé Tunisien",origin:"Tunisian",effort:"special",time:"2 h",serves:8,category:"Starter",
+note:"The little fried sandwich bun of every Tunisian Jewish celebration. Said to have been invented by a hostess whose dessert fritters outlived her guests. Traditionally filled with tuna; this is the house version — potato, olives, preserved lemon, harissa, egg.",
+ing:[i("Flour","500 g"),i("Dry yeast","8 g"),i("Sugar","1 tsp"),i("Eggs","1 + 3 hard-boiled"),i("Warm water","220 ml"),i("Olive oil","3 tbsp"),i("Neutral oil, for frying","1 L"),i("Potatoes, boiled","3"),i("Black olives, pitted","120 g"),i("Preserved lemon","1"),i("Harissa","2 tbsp"),i("Capers","2 tbsp"),i("Sea salt","1.5 tsp")],
+steps:["Dissolve the yeast and sugar in the warm water. Add to the flour with the raw egg, salt and olive oil, and knead 10 minutes to a soft, smooth dough.","Rise covered 1 hour, until doubled.","Shape into small ovals the size of an egg, and rise again 30 minutes on an oiled tray.","Fry in oil at 170°C, a few at a time, turning once — 3–4 minutes to a deep gold. Drain.","Split each bun. Spread harissa, then fill: sliced boiled potato, olives, slivers of preserved lemon peel, capers, a wedge of hard egg.","Eat the day they're fried — they don't wait."]},
+
+{id:"tj-lablabi",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Bol_de_Leblabi_de_Tunisie%2C_21_mars_2017.jpg/500px-Bol_de_Leblabi_de_Tunisie%2C_21_mars_2017.jpg",coll:"shabbat",title:"Lablabi",origin:"Tunisian",effort:"easy",time:"1 h + overnight soak",serves:6,category:"Main",
+note:"Chickpea and bread soup, built in the bowl: stale bread torn in, broth over, then everyone doctors their own with cumin, harissa, lemon and a soft egg.",
+ing:[i("Dried chickpeas","400 g"),i("Garlic cloves","6"),i("Ground cumin","1 tbsp"),i("Harissa","2 tbsp"),i("Olive oil","80 ml"),i("Lemons","2"),i("Stale bread","1/2 loaf"),i("Eggs","6"),i("Capers","3 tbsp"),i("Sea salt","to taste")],
+steps:["Soak the chickpeas overnight. Drain, cover generously with fresh water, and simmer with half the garlic until completely tender — about an hour.","Season the broth with salt, cumin and the rest of the garlic, crushed.","Poach the eggs soft in the broth (or 6-minute boil them separately).","Build each bowl: torn stale bread at the bottom, chickpeas and plenty of broth over it.","Top with an egg, a spoon of harissa, capers, cumin, lemon juice and a ribbon of olive oil. Everyone stirs their own chaos."]},
+
+{id:"tj-ajlouk-courge",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Courge.jpg/500px-Courge.jpg",coll:"shabbat",title:"Ajlouk de Courge",origin:"Tunisian",effort:"easy",time:"40 min",serves:6,category:"Starter",
+note:"The pumpkin cousin of omek houria — squash mashed with harissa, caraway and lemon. In parts of Tunisia this one is the dish called tershi.",
+ing:[i("Butternut squash or pumpkin","1.2 kg"),i("Garlic cloves","3"),i("Harissa","1 tbsp"),i("Ground caraway","1 tsp"),i("Ground coriander","1 tsp"),i("Lemon","1"),i("Olive oil","4 tbsp"),i("Black olives, to serve","80 g"),i("Sea salt","to taste")],
+steps:["Peel and cube the squash. Boil or steam until completely soft, and drain very well — watery squash makes a watery ajlouk.","Mash with the crushed garlic, harissa, caraway, coriander and salt.","Sharpen with lemon and finish with the olive oil.","Serve at room temperature with olives, as part of the kemia."]},
+
+{id:"tj-felfel-mehchi",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Quinoa_stuffed_peppers.jpg/500px-Quinoa_stuffed_peppers.jpg",coll:"shabbat",title:"Felfel Mehchi",origin:"Tunisian",effort:"special",time:"1 h 15",serves:6,category:"Main",
+note:"Sweet peppers stuffed with spiced lamb, simmered in a harissa-tomato sauce.",
+ing:[i("Sweet peppers","6 large"),i("Ground lamb","600 g"),i("Rice, cooked","150 g"),i("Onion, grated","1"),i("Garlic cloves","4"),i("Flat-leaf parsley","1 bunch"),i("Ground cumin","2 tsp"),i("Sweet paprika","1 tbsp"),i("Egg","1"),i("Tomato paste","2 tbsp"),i("Crushed tomatoes","400 g"),i("Harissa","1 tbsp"),i("Olive oil","4 tbsp"),i("Sea salt","to taste")],
+steps:["Cut the tops off the peppers and seed them, keeping the caps.","Mix the lamb with the rice, grated onion, half the garlic, parsley, cumin, half the paprika, the egg and salt.","Fill the peppers loosely — the rice swells — and replace the caps.","In a wide pot, fry the tomato paste and remaining paprika in the oil, add the crushed tomatoes, harissa, remaining garlic and a glass of water.","Sit the peppers upright in the sauce, cover, and simmer gently 45 minutes, spooning sauce over now and then."]},
+
+{id:"tj-nwasser",coll:"shabbat",title:"Nwasser au Poulet",origin:"Tunisian",effort:"special",time:"1 h 30",serves:6,category:"Main",
+note:"Little pasta squares — traditionally hand-cut and dried at home — simmered until they drink a paprika-chicken sauce. A Shabbat lunch dish.",
+ing:[i("Nwasser or small pasta squares","400 g"),i("Chicken thighs","6"),i("Onion, chopped","1"),i("Tomato paste","3 tbsp"),i("Sweet paprika","1 tbsp"),i("Harissa","1 tsp"),i("Ground caraway","1/2 tsp"),i("Garlic cloves","4"),i("Chickpeas, cooked","200 g"),i("Olive oil","5 tbsp"),i("Sea salt","to taste"),i("Black pepper","to taste")],
+steps:["Brown the chicken in the oil, then soften the onion in the same pot.","Fry the tomato paste, paprika, harissa, caraway and garlic 2 minutes, until dark and fragrant.","Add water to cover the chicken, plus the chickpeas, and simmer 40 minutes.","Lift the chicken out. Add the nwasser to the sauce with a little more water and cook gently, stirring, until tender and the sauce clings — like a rustic risotto.","Return the chicken on top and serve from the pot."]},
+
+{id:"tj-loubia",coll:"shabbat",title:"Loubia",origin:"Tunisian",effort:"easy",time:"2 h + overnight soak",serves:6,category:"Main",
+note:"White beans stewed soft in a cumin-paprika-tomato sauce. Humble, and one of the most loved.",
+ing:[i("Dried white beans","500 g"),i("Beef stew meat (optional)","400 g"),i("Onion, chopped","1"),i("Garlic cloves","5"),i("Tomato paste","3 tbsp"),i("Ground cumin","2 tsp"),i("Sweet paprika","1 tbsp"),i("Harissa","1 tbsp"),i("Olive oil","5 tbsp"),i("Flat-leaf parsley","1/2 bunch"),i("Sea salt","to taste")],
+steps:["Soak the beans overnight and drain.","Brown the meat, if using, in the oil; soften the onion with it.","Fry the tomato paste, cumin, paprika, harissa and garlic 2 minutes.","Add the beans and water to cover by 4 cm. Simmer, partly covered, 1.5–2 hours, until the beans are soft and the sauce has body. Salt only in the last half hour.","Finish with parsley and serve with bread or over couscous."]},
+
+{id:"tj-debla",coll:"shabbat",title:"Debla",origin:"Tunisian",effort:"special",time:"1 h 15",serves:12,category:"Dessert",
+note:"Ribbons of thin dough wound into roses on a fork as they fry, then bathed in honey syrup and dusted with sesame or pistachio. The showpiece of the pastry tray.",
+ing:[i("Flour","300 g"),i("Eggs","3"),i("Neutral oil","2 tbsp + 1 L for frying"),i("Orange blossom water","1 tbsp"),i("Honey","300 g"),i("Sugar","150 g"),i("Lemon","1/2"),i("Sesame seeds or ground pistachios","4 tbsp")],
+steps:["Knead the flour, eggs, 2 tbsp oil and orange blossom water into a firm, smooth dough. Rest 30 minutes.","Roll as thin as you can — pasta-machine thin — and cut into long ribbons about 3 cm wide.","Make the syrup: honey, sugar, a glass of water and the lemon juice, simmered 10 minutes.","Heat the frying oil to 170°C. Prong the end of a ribbon on a fork, dip into the oil, and turn the fork so the ribbon winds into a rose as it fries. Seconds per piece.","Dip each hot rose straight into the warm syrup, lift out, and scatter with sesame or pistachio. Dry on a rack."]},
+
+{id:"tj-makroudh",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Makrouds.JPG/500px-Makrouds.JPG",coll:"shabbat",title:"Makroudh",origin:"Tunisian",effort:"special",time:"1 h 30",serves:12,category:"Dessert",
+note:"Semolina diamonds with a date heart, fried and drowned in honey. Kairouan's pride, and no Tunisian celebration is without them.",
+ing:[i("Fine semolina","500 g"),i("Butter, melted","150 g"),i("Neutral oil","50 ml + 1 L for frying"),i("Warm water","150 ml"),i("Date paste","300 g"),i("Ground cinnamon","1 tsp"),i("Orange zest","1 orange"),i("Honey","400 g"),i("Orange blossom water","1 tbsp"),i("Sea salt","1 pinch")],
+steps:["Work the melted butter and oil into the semolina with the salt until sandy. Add the warm water little by little to a firm dough that holds together. Rest 30 minutes.","Knead the date paste with the cinnamon and orange zest until pliable, and roll into thin ropes.","Divide the dough, roll each piece into a thick rope, and press a channel down the middle. Lay in the date rope, close the dough over it, and flatten gently into a bar.","Cut on the diagonal into diamonds.","Fry at 170°C until deep gold, or bake at 180°C for 20 minutes.","Warm the honey with the orange blossom water and dip each hot makroudh. Drain on a rack."]},
+
+{id:"tj-yoyo",coll:"shabbat",title:"Yoyos",origin:"Tunisian",effort:"special",time:"1 h",serves:10,category:"Dessert",
+note:"Orange-scented ring doughnuts, fried and glossed in honey syrup, finished with sesame.",
+ing:[i("Flour","400 g"),i("Eggs","3"),i("Sugar","60 g"),i("Orange juice and zest","1 orange"),i("Neutral oil","60 ml + 1 L for frying"),i("Baking powder","1 sachet"),i("Honey","300 g"),i("Lemon","1/2"),i("Sesame seeds","3 tbsp")],
+steps:["Whisk the eggs with the sugar, orange juice and zest and 60 ml oil. Work in the flour and baking powder to a soft dough. Rest 20 minutes.","Roll ropes, join them into rings the size of your palm.","Fry at 170°C, turning once, until puffed and deep gold.","Simmer the honey with a glass of water and the lemon juice into a light syrup.","Dip the hot yoyos in the warm syrup, scatter with sesame, and let them drip on a rack."]},
+
+{id:"tj-mhalbiya",coll:"shabbat",title:"Mhalbiya",origin:"Tunisian",effort:"easy",time:"30 min + chilling",serves:6,category:"Dessert",
+note:"Rice pudding perfumed with geranium water, topped with crushed pistachios and dates. Ready in under half an hour.",
+ing:[i("Short-grain rice","150 g"),i("Whole milk","1 L"),i("Sugar","100 g"),i("Cornstarch","2 tbsp"),i("Geranium water (or rose water)","2 tbsp"),i("Pistachios, crushed","60 g"),i("Dates, sliced","6")],
+steps:["Rinse the rice and simmer it in the milk over low heat, stirring often, until tender — about 20 minutes.","Stir the cornstarch into a little cold milk, add with the sugar, and cook 3–4 minutes more until creamy.","Off the heat, perfume with the geranium water.","Pour into bowls, chill, and top with crushed pistachios and dates."]},
+];
+
+
 /* ── SHABBAT — Tunisian Jewish table ───────────────────── */
 var SHABBAT = [
 {id:"sh-pkaila",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Pkaila.jpg/500px-Pkaila.jpg",coll:"shabbat",title:"T'fina Pkaila",origin:"Tunisian",effort:"special",time:"4 h",serves:8,category:"Main",
@@ -1607,7 +1859,7 @@ function load() {
 }
 
 /* ── recipe pool ────────────────────────────────────────── */
-RECIPES = RECIPES.concat(FAMILY, FAMILY2, SHABBAT, BRUNCH);
+RECIPES = RECIPES.concat(FAMILY, FAMILY2, FAMILY3, SHABBAT, TUNIS2, BRUNCH, NOEL);
 RECIPES.forEach(function (r) { r.house = true; });
 (function () {
   var byId = {};
@@ -1735,6 +1987,185 @@ function todaysMoment() {
 }
 
 
+
+/* ── the week plan ──────────────────────────────────────── */
+var PLAN = {};
+function loadPlan() { try { PLAN = JSON.parse(localStorage.getItem('kitchen.plan') || '{}'); } catch (e) { PLAN = {}; } }
+function savePlan() { try { localStorage.setItem('kitchen.plan', JSON.stringify(PLAN)); } catch (e) {} }
+
+function dkey(d) {
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+function weekDays() {
+  var now = new Date();
+  var mon = new Date(now);
+  mon.setDate(now.getDate() - ((now.getDay() + 6) % 7));
+  var out = [];
+  for (var i = 0; i < 7; i++) {
+    var d = new Date(mon); d.setDate(mon.getDate() + i);
+    out.push({ key: dkey(d),
+      label: d.toLocaleDateString(undefined, { weekday: 'short' }),
+      num: d.getDate(),
+      today: dkey(d) === dkey(now),
+      friday: d.getDay() === 5 });
+  }
+  return out;
+}
+
+function renderWeek() {
+  var days = weekDays();
+  var planned = days.filter(function (d) { return PLAN[d.key] && findRecipe(PLAN[d.key]); });
+  return '<div class="home-label">This week</div>' +
+    '<div class="week">' + days.map(function (d) {
+      var r = PLAN[d.key] && findRecipe(PLAN[d.key]);
+      return '<button class="day ' + (d.today ? 'today' : '') + (r ? ' set' : '') + '" data-plan="' + d.key + '">' +
+        '<i>' + d.label + (d.friday ? ' 🕯️' : '') + '</i><em>' + d.num + '</em>' +
+        (r ? ((r.img || r.thumb) ? '<img src="' + esc(r.img || r.thumb) + '" alt="" loading="lazy" />' : '<b>🍽️</b>') +
+             '<span>' + esc(r.title) + '</span>'
+           : '<b>+</b><span class="ghost">plan</span>') +
+      '</button>';
+    }).join('') + '</div>' +
+    (planned.length ? '<button class="btn-ghost week-send" data-weeklist="1">🛒 Send the week to the list · ' + planned.length + ' dinner' + (planned.length > 1 ? 's' : '') + '</button>' : '');
+}
+
+function openPlanPicker(key) {
+  sheetState = null;
+  var d = new Date(key + 'T12:00:00');
+  var nice = d.toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' });
+  var cur = PLAN[key] && findRecipe(PLAN[key]);
+  document.getElementById('sheetBg').classList.add('on');
+  var el = document.getElementById('sheet');
+
+  function draw(q) {
+    var list;
+    if (q) {
+      var ql = q.toLowerCase();
+      list = ALL.filter(function (r) { return r.title.toLowerCase().indexOf(ql) > -1; }).slice(0, 14);
+    } else {
+      var day = d.getDay();
+      var sugg = day === 5 ? ALL.filter(function (r) { return r.coll === 'shabbat' && courseOf(r) === 'main'; })
+                           : simplePool();
+      list = sugg.slice(0, 5).concat(seasonalPicks(4)).filter(function (r, i2, a) {
+        return a.map(function (x) { return x.id; }).indexOf(r.id) === i2;
+      }).slice(0, 9);
+    }
+    el.innerHTML =
+      '<div class="sheet-head"><div class="grab"></div><button class="x-btn" data-close="1">✕</button></div>' +
+      '<div class="sheet-body">' +
+        '<h2 style="font-family:var(--serif);font-size:22px;font-weight:700;margin-bottom:4px">' + nice + '</h2>' +
+        '<p style="font-size:13px;color:var(--muted);margin-bottom:14px">' + (cur ? 'Planned: <b>' + esc(cur.title) + '</b>' : 'What\'s for dinner?') + '</p>' +
+        (cur ? '<button class="btn-ghost" data-planclear="' + key + '" style="margin-bottom:14px;color:var(--primary);border-color:var(--primary)">Remove ' + esc(cur.title) + '</button>' : '') +
+        '<input class="field" id="planSearch" placeholder="Search the ' + ALL.length + ' recipes" value="' + esc(q || '') + '" />' +
+        '<div class="section-title" style="margin-top:16px">' + (q ? 'Matches' : (d.getDay() === 5 ? 'For a Friday' : 'Easy ideas + in season')) + '</div>' +
+        list.map(function (r) {
+          return '<div class="rec" data-planpick="' + r.id + '" data-plankey="' + key + '">' +
+            ((r.img || r.thumb) ? '<img class="rec-thumb" src="' + esc(r.img || r.thumb) + '" alt="" loading="lazy" />' : '<div class="rec-thumb">🍽️</div>') +
+            '<div class="rec-body"><div class="rec-title">' + esc(r.title) + '</div>' +
+            '<div class="rec-meta">' + esc(r.origin) + (r.time ? ' · ' + esc(r.time) : '') + ' · ~' + estimateKcal(r) + ' kcal</div></div></div>';
+        }).join('') +
+      '</div>';
+    var inp = document.getElementById('planSearch');
+    inp.addEventListener('input', function () { draw(inp.value.trim()); });
+    if (q) { inp.focus(); inp.setSelectionRange(inp.value.length, inp.value.length); }
+  }
+  draw('');
+}
+
+function sendWeekToList(){
+  var days = weekDays(), added = 0, merged = 0;
+  days.forEach(function (d) {
+    var r = PLAN[d.key] && findRecipe(PLAN[d.key]);
+    if (!r) return;
+    var f = OPT.serves / (r.serves || 4);
+    r.ing.forEach(function (x) {
+      if (pantryHas(S.pantry, x.name)) return;
+      var q = displayQty(x.qty, f);
+      var hit = S.items.filter(function (it) { return !it.done && it.name.toLowerCase() === x.name.toLowerCase(); })[0];
+      if (hit) {
+        if (q && hit.qty && hit.qty.indexOf(q) === -1) hit.qty = hit.qty + ' + ' + q;
+        else if (q && !hit.qty) hit.qty = q;
+        hit.from = hit.from || [];
+        if (hit.from.indexOf(r.title) === -1) hit.from.push(r.title);
+        merged++;
+      } else {
+        S.items.push({ id: uid(), name: x.name, qty: q, aisle: x.aisle || guessAisle(x.name), done: false, from: [r.title] });
+        added++;
+      }
+    });
+  });
+  save(); renderList(); renderBadge();
+  toast(added + ' added' + (merged ? ', ' + merged + ' combined' : '') + ' — the week is on the list');
+  setTab('list');
+}
+
+
+/* ── the weather decides part of dinner ─────────────────
+   Open-Meteo is keyless and allows the browser in directly.
+   Location: try the device once, quietly fall back to NYC.   */
+var WX = null;
+function fetchWeather(cb) {
+  try {
+    var cached = JSON.parse(sessionStorage.getItem('kitchen.wx') || 'null');
+    if (cached && Date.now() - cached.t < 1800000) { WX = cached; return cb && cb(); }
+  } catch (e) {}
+  var go = function (lat, lon) {
+    fetch('https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon +
+          '&current=temperature_2m,weather_code&timezone=auto')
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (!d.current) return;
+        WX = { t: Date.now(), temp: Math.round(d.current.temperature_2m), code: d.current.weather_code };
+        try { sessionStorage.setItem('kitchen.wx', JSON.stringify(WX)); } catch (e) {}
+        cb && cb();
+      }).catch(function () {});
+  };
+  var fallback = setTimeout(function () { go(40.777, -73.956); }, 2500);
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function (pos) {
+      clearTimeout(fallback);
+      go(pos.coords.latitude.toFixed(3), pos.coords.longitude.toFixed(3));
+    }, function () { clearTimeout(fallback); go(40.777, -73.956); }, { timeout: 2200, maximumAge: 3600000 });
+  } else { clearTimeout(fallback); go(40.777, -73.956); }
+}
+
+function wxMood() {
+  if (!WX) return null;
+  var t = WX.temp, c = WX.code;
+  var wet = (c >= 51 && c <= 99);
+  var icon = c === 0 ? '☀️' : c <= 3 ? '⛅' : c <= 48 ? '🌫️' : c <= 67 ? '🌧️' : c <= 77 ? '❄️' : c <= 82 ? '🌦️' : '⛈️';
+  if (t >= 27) return { key: 'hot', icon: icon, temp: t, line: 'Too hot for the oven — keep it cold and fresh' };
+  if (wet)      return { key: 'wet', icon: icon, temp: t, line: 'Wet outside — a pot on the stove kind of night' };
+  if (t <= 8)  return { key: 'cold', icon: icon, temp: t, line: 'Cold out — something long and hearty' };
+  return { key: 'mild', icon: icon, temp: t, line: 'Perfect cooking weather' };
+}
+
+var WX_HOT = /salad|gazpacho|tabbouleh|fattoush|panzanella|horiatiki|slaw|cucumber|melon|labneh|hummus|zaalouk|mechouia|ceviche|crudo|ajlouk|houria|caprese|tzatziki/i;
+var WX_COMFORT = /stew|braise|soup|tagine|tajine|daube|bourguignon|blanquette|chili|harira|couscous|cassoulet|pot roast|gratin|kamounia|loubia|lablabi|marka|pkaila|msoki|navarin|goulash|curry|dal|pho|ramen/i;
+
+function weatherPicks(n) {
+  var mood = wxMood();
+  if (!mood) return [];
+  var pool = ALL.filter(function (r) {
+    if (!(r.img || r.thumb) || r.exempt) return false;
+    var c = courseOf(r);
+    if (mood.key === 'hot')
+      return (WX_HOT.test(r.title) || (weightOf(r) === 'light' && c === 'starter')) && !WX_COMFORT.test(r.title);
+    if (mood.key === 'cold' || mood.key === 'wet')
+      return c === 'main' && (WX_COMFORT.test(r.title) || weightOf(r) === 'heavy');
+    return c === 'main' && r.house && weightOf(r) !== 'heavy';
+  });
+  pool.sort(function (a, b) { return (b.house ? 1 : 0) - (a.house ? 1 : 0); });
+  var seed = todaySeed(), out = [], step = Math.max(1, Math.floor(pool.length / (n || 6)));
+  for (var k = 0; k < pool.length && out.length < (n || 6); k += step) out.push(pool[(k + seed) % pool.length]);
+  return out;
+}
+
+function surpriseTonight() {
+  var pool = ALL.filter(function (r) { return courseOf(r) === 'main' && (r.img || r.thumb) && !r.exempt; });
+  var r = pool[Math.floor(Math.random() * pool.length)];
+  openSheet(r);
+}
+
 /* ── home: day, time, and one honest suggestion ─────────── */
 function parseMinutes(t) {
   if (!t) return 60;
@@ -1742,15 +2173,19 @@ function parseMinutes(t) {
   return (h ? Number(h[1]) * 60 : 0) + (m ? Number(m[1]) : 0) || 60;
 }
 
-function simpleOfTheDay() {
+function simplePool() {
   var pool = ALL.filter(function (r) {
     return r.effort === 'easy' && courseOf(r) === 'main' && (r.img || r.thumb) &&
       r.ing.length <= 12 && parseMinutes(r.time) <= 50 &&
       r.coll !== 'brunch' && !r.exempt && ['Bread', 'Base', 'Side'].indexOf(r.category) === -1;
   });
-  // prefer the curated ones but keep enough variety for a different dish most days
   var housePool = pool.filter(function (r) { return r.house; });
-  var use = housePool.length >= 15 ? housePool : pool;
+  return housePool.length >= 15 ? housePool : pool;
+}
+
+function simpleOfTheDay() {
+  if (S.homePick) return S.homePick;
+  var use = simplePool();
   return use[todaySeed() % use.length];
 }
 
@@ -1763,20 +2198,44 @@ function renderHome() {
   var d = new Date();
   var date = d.toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' });
   var time = d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
-  var sd = simpleOfTheDay();
+  var plannedToday = PLAN[dkey(d)] && findRecipe(PLAN[dkey(d)]);
+  var sd = plannedToday || simpleOfTheDay();
   var mo = todaysMoment();
   var openItems = S.items.filter(function (x) { return !x.done; }).length;
   var mins = parseMinutes(sd.time);
 
   document.getElementById('homeBody').innerHTML =
-    '<div class="home-head"><i>' + greeting() + '</i><b>' + date + '</b><span id="homeClock">' + time + '</span></div>' +
+    '<div class="home-head"><i>' + greeting() + '</i><b>' + date + '</b>' +
+      '<span id="homeClock">' + time + (WX ? ' · ' + wxMood().icon + ' ' + WX.temp + '°' : '') + '</span></div>' +
     (mo ? '<button class="moment" data-gocoll="' + mo.coll + '"><span>' + mo.icon + '</span><div><b>' + mo.title + '</b><i>' + mo.line + '</i></div><em>›</em></button>' : '') +
-    '<div class="home-label">Tonight, keep it simple</div>' +
+    '<div class="home-label">' + (plannedToday ? 'Tonight — as planned' : 'Tonight, keep it simple') + '</div>' +
     '<div class="dayhero" data-recipe="' + sd.id + '">' +
       '<img src="' + esc(sd.img || sd.thumb) + '" alt="" />' +
       '<div class="dayhero-cap"><b>' + esc(sd.title) + '</b>' +
       '<span>' + mins + ' min · ' + sd.ing.length + ' ingredients · ~' + estimateKcal(sd) + ' kcal</span></div>' +
-      '<span class="dayhero-go">Cook it ›</span></div>' +
+      (plannedToday ? '' : '<button class="dayhero-dice" data-shuffle="1" aria-label="Another suggestion">🎲</button>') + '</div>' +
+    (plannedToday ? '' : '<div class="hero-acts">' +
+      '<button data-shuffle="1">🎲 Another easy one</button>' +
+      '<button data-surprise="1">✨ Surprise me</button></div>') +
+    (function () {
+      var mood = wxMood();
+      if (!mood) return '';
+      var picks = weatherPicks(6);
+      if (!picks.length) return '';
+      return '<div class="home-label">' + mood.icon + ' ' + esc(mood.line) + '</div>' +
+        '<div class="scroller wx">' + picks.map(bigCard).join('') + '</div>';
+    })() +
+    (function () {
+      var hot = freshness().filter(function (x) { return x.left !== null && x.left <= 2; })
+        .sort(function (a, b) { return a.left - b.left; });
+      if (!hot.length) return '';
+      return '<button class="usefirst" data-goto="cook"><span>⏰</span><div><b>Use these first</b>' +
+        '<i>' + hot.slice(0, 4).map(function (x) {
+          return esc(x.e.n) + ' (' + (x.left < 0 ? 'past it' : x.left === 0 ? 'today' : x.left + 'd') + ')';
+        }).join(' · ') + '</i></div><em>›</em></button>';
+    })() +
+    renderWeek() +
+    '<div class="home-label">Go to</div>' +
     '<div class="home-grid">' +
       '<button class="home-tile" data-goto="list"><span>🛒</span><b>The list</b><i>' + (openItems ? openItems + ' to buy' : 'empty') + '</i></button>' +
       '<button class="home-tile" data-goto="cook"><span>🍳</span><b>What can I make?</b><i>' + S.pantry.length + ' in the kitchen</i></button>' +
@@ -1882,11 +2341,48 @@ function itemHTML(it) {
     '<div class="tick">' + (it.done ? '✓' : '') + '</div>' +
     '<div class="item-emoji">' + emojiFor(it.name, it.aisle) + '</div>' +
     '<div class="item-body"><div class="item-name">' + esc(it.name) + '</div>' +
-    (it.from.length ? '<div class="item-from">for ' + esc(it.from.join(' · ')) + '</div>' : '') + '</div>' +
-    '<div class="item-qty">' + esc(it.qty) + '</div>' +
+    ((it.from || []).length ? '<div class="item-from">for ' + esc(it.from.join(' · ')) + '</div>' : '') + '</div>' +
+    '<div class="item-qty">' + esc(it.qty || '') + '</div>' +
     '<button class="item-x" data-del="' + it.id + '">×</button></div>';
 }
 
+
+
+/* ── shop the list on a delivery service ────────────────
+   No API key exists for FreshDirect, and Instacart's real
+   integration needs a server-held key — so in the static file
+   each item deep-links into the service's search instead.    */
+var SHOPS = {
+  instacart:  { name: 'Instacart',   e: '🥕', url: function (q) { return 'https://www.instacart.com/store/s?k=' + encodeURIComponent(q); } },
+  freshdirect:{ name: 'FreshDirect', e: '🍏', url: function (q) { return 'https://www.freshdirect.com/search?searchParams=' + encodeURIComponent(q); } }
+};
+
+function cleanQuery(name) {
+  // strip pack sizes and counts so the search matches products
+  return name.replace(/\b\d+(\.\d+)?\s*(oz|lb|g|kg|ml|l|ct|pack|bag|dozen)\b/gi, '')
+             .replace(/\(.*?\)/g, '').replace(/\s{2,}/g, ' ').trim();
+}
+
+function openShopSheet(key) {
+  var svc = SHOPS[key];
+  var items = S.items.filter(function (x) { return !x.done; });
+  if (!items.length) return toast('The list is empty');
+  sheetState = null;
+  document.getElementById('sheetBg').classList.add('on');
+  document.getElementById('sheet').innerHTML =
+    '<div class="sheet-head"><div class="grab"></div><button class="x-btn" data-close="1">✕</button></div>' +
+    '<div class="sheet-body">' +
+      '<h2 style="font-family:var(--serif);font-size:22px;font-weight:700;margin-bottom:4px">' + svc.e + ' Shop on ' + svc.name + '</h2>' +
+      '<p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.5">Each item opens ' + svc.name + ' with the search done. Add to cart there, come back, tap the next one.</p>' +
+      items.map(function (it) {
+        return '<a class="item shoplink" href="' + svc.url(cleanQuery(it.name)) + '" target="_blank" rel="noreferrer">' +
+          '<div class="item-emoji">' + emojiFor(it.name, it.aisle) + '</div>' +
+          '<div class="item-body"><div class="item-name">' + esc(it.name) + '</div>' +
+          (it.qty ? '<div class="item-meta">' + esc(it.qty) + '</div>' : '') + '</div>' +
+          '<span class="shoplink-go">Search ↗</span></a>';
+      }).join('') +
+    '</div>';
+}
 
 /* ── getting the list out of the app ────────────────────── */
 function listAsText() {
@@ -2140,7 +2636,8 @@ function renderRecipes() {
   }
 
   if (S.coll !== 'all') {
-    var blurb = { family: ['👨‍👩‍👧‍👦','Family recipes',"The ones that came from your kitchen, written down as you sent them."],
+    var blurb = { noel: ['🎄','The Christmas tin','The Alsatian bredele sheet — Strasbourg in ten cookies. Bake in December, keep in tins.'],
+                  family: ['👨‍👩‍👧‍👦','Family recipes',"The ones that came from your kitchen, written down as you sent them."],
                   shabbat: ['🕯️','Shabbat','The Tunisian Friday night table — kemia salads, a long-simmered t\'fina, couscous.'],
                   brunch: ['🥐','Brunch','Eggs, pastry and things you can make while people are still arriving.'] }[S.coll];
     if (blurb) html += '<div class="coll-head"><span>' + blurb[0] + '</span><b>' + blurb[1] + '</b><i>' + blurb[2] + '</i></div>';
@@ -2159,6 +2656,7 @@ function bigCard(r) {
     '<div class="tile-cap"><b>' + esc(r.title) + '</b><i>' + WEIGHT_LABEL[weightOf(r)].split(' ')[0] + ' ' + esc(r.origin) + ' · ~' + estimateKcal(r) + ' kcal</i></div>' +
     (r.coll === 'family' ? '<span class="tile-flag fam">FAMILY</span>'
       : r.coll === 'shabbat' ? '<span class="tile-flag sh">SHABBAT</span>'
+      : r.coll === 'noel' ? '<span class="tile-flag no">NOËL</span>'
       : r.coll === 'brunch' ? '<span class="tile-flag br">BRUNCH</span>'
       : r.house ? '<span class="tile-flag">CHEF\'S PICK</span>' : '') +
     (isVegetarian(r) ? '<span class="tile-veg">🌱</span>' : '') + '</div>';
@@ -2647,6 +3145,101 @@ function drawCook() {
     '</div></div>';
 }
 
+
+/* ── staples: what the receipts say you actually rebuy ────
+   Sourced from FreshDirect receipts of 18 May and 17 Jun 2026.
+   "Every order" appeared in both; the rest appeared once.     */
+var STAPLES = [
+ {n:"S.Pellegrino Sparkling Water 1L",d:"4–10 bottles per order",p:"$1.87–3.29",c:2,a:"pantry"},
+ {n:"Organic Large Eggs, dozen",d:"FreshDirect own brand",p:"$4.99–6.49",c:2,a:"dairy"},
+ {n:"Hass Avocados, Ready-to-Eat 2ct",d:"2–3 packs per order",p:"$4.99–5.99",c:2,a:"produce"},
+ {n:"Raspberries 6oz",d:"2 per order, every order",p:"$2.50–3.99",c:2,a:"produce"},
+ {n:"Organic Pink Lady Apples 4ct",d:"",p:"$5.99–7.69",c:2,a:"produce"},
+ {n:"Mandarin Clementines 3lb bag",d:"",p:"$5.99",c:2,a:"produce"},
+ {n:"Andrew & Everett Shredded Fiesta Blend 6oz",d:"",p:"$6.19",c:2,a:"dairy"},
+ {n:"ParmCrisps Original 6ct",d:"",p:"$11.59–15.39",c:2,a:"pantry"},
+ {n:"Brooklyn Born Dark Chocolate Keto Bar",d:"salted almonds",p:"$6.59",c:2,a:"pantry"},
+ {n:"Organic Rainbow Pepper Pack 3ct",d:"1–2 per order",p:"$7.79–8.99",c:2,a:"produce"},
+ {n:"Wild Wonders Tomatoes 12oz",d:"Sunset Grown",p:"$3.99–4.99",c:2,a:"produce"},
+ {n:"Broccoli Florets",d:"bagged, sometimes organic",p:"$5.99–6.49",c:2,a:"produce"},
+ {n:"Stone fruit — peaches & nectarines",d:"4–6 of each, in season",p:"$3.19–4.99/lb",c:2,a:"produce"},
+ {n:"Frozen berries (Wyman's)",d:"blueberries or triple berry",p:"$6.19–17.99",c:2,a:"frozen"},
+ {n:"Green beans, trimmed",d:"French or snipped",p:"$3.19–4.49",c:2,a:"produce"},
+ {n:"Isigny Ste Mère Salted Butter",d:"",p:"$6.99",c:1,a:"dairy"},
+ {n:"Hebrew National Beef Salami 12oz",d:"",p:"$13.79",c:1,a:"butcher"},
+ {n:"Boar's Head Cheddar, sliced 1lb",d:"black wax",p:"$12.49/lb",c:1,a:"dairy"},
+ {n:"Liuzzi Perlini mozzarella 7oz",d:"",p:"$8.99",c:1,a:"dairy"},
+ {n:"Pitted Greek Olive Mix",d:"",p:"$6.99",c:1,a:"pantry"},
+ {n:"Romaine Hearts 3ct",d:"organic, local",p:"$5.39",c:1,a:"produce"},
+ {n:"Lemons",d:"6 at a time",p:"$0.75/ea",c:1,a:"produce"},
+ {n:"Mini Seedless Cucumbers 14oz",d:"",p:"$3.19",c:1,a:"produce"},
+ {n:"Belgian Endive",d:"",p:"$6.49/lb",c:1,a:"produce"},
+ {n:"Rainbow Baby Carrots 12oz",d:"organic",p:"$3.19",c:1,a:"produce"},
+ {n:"Asparagus 1lb",d:"local, in season",p:"$5.99",c:1,a:"produce"},
+ {n:"Black Seedless Grapes 2lb",d:"",p:"$3.49/lb",c:1,a:"produce"},
+ {n:"Granny Smith Apples 4ct",d:"organic",p:"$8.79",c:1,a:"produce"},
+ {n:"Watermelon, cubed 8oz",d:"",p:"$6.59",c:1,a:"produce"},
+ {n:"Bays English Muffins 6ct",d:"frozen",p:"$5.19",c:1,a:"bakery"},
+ {n:"Maison Perrier Cans 8ct",d:"",p:"$5.24",c:1,a:"pantry"},
+ {n:"Shepherd's Salad",d:"FreshDirect prepared",p:"$4.49–8.29",c:1,a:"other"}
+];
+
+var STAP = { hidden: [], custom: [] };
+function loadStaples() {
+  try { var o = JSON.parse(localStorage.getItem('kitchen.staples') || '{}');
+        STAP.hidden = o.hidden || []; STAP.custom = o.custom || []; } catch (e) {}
+}
+function saveStaples() { try { localStorage.setItem('kitchen.staples', JSON.stringify(STAP)); } catch (e) {} }
+function activeStaples() {
+  return STAPLES.filter(function (x) { return STAP.hidden.indexOf(x.n) === -1; })
+    .concat(STAP.custom.filter(function (x) { return STAP.hidden.indexOf(x.n) === -1; }));
+}
+
+function onListAlready(name) {
+  var n = name.toLowerCase();
+  return S.items.some(function (x) { return !x.done && x.name.toLowerCase() === n; });
+}
+
+function renderStaples() {
+  var el = document.getElementById('staplesBody');
+  var edit = S.stapEdit;
+  var row = function (x) {
+    var got = onListAlready(x.n);
+    return '<div class="item stap"><div class="item-emoji">' + emojiFor(x.n, x.a) + '</div>' +
+      '<div class="item-body"><div class="item-name">' + esc(x.n) + '</div>' +
+      (x.mine ? '<div class="item-meta">yours</div>' : x.p ? '<div class="item-meta">' + esc(x.p) + '</div>' : '') + '</div>' +
+      (edit ? '<button class="stap-del" data-stapdel="' + esc(x.n) + '">✕</button>'
+            : got ? '<span class="stap-got">✓</span>'
+                  : '<button class="stap-add" data-staple="' + esc(x.n) + '" data-aisle="' + x.a + '">+</button>') +
+    '</div>';
+  };
+  var act = activeStaples();
+  var reg = act.filter(function (x) { return x.c > 1 || x.mine; });
+  var occ = act.filter(function (x) { return x.c === 1 && !x.mine; });
+  el.innerHTML =
+    '<div class="card">' +
+      '<div class="stap-head"><div class="section-title" style="margin:0">🔁 Every order</div>' +
+        '<button class="stap-edit ' + (edit ? 'on' : '') + '" data-stapedit="1">' + (edit ? 'Done' : 'Edit') + '</button></div>' +
+      reg.map(row).join('') +
+      '<div class="stap-new"><input class="field" id="stapNew" placeholder="Add your own…" />' +
+        '<button class="stap-newbtn" id="stapNewBtn">Add</button></div>' +
+      (!edit && reg.length ? '<button class="btn" data-stapleall="1" style="margin-top:10px">🛒 Add all ' + reg.length + ' to the list</button>' : '') +
+      (edit && STAP.hidden.length ? '<button class="btn-ghost" data-staprestore="1" style="margin-top:10px">Restore ' + STAP.hidden.length + ' removed</button>' : '') +
+    '</div>' +
+    (occ.length ? '<div class="card"><div class="section-title">Sometimes</div>' + occ.map(row).join('') + '</div>' : '');
+}
+
+function addCustomStaple() {
+  var inp = document.getElementById('stapNew');
+  var name = inp.value.trim();
+  if (!name) return;
+  STAP.hidden = STAP.hidden.filter(function (h) { return h.toLowerCase() !== name.toLowerCase(); });
+  if (!activeStaples().some(function (x) { return x.n.toLowerCase() === name.toLowerCase(); }))
+    STAP.custom.push({ n: name, d: '', p: '', c: 2, a: guessAisle(name), mine: true });
+  saveStaples(); renderStaples();
+  toast('Added to your staples');
+}
+
 /* ── options ────────────────────────────────────────────── */
 function openOptions() {
   sheetState = null;
@@ -2689,7 +3282,8 @@ function setTab(t) {
   S.tab = t;
   document.querySelectorAll('.panel').forEach(function (p) { p.classList.toggle('active', p.dataset.panel === t); });
   document.querySelectorAll('.nav button').forEach(function (b) { b.classList.toggle('active', b.dataset.tab === t); });
-  var titles = { home: ['🍳', 'Kitchen', new Date().toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' })],
+  var titles = { home: ['🍳', 'Kitchen', 'Plan it, shop it, cook it'],
+                 staples: ['🔁', 'Staples', 'What your receipts say you rebuy'],
                  list: ['🛒', 'The list', "Shared between the two of you"],
                  cook: ['🍳', 'Tonight', "Cook what's already in the kitchen"],
                  fresh: ['🥗', 'Still good?', 'Before you cook it or bin it'],
@@ -2698,6 +3292,8 @@ function setTab(t) {
   document.getElementById('title').textContent = titles[t][1];
   document.getElementById('tagline').textContent = titles[t][2];
   if (t === 'home') renderHome();
+  if (t === 'list') renderList();
+  if (t === 'staples') renderStaples();
   if (t !== 'fresh' && S.scanning) stopScanner();
   window.scrollTo(0, 0);
 }
@@ -2718,6 +3314,9 @@ function renderDateKinds() {
 
 function boot() {
   loadOpts();
+  loadPlan();
+  loadStaples();
+  fetchWeather(function () { if (S.tab === 'home') renderHome(); });
   var ok = load();
   document.getElementById('syncNote').innerHTML = ok
     ? 'Saved on this device. Shared sync arrives with the hosted version.'
@@ -2741,6 +3340,27 @@ function boot() {
     if (c('[data-mood]')) {
       S.mood = c('[data-mood]').dataset.mood;
       document.querySelectorAll('[data-mood]').forEach(function (b) { b.classList.toggle('on', b.dataset.mood === S.mood); });
+      return;
+    }
+    if (c('[data-plan]')) return openPlanPicker(c('[data-plan]').dataset.plan);
+    if (c('[data-planpick]')) {
+      PLAN[c('[data-planpick]').dataset.plankey] = c('[data-planpick]').dataset.planpick;
+      savePlan(); closeSheet(); renderHome();
+      return toast('Planned 🍽️');
+    }
+    if (c('[data-planclear]')) {
+      delete PLAN[c('[data-planclear]').dataset.planclear];
+      savePlan(); closeSheet(); renderHome();
+      return;
+    }
+    if (c('[data-weeklist]')) return sendWeekToList();
+    if (c('[data-surprise]')) return surpriseTonight();
+    if (c('[data-shuffle]')) {
+      var use = simplePool(), cur = simpleOfTheDay();
+      var next = cur;
+      for (var g = 0; g < 12 && next.id === cur.id; g++) next = use[Math.floor(Math.random() * use.length)];
+      S.homePick = next;
+      renderHome();
       return;
     }
     if (c('[data-goto]')) return setTab(c('[data-goto]').dataset.goto);
@@ -2855,7 +3475,40 @@ function boot() {
     }
     if (c('[data-prodadd]')) { addItems([{ name: c('[data-prodadd]').dataset.prodadd, qty: '' }], null); return setTab('list'); }
 
+    if (c('[data-shop]')) return openShopSheet(c('[data-shop]').dataset.shop);
     if (c('[data-share]')) return shareList(c('[data-share]').dataset.share);
+    if (t.id === 'stapNewBtn') return addCustomStaple();
+    if (c('[data-stapedit]')) { S.stapEdit = !S.stapEdit; return renderStaples(); }
+    if (c('[data-stapdel]')) {
+      var dn = c('[data-stapdel]').dataset.stapdel;
+      STAP.hidden.push(dn);
+      saveStaples(); renderStaples();
+      return toastAction('Removed ' + dn, 'Undo', function () {
+        STAP.hidden = STAP.hidden.filter(function (h) { return h !== dn; });
+        saveStaples(); renderStaples();
+      });
+    }
+    if (c('[data-staprestore]')) {
+      STAP.hidden = [];
+      saveStaples(); renderStaples();
+      return toast('All restored');
+    }
+    if (c('[data-staple]')) {
+      var st = c('[data-staple]');
+      S.items.push({ id: uid(), name: st.dataset.staple, qty: '', aisle: st.dataset.aisle, done: false, from: [] });
+      save(); renderBadge(); renderStaples();
+      return toast('On the list');
+    }
+    if (c('[data-stapleall]')) {
+      var added = 0;
+      activeStaples().filter(function (x) { return x.c > 1 || x.mine; }).forEach(function (x) {
+        if (onListAlready(x.n)) return;
+        S.items.push({ id: uid(), name: x.n, qty: '', aisle: x.a, done: false, from: [] });
+        added++;
+      });
+      save(); renderBadge(); renderStaples();
+      return toast(added ? added + ' staples added' : 'All already on the list');
+    }
     if (t.id === 'optBtn') return openOptions();
     if (c('[data-opt]')) {
       var kv = c('[data-opt]').dataset.opt.split(':');
