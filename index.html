@@ -138,7 +138,7 @@ h1{
 /* ── bottom nav — the pass rail ─────────────────────── */
 .nav{
   position:fixed;left:50%;transform:translateX(-50%);width:100%;max-width:560px;bottom:0;
-  z-index:50;display:grid;grid-template-columns:repeat(6,1fr);
+  z-index:50;display:grid;grid-template-columns:repeat(7,1fr);
   background:color-mix(in srgb,var(--bg) 82%,transparent);
   border-top:1px solid var(--border);
   backdrop-filter:blur(20px) saturate(1.5);-webkit-backdrop-filter:blur(20px) saturate(1.5);
@@ -875,6 +875,120 @@ img.rec-thumb{object-fit:cover}
   }
 }
 
+/* photo-less recipes render as a card from the index box, not a
+   placeholder — the pack has thousands of them and they should
+   look deliberate next to the photographed ones */
+.tile.noimg{background:var(--card-bg)}
+.tile.noimg .tile-ph{
+  flex-direction:column;align-items:flex-start;justify-content:flex-start;
+  gap:0;padding:15px 13px;font-size:inherit;text-align:left;
+  background:
+    linear-gradient(var(--border),var(--border)) 0 44px/100% 1px no-repeat,
+    var(--card-bg);
+  border-top:2px solid var(--primary)
+}
+.tile.noimg .tile-ph i{
+  font-style:normal;font-family:var(--mono);font-size:9px;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.16em;display:block;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%
+}
+.tile.noimg .tile-ph b{
+  font-family:var(--serif);font-weight:400;font-size:17px;line-height:1.15;
+  letter-spacing:-.01em;margin-top:22px;color:var(--text);
+  display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden
+}
+.tile.noimg .tile-ph em{
+  font-style:normal;font-family:var(--mono);font-size:9.5px;color:var(--muted);
+  margin-top:auto;letter-spacing:-.01em
+}
+.tile.noimg .tile-cap{display:none}
+.tile.noimg .tile-veg{filter:none}
+.tile.noimg:hover{border-color:var(--primary)}
+
+.tile-flag.mine{background:var(--text);color:var(--bg)}
+textarea.field{font-family:var(--sans);min-height:120px}
+
+/* ── recipe photos ──────────────────────────────── */
+.photo-drop{
+  display:flex;flex-direction:column;align-items:center;gap:5px;width:100%;
+  padding:26px 16px;border:1px dashed var(--line-strong);border-radius:11px;
+  background:var(--raise);cursor:pointer;text-align:center;font-family:inherit;
+  transition:border-color var(--fast) var(--ease)
+}
+.photo-drop:hover{border-color:var(--primary)}
+.photo-drop span{font-size:22px;color:var(--primary);line-height:1}
+.photo-drop b{font-size:14px;font-weight:600;color:var(--text)}
+.photo-drop i{font-style:normal;font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:-.01em}
+.photo-set{position:relative;border-radius:11px;overflow:hidden;border:1px solid var(--border)}
+.photo-set img{width:100%;height:190px;object-fit:cover;display:block}
+.photo-x{
+  position:absolute;top:10px;right:10px;padding:6px 12px;border-radius:999px;border:none;
+  background:rgba(0,0,0,.62);color:#fff;font-family:var(--mono);font-size:10px;
+  letter-spacing:.08em;text-transform:uppercase;cursor:pointer;backdrop-filter:blur(8px)
+}
+
+/* ── a day you just wrote yourself ───────────────────── */
+.plan-free{display:flex;gap:8px;margin-bottom:2px}
+.plan-free .field{flex:1}
+.day.note{border-style:dashed;border-color:var(--line-strong)}
+.day.note b{font-size:12px;color:var(--primary);opacity:1;margin-top:6px}
+.day.note span{color:var(--text)}
+
+/* ── calendar ────────────────────────────────── */
+.day-ev{
+  position:absolute;top:6px;right:6px;width:5px;height:5px;border-radius:50%;
+  background:var(--accent);text-decoration:none
+}
+.agenda{
+  border:1px solid var(--border);border-left:2px solid var(--accent);
+  border-radius:9px;padding:4px 13px;margin-bottom:14px;background:var(--card-bg)
+}
+.agenda-row{
+  display:flex;gap:12px;align-items:baseline;padding:9px 0;
+  border-bottom:1px dashed var(--border)
+}
+.agenda-row:last-child{border-bottom:none}
+.agenda-row span{
+  font-family:var(--mono);font-size:10.5px;color:var(--muted);
+  letter-spacing:-.01em;flex-shrink:0;min-width:62px
+}
+.agenda-row b{font-size:13.5px;font-weight:500;line-height:1.35}
+
+/* ── the week tab ─────────────────────────────────────────── */
+.cal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.cal-head b{font-family:var(--serif);font-size:24px;font-weight:400;display:block;letter-spacing:-.012em}
+.cal-head i{font-style:normal;font-family:var(--mono);font-size:10px;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.14em;display:block;margin-top:4px}
+.cal-day{margin-bottom:22px}
+.cal-date{font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;
+  letter-spacing:.18em;margin-bottom:9px;display:flex;align-items:center;gap:10px}
+.cal-date::after{content:'';flex:1;height:1px;background:var(--border)}
+.cal-day.now .cal-date{color:var(--primary)}
+.cal-day.now .cal-date::after{background:var(--primary);opacity:.3}
+.cal-dinner{
+  display:flex;align-items:center;gap:12px;width:100%;padding:9px;margin-bottom:8px;
+  border:1px solid var(--border);border-radius:11px;background:var(--card-bg);
+  cursor:pointer;text-align:left;font-family:inherit;color:var(--text);
+  transition:border-color var(--fast) var(--ease)
+}
+.cal-dinner:hover{border-color:var(--primary)}
+.cal-dinner img{width:46px;height:46px;border-radius:8px;object-fit:cover;flex-shrink:0}
+.cal-dinner span{width:46px;height:46px;border-radius:8px;background:var(--raise);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:20px}
+.cal-dinner i{font-style:normal;font-family:var(--mono);font-size:9px;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.16em;display:block}
+.cal-dinner b{font-family:var(--serif);font-size:17px;font-weight:400;line-height:1.2;
+  display:block;margin-top:3px;letter-spacing:-.008em}
+.cal-plan{
+  width:100%;padding:11px;border:1px dashed var(--line-strong);border-radius:11px;
+  background:transparent;color:var(--muted);font-family:var(--mono);font-size:10.5px;
+  letter-spacing:.1em;text-transform:uppercase;cursor:pointer;
+  transition:border-color var(--fast) var(--ease),color var(--fast) var(--ease)
+}
+.cal-plan:hover{border-color:var(--primary);color:var(--primary)}
+.nav button{font-size:8.5px;letter-spacing:.01em}
+.nav button .ico{font-size:16px}
+
 /* ── print: the menu for the fridge ─────────────────── */
 #printMenu{display:none}
 @media print{
@@ -903,6 +1017,10 @@ img.rec-thumb{object-fit:cover}
   <!-- ═══ LIST ═══ -->
   <div class="panel active" data-panel="home">
     <div id="homeBody"></div>
+  </div>
+
+  <div class="panel" data-panel="cal">
+    <div id="calBody"></div>
   </div>
 
   <div class="panel" data-panel="staples">
@@ -1037,7 +1155,7 @@ img.rec-thumb{object-fit:cover}
       <input class="field" id="recSearch" placeholder="Search a dish or an ingredient…" />
       <div class="chips" style="margin-top:12px">
         <button class="chip on" data-coll="all">📖 All recipes</button>
-        <button class="chip" data-coll="family">👨‍👩‍👧‍👦 Family</button>
+        <button class="chip" data-coll="mine">✎ Yours</button><button class="chip" data-coll="family">👨‍👩‍👧‍👦 Family</button>
         <button class="chip" data-coll="shabbat">🕯️ Shabbat</button>
         <button class="chip" data-coll="brunch">🥐 Brunch</button>
         <button class="chip" data-coll="noel">🎄 Noël</button>
@@ -1066,6 +1184,7 @@ img.rec-thumb{object-fit:cover}
       </div>
       <div class="chips" id="cuisineChips" style="margin-top:8px"></div>
     </div>
+    <button class="btn-ghost" id="addRecipeBtn" style="margin-bottom:16px">✎ Add your own recipe</button>
     <div id="recResults"></div>
   </div>
 
@@ -1079,6 +1198,7 @@ img.rec-thumb{object-fit:cover}
   <button class="active" data-tab="home"><span class="ico">🏠</span>Home</button>
   <button data-tab="list"><span class="ico">🛒</span>List<span class="badge" id="listBadge" style="display:none">0</span></button>
   <button data-tab="cook"><span class="ico">🍳</span>Tonight</button>
+  <button data-tab="cal"><span class="ico">🗓️</span>Week</button>
   <button data-tab="fresh"><span class="ico">🥗</span>Fresh?</button>
   <button data-tab="staples"><span class="ico">🔁</span>Staples</button>
   <button data-tab="recipes"><span class="ico">📖</span>Recipes</button>
@@ -2273,12 +2393,14 @@ function renderWeek() {
   return '<div class="home-label-row"><div class="home-label" style="margin:0">This week</div>' +
     (empty ? '<button class="autoplan" data-autoplan="1">✨ Plan it for me</button>' : '') + '</div>' +
     '<div class="week">' + days.map(function (d) {
-      var v = PLAN[d.key];
-      var sp = v === '@leftovers' ? ['🍱', 'Leftovers'] : v === '@out' ? ['🍽️', 'Eating out'] : null;
-      var r = v && !sp && findRecipe(v);
+      var pe = planEntry(PLAN[d.key]);
+      var sp = pe && pe.kind !== 'recipe' ? [pe.icon, pe.label] : null;
+      var r = pe && pe.kind === 'recipe' ? pe.recipe : null;
       var hol = holidayFor(d.key);
       var hb = hol && HOLINFO[hol] ? HOLINFO[hol].e : (d.friday ? '🕯️' : '');
-      return '<button class="day ' + (d.today ? 'today' : '') + ((r || sp) ? ' set' : '') + '" data-plan="' + d.key + '">' +
+      var evs = eventsOn(d.key);
+      return '<button class="day ' + (d.today ? 'today' : '') + ((r || sp) ? ' set' : '') + (sp && pe.kind === 'note' ? ' note' : '') + '" data-plan="' + d.key + '">' +
+        (evs.length ? '<u class="day-ev" title="' + esc(evs.map(function (e) { return e.title; }).join(', ')) + '"></u>' : '') +
         '<i>' + d.label + (hb ? ' ' + hb : '') + '</i><em>' + d.num + '</em>' +
         (sp ? '<b>' + sp[0] + '</b><span>' + sp[1] + '</span>'
            : r ? ((r.img || r.thumb) ? '<img src="' + esc(r.img || r.thumb) + '" alt="" loading="lazy" />' : '<b>🍽️</b>') +
@@ -2291,11 +2413,25 @@ function renderWeek() {
       ? '<button class="btn-ghost" data-printweek="1" style="margin-top:8px">🖨️ Print this week for the fridge</button>' : '');
 }
 
+
+/* A planned day is one of four things: a recipe id, '@leftovers',
+   '@out', or '!' followed by whatever Ben typed. Everything that
+   reads the planner goes through here so the four stay in step. */
+function planEntry(v) {
+  if (!v) return null;
+  if (v === '@leftovers') return { kind: 'special', icon: '\ud83c\udf71', label: 'Leftovers' };
+  if (v === '@out') return { kind: 'special', icon: '\ud83c\udf7d\ufe0f', label: 'Eating out' };
+  if (v.charAt(0) === '!') return { kind: 'note', icon: '\u270e', label: v.slice(1) };
+  var r = findRecipe(v);
+  return r ? { kind: 'recipe', label: r.title, recipe: r } : null;
+}
+
 function openPlanPicker(key) {
   sheetState = null;
   var d = new Date(key + 'T12:00:00');
   var nice = d.toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' });
   var cur = PLAN[key] && findRecipe(PLAN[key]);
+  var curEntry = planEntry(PLAN[key]);
   document.getElementById('sheetBg').classList.add('on');
   var el = document.getElementById('sheet');
   var hol = holidayFor(key);
@@ -2303,13 +2439,25 @@ function openPlanPicker(key) {
   var featured = hinf ? ALL.filter(function (r) {
     return courseOf(r) === 'main' && hinf.pick.test(r.title) && !r.exempt;
   }).slice(0, 4) : [];
-  var quick = (hinf ? '<div class="hol-note">' + hinf.e + ' <b>' + hinf.name + '</b>' +
+  var dayEvents = eventsOn(key);
+  var agenda = dayEvents.length
+    ? '<div class="agenda">' + dayEvents.map(function (e) {
+        return '<div class="agenda-row"><span>' + esc(evTime(e)) + '</span><b>' + esc(e.title) + '</b></div>';
+      }).join('') + '</div>'
+    : '';
+  var quick = agenda + (hinf ? '<div class="hol-note">' + hinf.e + ' <b>' + hinf.name + '</b>' +
     (hinf.note ? ' — ' + hinf.note : '') + '</div>' : '') +
   '<div class="plan-quick">' +
     '<button data-planspecial="leftovers" data-plankey="' + key + '">🍱 Leftovers</button>' +
     '<button data-planspecial="out" data-plankey="' + key + '">🍽️ Eating out</button>' +
     (PLAN[key] ? '<button data-planspecial="clear" data-plankey="' + key + '">✕ Clear day</button>' : '') +
-  '</div>';
+  '</div>' +
+  '<div class="plan-free">' +
+    '<input class="field" id="planNote" maxlength="60" placeholder="Write the day — anything at all" value="' +
+      esc(curEntry && curEntry.kind === 'note' ? curEntry.label : '') + '" />' +
+    '<button class="stap-newbtn" data-plannote="' + key + '">Set</button>' +
+  '</div>' +
+  '<p class="est" style="text-align:left;margin:8px 0 4px">Pizza night, dinner at your parents, Melissa cooks — it doesn\'t have to be a recipe.</p>';
 
   function draw(q) {
     var list;
@@ -2330,7 +2478,7 @@ function openPlanPicker(key) {
         '<h2 style="font-family:var(--serif);font-size:22px;font-weight:700;margin-bottom:4px">' + nice + '</h2>' +
       quick +
       (featured.length ? '<div class="section-title">' + hinf.e + ' For ' + hinf.name + '</div>' + featured.map(function (r) { return '<div class="rec" data-planpick="' + r.id + '" data-plankey="' + key + '">' + ((r.img || r.thumb) ? '<img src="' + esc(r.img || r.thumb) + '" alt="" />' : '<span class="rec-emoji">🍽️</span>') + '<div><b>' + esc(r.title) + '</b><i>' + esc(r.time) + ' · ' + esc(r.origin) + '</i></div></div>'; }).join('') : '') +
-        '<p style="font-size:13px;color:var(--muted);margin-bottom:14px">' + (cur ? 'Planned: <b>' + esc(cur.title) + '</b>' : 'What\'s for dinner?') + '</p>' +
+        '<p style="font-size:13px;color:var(--muted);margin-bottom:14px">' + (curEntry ? 'Planned: <b>' + esc(curEntry.label) + '</b>' : 'What\'s for dinner?') + '</p>' +
         (cur ? '<button class="btn-ghost" data-planclear="' + key + '" style="margin-bottom:14px;color:var(--primary);border-color:var(--primary)">Remove ' + esc(cur.title) + '</button>' : '') +
         '<input class="field" id="planSearch" placeholder="Search the ' + ALL.length + ' recipes" value="' + esc(q || '') + '" />' +
         '<div class="section-title" style="margin-top:16px">' + (q ? 'Matches' : (d.getDay() === 5 ? 'For a Friday' : 'Easy ideas + in season')) + '</div>' +
@@ -2343,6 +2491,10 @@ function openPlanPicker(key) {
       '</div>';
     var inp = document.getElementById('planSearch');
     inp.addEventListener('input', function () { draw(inp.value.trim()); });
+    var note = document.getElementById('planNote');
+    if (note) note.addEventListener('keydown', function (e2) {
+      if (e2.key === 'Enter') { e2.preventDefault(); document.querySelector('[data-plannote]').click(); }
+    });
     if (q) { inp.focus(); inp.setSelectionRange(inp.value.length, inp.value.length); }
   }
   draw('');
@@ -2533,8 +2685,16 @@ function autoPlanWeek() {
       var sh = ALL.filter(function (r) { return r.coll === 'shabbat' && courseOf(r) === 'main' && used.indexOf(r.id) === -1; });
       pickR = sh[(todaySeed() + idx) % sh.length];
     }
+    /* out at dinner time? then the honest plan is not a recipe at all */
+    var clash = dinnerOut(d.key);
+    if (!pickR && clash.length && !hol) {
+      PLAN[d.key] = '!' + clash[0].title.slice(0, 40);
+      filled++;
+      return;
+    }
     if (!pickR) {
       var wxd = WX && WX.daily && WX.daily[d.key];
+      var busy = eventsOn(d.key).some(function (e) { return !e.allDay && e.start.getHours() >= 15; });
       var hot = wxd ? wxd.t >= 27 : false;
       var wet = wxd ? (wxd.c >= 51 && wxd.c <= 99) : false;
       var cold = wxd ? wxd.t <= 8 : false;
@@ -2547,6 +2707,7 @@ function autoPlanWeek() {
         if ((cold || wet) && !WX_COMFORT.test(r.title) && weightOf(r) === 'light') return false;
         if (!wk && r.effort === 'special') return false;
         if (brk && parseInt(r.time) > 45) return false;
+        if (busy && (r.effort === 'special' || parseInt(r.time) > 40)) return false;
         return pw;
       });
       if (!pool.length) pool = ALL.filter(function (r) { return courseOf(r) === 'main' && used.indexOf(r.id) === -1; });
@@ -2594,17 +2755,29 @@ function renderHome() {
   var d = new Date();
   var date = d.toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' });
   var time = d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
-  var plannedToday = PLAN[dkey(d)] && findRecipe(PLAN[dkey(d)]);
+  var todayEntry = planEntry(PLAN[dkey(d)]);
+  var plannedToday = todayEntry && todayEntry.kind === 'recipe' ? todayEntry.recipe : null;
   var sd = plannedToday || simpleOfTheDay();
   var mo = todaysMoment();
+  var tonightEvents = dinnerClash(dkey(d));
   var openItems = S.items.filter(function (x) { return !x.done; }).length;
   var mins = parseMinutes(sd.time);
 
   document.getElementById('homeBody').innerHTML =
     '<div class="home-head"><i>' + greeting() + '</i><b>' + date + '</b>' +
       '<span id="homeClock">' + time + (WX ? ' · ' + wxMood().icon + ' ' + WX.temp + '°' : '') + '</span></div>' +
-    (mo ? '<button class="moment" data-gocoll="' + mo.coll + '"><span>' + mo.icon + '</span><div><b>' + mo.title + '</b><i>' + mo.line + '</i></div><em>›</em></button>' : '') +
-    '<div class="home-label">' + (plannedToday ? 'Tonight — as planned' : 'Tonight, keep it simple') + '</div>' +
+    (tonightEvents.length
+      ? '<button class="moment" data-plan="' + dkey(d) + '"><span>🗓️</span><div><b>' +
+        esc(tonightEvents[0].title) + '</b><i>' + esc(evTime(tonightEvents[0])) +
+        (tonightEvents.length > 1 ? ' · and ' + (tonightEvents.length - 1) + ' more' : '') +
+        ' — keep tonight easy</i></div><em>›</em></button>'
+      : mo ? '<button class="moment" data-gocoll="' + mo.coll + '"><span>' + mo.icon + '</span><div><b>' + mo.title + '</b><i>' + mo.line + '</i></div><em>›</em></button>' : '') +
+    (todayEntry && todayEntry.kind !== 'recipe'
+      ? '<button class="moment" data-plan="' + dkey(d) + '"><span>' + todayEntry.icon + '</span>' +
+        '<div><b>' + esc(todayEntry.label) + '</b><i>That\'s tonight — tap to change it</i></div><em>›</em></button>'
+      : '') +
+    '<div class="home-label">' + (plannedToday ? 'Tonight — as planned'
+      : todayEntry ? 'If you\'d rather cook' : 'Tonight, keep it simple') + '</div>' +
     '<div class="dayhero" data-recipe="' + sd.id + '">' +
       '<img src="' + esc(sd.img || sd.thumb) + '" alt="" />' +
       '<div class="dayhero-cap"><b>' + esc(sd.title) + '</b>' +
@@ -2845,9 +3018,8 @@ function printWeek() {
   var days = weekDays();
   var name = OPT.fam ? 'The ' + OPT.fam + ' Table' : 'This Week';
   var rows = days.map(function (d) {
-    var v = PLAN[d.key];
-    var label = v === '@leftovers' ? 'Leftovers' : v === '@out' ? 'Eating out' :
-                (v && findRecipe(v)) ? findRecipe(v).title : '—';
+    var pe = planEntry(PLAN[d.key]);
+    var label = pe ? pe.label : '—';
     return '<tr><td>' + d.label + ' ' + d.num + (d.friday ? ' 🕯️' : '') + '</td><td>' + esc(label) + '</td></tr>';
   }).join('');
   var el = document.getElementById('printMenu');
@@ -2863,7 +3035,7 @@ function printWeek() {
    boot restores it. Options can export/import a file.     */
 function snapshot() {
   return { v: 1, t: Date.now(), items: S.items, pantry: S.pantry, plan: PLAN, opts: OPT,
-           staples: STAP };
+           staples: STAP, mine: MINE };
 }
 function backupNow() {
   try { localStorage.setItem('kitchen.backup', JSON.stringify(snapshot())); } catch (e) {}
@@ -2872,6 +3044,7 @@ function applySnapshot(o) {
   if (!o) return false;
   S.items = o.items || []; S.pantry = o.pantry || [];
   PLAN = o.plan || {}; STAP = o.staples || { hidden: [], custom: [] };
+  if (o.mine) { MINE = o.mine; try { localStorage.setItem('kitchen.mine', JSON.stringify(MINE)); } catch (e) {} rebuildLibrary(); }
   for (var k in (o.opts || {})) OPT[k] = o.opts[k];
   save(); savePlan(); saveStaples(); saveOpts();
   return true;
@@ -3079,7 +3252,14 @@ function renderRecipes() {
     if (r.title.toLowerCase().indexOf(q) > -1) return true;
     return r.ing.some(function (x) { return x.name.toLowerCase().indexOf(q) > -1; });
   });
-  list.sort(function (a, b) { return (b.house ? 1 : 0) - (a.house ? 1 : 0); });
+  list.sort(function (a, b) {
+    var h = (b.house ? 1 : 0) - (a.house ? 1 : 0);
+    if (h) return h;
+    /* pack recipes have no photography, so they sit below the shot ones
+       while browsing — but a search still surfaces them on merit */
+    if (!q) return ((b.img || b.thumb) ? 1 : 0) - ((a.img || a.thumb) ? 1 : 0);
+    return 0;
+  });
 
   var html = '';
   if (!q && S.cuisine === 'All' && S.eff === 'all' && S.course === 'all' && S.weight === 'all' && S.coll === 'all' && S.diet === 'all') {
@@ -3099,7 +3279,8 @@ function renderRecipes() {
   }
 
   if (S.coll !== 'all') {
-    var blurb = { noel: ['🎄','The Christmas tin','The Alsatian bredele sheet — Strasbourg in ten cookies. Bake in December, keep in tins.'],
+    var blurb = { mine: ['✎','Yours',"Recipes you pasted in yourself. They scale, they send to the list, and they turn up on the other phone too."],
+                  noel: ['🎄','The Christmas tin','The Alsatian bredele sheet — Strasbourg in ten cookies. Bake in December, keep in tins.'],
                   family: ['👨‍👩‍👧‍👦','Family recipes',"The ones that came from your kitchen, written down as you sent them."],
                   shabbat: ['🕯️','Shabbat','The Tunisian Friday night table — kemia salads, a long-simmered t\'fina, couscous.'],
                   brunch: ['🥐','Brunch','Eggs, pastry and things you can make while people are still arriving.'] }[S.coll];
@@ -3114,10 +3295,14 @@ function renderRecipes() {
 
 function bigCard(r) {
   var img = r.img || r.thumb;
-  return '<div class="tile" data-recipe="' + r.id + '">' +
-    (img ? '<img src="' + esc(img) + '" alt="" loading="lazy" />' : '<div class="tile-ph">' + (r.effort === 'special' ? '✨' : '⚡') + '</div>') +
+  return '<div class="tile' + (img ? '' : ' noimg') + '" data-recipe="' + r.id + '">' +
+    (img ? '<img src="' + esc(img) + '" alt="" loading="lazy" />'
+         : '<div class="tile-ph"><i>' + esc(r.origin || 'Recipe') + '</i>' +
+           '<b>' + esc(r.title) + '</b>' +
+           '<em>' + r.ing.length + ' ingredients</em></div>') +
     '<div class="tile-cap"><b>' + esc(r.title) + '</b><i>' + WEIGHT_LABEL[weightOf(r)].split(' ')[0] + ' ' + esc(r.origin) + ' · ~' + estimateKcal(r) + ' kcal</i></div>' +
-    (r.coll === 'family' ? '<span class="tile-flag fam">FAMILY</span>'
+    (r.coll === 'mine' ? '<span class="tile-flag mine">YOURS</span>'
+      : r.coll === 'family' ? '<span class="tile-flag fam">FAMILY</span>'
       : r.coll === 'shabbat' ? '<span class="tile-flag sh">SHABBAT</span>'
       : r.coll === 'noel' ? '<span class="tile-flag no">NOËL</span>'
       : r.coll === 'brunch' ? '<span class="tile-flag br">BRUNCH</span>'
@@ -3751,9 +3936,27 @@ function openOptions() {
         : '<label class="label" style="margin-top:14px">Sync address</label>' +
           '<input class="field" id="syncUrl" placeholder="https://….workers.dev" value="' + esc(SYNC.url) + '" />' +
           '<label class="label" style="margin-top:12px">Household code</label>' +
-          '<div class="stap-new"><input class="field" id="syncCode" placeholder="6 characters" value="' + esc(SYNC.code || newHouseCode()) + '" />' +
+          '<div class="stap-new"><input class="field" id="syncCode" placeholder="6 characters" value="' + esc(SYNC.code || SYNC_DEFAULT_CODE) + '" />' +
           '<button class="stap-newbtn" data-syncon="1">Connect</button></div>' +
-          '<p class="est" style="text-align:left">Both phones need the same address and the same code. Without one, everything still works — it just stays on this phone.</p>') +
+          '<p class="est" style="text-align:left">Already filled in for your kitchen — just tap Connect, on this phone and on Melissa\'s. Both must show the same code.</p>') +
+
+      '<div class="section-title" style="margin-top:26px">Family calendar</div>' +
+      '<div class="opt-stat"><span class="sync-dot ' +
+        (CAL.state === 'live' ? 'live' : CAL.state === 'error' ? 'err' : '') + '"></span>' +
+        (CAL.url
+          ? esc(CAL.events.length + ' things on in the next four weeks')
+          : 'Not connected') + '</div>' +
+      (CAL.err ? '<div class="banner err" style="margin-top:10px">' + esc(CAL.err) + '</div>' : '') +
+      (CAL.url
+        ? '<div class="stap-new" style="margin-top:10px">' +
+          '<button class="btn-ghost" style="flex:1" data-calrefresh="1">Refresh now</button>' +
+          '<button class="btn-ghost" style="flex:1" data-caloff="1">Disconnect</button></div>'
+        : '<input class="field" id="calUrl" style="margin-top:10px" placeholder="https://calendar.google.com/calendar/ical/…" />' +
+          '<button class="btn-ghost" data-calon="1" style="margin-top:8px">Connect the calendar</button>' +
+          '<p class="est" style="text-align:left">In Google Calendar: Settings → pick the calendar → <b>Secret address in iCal format</b>. Paste it here once and it works on every phone in the household.</p>') +
+      (CAL.url ? '<p class="est" style="text-align:left">Read only — the app never writes to your calendar.' +
+        (CAL.url === CAL_DEFAULT_URL ? ' This address is built into the app, so anyone who opens the site can read this calendar. Reset it in Google if that ever stops being fine.' : '') +
+        '</p>' : '') +
 
       '<div class="section-title" style="margin-top:26px">Recipe library</div>' +
       '<div class="opt-stat">' + ALL.length.toLocaleString() + ' recipes' +
@@ -3786,13 +3989,17 @@ function openOptions() {
      GET  {url}?code=ABC123        -> {rev, t, data} | {}
      POST {url}?code=ABC123 {data} -> {rev, t}
    ══════════════════════════════════════════════════════════ */
-var SYNC = { url: '', code: '', on: false, state: 'off', last: 0, rev: 0, err: '' };
+/* Ben's own endpoint and household code, so neither phone has to be
+   told where to look — open the app, tap Connect, done. */
+var SYNC_DEFAULT_URL  = 'https://kitchen-sync.b-sberro.workers.dev';
+var SYNC_DEFAULT_CODE = 'WVKFGC';
+var SYNC = { url: SYNC_DEFAULT_URL, code: SYNC_DEFAULT_CODE, on: false, state: 'off', last: 0, rev: 0, err: '' };
 var syncTimer = null, syncPulling = false;
 
 function loadSync() {
   try {
     var o = JSON.parse(localStorage.getItem('kitchen.sync') || '{}');
-    SYNC.url = o.url || ''; SYNC.code = o.code || '';
+    SYNC.url = o.url || SYNC_DEFAULT_URL; SYNC.code = o.code || SYNC_DEFAULT_CODE;
     SYNC.on = !!(o.on && o.url && o.code); SYNC.rev = o.rev || 0;
   } catch (e) {}
 }
@@ -3852,6 +4059,17 @@ function mergeRemote(remote) {
     if (remote.plan) PLAN = remote.plan;
     if (remote.staples) STAP = remote.staples;
     if (remote.pantry) S.pantry = remote.pantry;
+    if (remote.cal && remote.cal !== CAL.url) { CAL.url = remote.cal; saveCal(); fetchCal(); }
+    if (remote.mine) {
+      var localImg = {};
+      MINE.forEach(function (r) { if (r.img) localImg[r.id] = r.img; });
+      MINE = remote.mine.map(function (r) {
+        if (!r.img && localImg[r.id]) { r.img = localImg[r.id]; }
+        return r;
+      });
+      try { localStorage.setItem('kitchen.mine', JSON.stringify(MINE)); } catch (e) {}
+      rebuildLibrary();
+    }
   }
   return true;
 }
@@ -3889,7 +4107,7 @@ function syncPush() {
     if (!SYNC.on) return;
     syncState('busy');
     var body = { v: 1, t: Date.now(), items: S.items, tombs: TOMBS,
-                 pantry: S.pantry, plan: PLAN, staples: STAP, rev: SYNC.rev };
+                 pantry: S.pantry, plan: PLAN, staples: STAP, mine: mineForSync(), cal: CAL.url, rev: SYNC.rev };
     fetch(syncEndpoint(), {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
@@ -3921,6 +4139,227 @@ function newHouseCode() {
   var a = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', s = '';
   for (var i = 0; i < 6; i++) s += a[Math.floor(Math.random() * a.length)];
   return s;
+}
+
+
+/* ══ FAMILY CALENDAR ════════════════════════════════════════
+   Read-only. Google gives each calendar a private iCal address;
+   the worker fetches it (a browser can't) and this parses it.
+   Nothing is ever written back to Google.
+
+   What it is for: the planner already knows the weather and the
+   holidays. Knowing you are out on Tuesday at seven is the last
+   piece — it stops the app proposing a three-hour braise on a
+   night nobody is home to cook it.
+   ══════════════════════════════════════════════════════════ */
+/* Ben's family calendar, set here so neither phone has to be told.
+   Note this address ships inside the page — see the note in Options. */
+var CAL_DEFAULT_URL = 'https://calendar.google.com/calendar/ical/family07135201501336604300%40group.calendar.google.com/private-a9c47c0f92662110c640feacdc24c76e/basic.ics';
+var CAL = { url: CAL_DEFAULT_URL, events: [], at: 0, state: 'off', err: '' };
+
+function loadCal() {
+  try {
+    var o = JSON.parse(localStorage.getItem('kitchen.cal') || '{}');
+    CAL.url = o.off ? '' : (o.url || CAL_DEFAULT_URL);
+    CAL.at = o.at || 0;
+    CAL.events = (o.events || []).map(reviveEvent).filter(Boolean);
+  } catch (e) {}
+}
+function saveCal() {
+  try {
+    localStorage.setItem('kitchen.cal', JSON.stringify({
+      url: CAL.url, at: CAL.at, off: CAL.url ? 0 : 1,
+      events: CAL.events.map(function (e) {
+        return { s: e.start.getTime(), e: e.end.getTime(), a: e.allDay ? 1 : 0, t: e.title };
+      })
+    }));
+  } catch (e) {}
+}
+function reviveEvent(o) {
+  if (!o || !o.s) return null;
+  return { start: new Date(o.s), end: new Date(o.e || o.s), allDay: !!o.a, title: o.t || '' };
+}
+
+/* ── iCal parsing ──────────────────────────────────────────
+   Enough of RFC 5545 to be useful and no more: folded lines,
+   VEVENT, all-day vs timed, and the recurrence rules people
+   actually use. Anything it can't read is skipped rather than
+   guessed at.                                                */
+function unfoldICS(text) {
+  return text.replace(/\r\n/g, '\n').replace(/\n[ \t]/g, '');
+}
+
+function icsDate(val, params) {
+  var allDay = /VALUE=DATE(?!-TIME)/.test(params || '');
+  var m = val.match(/^(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2})(\d{2})(Z)?)?$/);
+  if (!m) return null;
+  var y = +m[1], mo = +m[2] - 1, d = +m[3];
+  if (allDay || !m[4]) return { d: new Date(y, mo, d, 0, 0, 0), allDay: true };
+  var hh = +m[4], mi = +m[5], ss = +m[6];
+  /* a trailing Z is UTC; anything else we take at face value in the
+     phone's own timezone, which is right for a family calendar kept
+     in the timezone the family lives in */
+  return { d: m[7] ? new Date(Date.UTC(y, mo, d, hh, mi, ss)) : new Date(y, mo, d, hh, mi, ss), allDay: false };
+}
+
+function parseRRule(s) {
+  var o = {};
+  String(s || '').split(';').forEach(function (kv) {
+    var p = kv.split('=');
+    if (p.length === 2) o[p[0].toUpperCase()] = p[1];
+  });
+  return o;
+}
+
+var DAYNUM = { SU: 0, MO: 1, TU: 2, WE: 3, TH: 4, FR: 5, SA: 6 };
+
+/* expand one event across the window, honouring simple RRULEs */
+function expandEvent(ev, from, to, out) {
+  var span = ev.end - ev.start;
+  if (!ev.rrule) {
+    if (ev.end >= from && ev.start <= to)
+      out.push({ start: ev.start, end: ev.end, allDay: ev.allDay, title: ev.title });
+    return;
+  }
+  var r = parseRRule(ev.rrule);
+  var freq = r.FREQ, interval = Math.max(1, parseInt(r.INTERVAL, 10) || 1);
+  if (!freq) return;
+  var until = null;
+  if (r.UNTIL) { var u = icsDate(r.UNTIL, ''); if (u) until = u.d; }
+  var count = parseInt(r.COUNT, 10) || 0;
+  var byday = r.BYDAY ? r.BYDAY.split(',').map(function (x) { return DAYNUM[x.slice(-2)]; })
+    .filter(function (x) { return x !== undefined; }) : null;
+
+  var cur = new Date(ev.start), made = 0, guard = 0;
+  while (guard++ < 800) {
+    if (until && cur > until) break;
+    if (count && made >= count) break;
+    if (cur > to) break;
+
+    var hit = true;
+    if (freq === 'WEEKLY' && byday && byday.length) hit = byday.indexOf(cur.getDay()) > -1;
+    if (hit) {
+      made++;
+      var e2 = new Date(cur.getTime() + span);
+      if (e2 >= from && cur <= to)
+        out.push({ start: new Date(cur), end: e2, allDay: ev.allDay, title: ev.title });
+    }
+
+    if (freq === 'DAILY') cur.setDate(cur.getDate() + interval);
+    else if (freq === 'WEEKLY') {
+      if (byday && byday.length) cur.setDate(cur.getDate() + 1);
+      else cur.setDate(cur.getDate() + 7 * interval);
+    } else if (freq === 'MONTHLY') cur.setMonth(cur.getMonth() + interval);
+    else if (freq === 'YEARLY') cur.setFullYear(cur.getFullYear() + interval);
+    else break;
+  }
+}
+
+function parseICS(text, from, to) {
+  var lines = unfoldICS(text).split('\n');
+  var out = [], cur = null, cancelled = false;
+
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i];
+    if (line.indexOf('BEGIN:VEVENT') === 0) { cur = { title: '', allDay: false }; cancelled = false; continue; }
+    if (line.indexOf('END:VEVENT') === 0) {
+      if (cur && cur.start && !cancelled) {
+        if (!cur.end) cur.end = new Date(cur.start.getTime() + (cur.allDay ? 86400000 : 3600000));
+        expandEvent(cur, from, to, out);
+      }
+      cur = null; continue;
+    }
+    if (!cur) continue;
+
+    var c = line.indexOf(':');
+    if (c < 0) continue;
+    var lhs = line.slice(0, c), val = line.slice(c + 1);
+    var name = lhs.split(';')[0].toUpperCase();
+    var params = lhs.slice(name.length);
+
+    if (name === 'DTSTART') { var a = icsDate(val, params); if (a) { cur.start = a.d; cur.allDay = a.allDay; } }
+    else if (name === 'DTEND') { var b = icsDate(val, params); if (b) cur.end = b.d; }
+    else if (name === 'SUMMARY') {
+      cur.title = val.replace(/\\n/g, ' ').replace(/\\,/g, ',').replace(/\\;/g, ';')
+        .replace(/\\\\/g, '\\').trim();
+    }
+    else if (name === 'RRULE') cur.rrule = val;
+    else if (name === 'STATUS' && /CANCELLED/i.test(val)) cancelled = true;
+  }
+
+  out.sort(function (x, y) { return x.start - y.start; });
+  return out.slice(0, 400);
+}
+
+/* ── fetching ──────────────────────────────────────────────── */
+function calFeedURL() {
+  var base = (SYNC.url || SYNC_DEFAULT_URL).replace(/\/+$/, '');
+  return base + '?code=' + encodeURIComponent(SYNC.code || SYNC_DEFAULT_CODE) +
+    '&ics=' + encodeURIComponent(CAL.url);
+}
+
+function fetchCal(cb) {
+  if (!CAL.url) return cb && cb(false);
+  CAL.state = 'busy';
+  var from = new Date(); from.setHours(0, 0, 0, 0);
+  var to = new Date(from.getTime() + 28 * DAY);
+
+  fetch(calFeedURL(), { cache: 'no-store' })
+    .then(function (r) {
+      if (!r.ok) return r.text().then(function (t) {
+        var msg = 'The calendar did not load';
+        try { msg = JSON.parse(t).error || msg; } catch (e) {}
+        throw new Error(msg);
+      });
+      return r.text();
+    })
+    .then(function (text) {
+      CAL.events = parseICS(text, from, to);
+      CAL.at = Date.now(); CAL.state = 'live'; CAL.err = '';
+      saveCal();
+      if (S.tab === 'home') renderHome();
+      cb && cb(true);
+    })
+    .catch(function (e) {
+      CAL.state = 'error'; CAL.err = e.message || 'The calendar did not load';
+      cb && cb(false);
+    });
+}
+
+function connectCal(u) {
+  u = (u || '').trim();
+  if (!u) { CAL.url = ''; CAL.events = []; saveCal(); syncPush(); openOptions(); return toast('Calendar removed'); }
+  if (!/^https:\/\/calendar\.google\.com\/calendar\/ical\//.test(u))
+    return toast("That should be the secret iCal address from Google Calendar");
+  CAL.url = u; saveCal();
+  toast('Reading the calendar…');
+  fetchCal(function (ok) {
+    syncPush();
+    toast(ok ? CAL.events.length + ' things on over the next four weeks' : CAL.err);
+    openOptions();
+  });
+}
+
+/* ── what the app asks the calendar ────────────────────────── */
+function eventsOn(key) {
+  var d0 = new Date(key + 'T00:00:00'), d1 = new Date(d0.getTime() + DAY);
+  return CAL.events.filter(function (e) { return e.end > d0 && e.start < d1; });
+}
+/* anything across dinner — enough to say "keep tonight easy" */
+function dinnerClash(key) {
+  return eventsOn(key).filter(function (e) {
+    if (e.allDay) return false;
+    var h = e.start.getHours();
+    return h >= 16 && h <= 21;
+  });
+}
+/* out at dinner itself — enough to say you are not cooking */
+function dinnerOut(key) {
+  return dinnerClash(key).filter(function (e) { return e.start.getHours() >= 18; });
+}
+function evTime(e) {
+  return e.allDay ? 'all day'
+    : e.start.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
 }
 
 /* ══ RECIPE PACKS ═══════════════════════════════════════════
@@ -3981,7 +4420,7 @@ function adoptPack(pack, quiet) {
   return true;
 }
 function rebuildLibrary() {
-  ALL = RECIPES.concat(ONLINE).concat(PACK_RECIPES);
+  ALL = MINE.concat(RECIPES).concat(ONLINE).concat(PACK_RECIPES);
   CCOUNT = ALL.reduce(function (a, r) { a[r.origin] = (a[r.origin] || 0) + 1; return a; }, {});
   CUISINES = ['All'].concat(Object.keys(CCOUNT).sort(function (a, b) { return CCOUNT[b] - CCOUNT[a]; }));
 }
@@ -4013,6 +4452,394 @@ function dropPack() {
   toast('Pack removed'); openOptions();
 }
 
+/* ══ YOUR OWN RECIPES ═══════════════════════════════════════
+   Paste a recipe in from anywhere — a website, an email, a
+   photo you transcribed, a text from your mother — and it
+   joins the library, syncs to the other phone, and behaves
+   like every other recipe: scales to six, sends its
+   ingredients to the list, works in cook mode.
+   ══════════════════════════════════════════════════════════ */
+var MINE = [];
+
+function loadMine() {
+  try { MINE = JSON.parse(localStorage.getItem('kitchen.mine') || '[]'); } catch (e) { MINE = []; }
+  MINE = MINE.filter(function (r) { return r && r.title; });
+}
+function saveMine() {
+  try { localStorage.setItem('kitchen.mine', JSON.stringify(MINE)); }
+  catch (e) {
+    toast('Out of room on this phone — remove a photo from an older recipe');
+    return false;
+  }
+  rebuildLibrary(); backupNow(); syncPush();
+  return true;
+}
+
+/* ── the parser ───────────────────────────────────────────
+   Pasted recipes are messy but they are messy in predictable
+   ways. Ingredients start with a number or a fraction and run
+   short; method lines are long sentences. That single signal
+   gets most of the way, and anything it gets wrong is fixable
+   in the preview before saving.                              */
+var QTY_START = /^\s*(?:[-•*–]\s*)?(?:\d+[\d\/.,\s]*|[¼½¾⅓⅔⅛⅜⅝⅞]|a |an |one |two |three |four |five |six |half |quarter )/i;
+var UNIT_WORD = /\b(g|kg|ml|l|cl|dl|oz|lb|lbs|cup|cups|tbsp|tbs|tsp|teaspoon|tablespoon|pinch|clove|cloves|slice|slices|handful|bunch|can|cans|jar|packet|sprig|sprigs|stick|sticks|gramme?s?|litre?s?|pound|ounce)\b/i;
+var HEAD_ING = /^\s*(ingredients?|shopping list|you will need|for the .+|pour la .+|ingr[ée]dients?)\s*:?\s*$/i;
+var HEAD_STEP = /^\s*(method|directions?|instructions?|steps?|preparation|pr[ée]paration|how to make.*|to make.*)\s*:?\s*$/i;
+var HEAD_SKIP = /^\s*(notes?|tips?|nutrition|equipment|serves?\b|yield|prep time|cook time|total time|difficulty|print this|share this|jump to|rate this|save this|advertisement|by [A-Z])/i;
+var TIME_RE = /(\d+\s*(?:h|hr|hour|hours|heures?)\b(?:\s*\d+)?|\d+\s*(?:min|mins|minutes?)\b)/i;
+var SERVES_RE = /(?:serves|servings?|yield|makes)\s*:?\s*(\d{1,2})(?!\s*(?:min|hour|h\b|sec))/i;
+
+function looksLikeIngredient(line) {
+  if (line.length > 120) return false;
+  if (QTY_START.test(line)) return true;
+  /* a unit only counts as evidence when there is a number with it —
+     otherwise French titles like "tarte a l'oignon" read as litres */
+  if (UNIT_WORD.test(line) && /\d/.test(line) && line.length < 60) return true;
+  return false;
+}
+
+function parseRecipeText(text) {
+  var lines = String(text || '').split(/\r?\n/)
+    .map(function (l) { return l.replace(/\s+/g, ' ').trim(); });
+
+  /* title: first substantial line that isn't a heading or a URL */
+  var title = '';
+  for (var i = 0; i < lines.length; i++) {
+    var l = lines[i];
+    if (!l || l.length < 3) continue;
+    if (/^https?:\/\//.test(l)) continue;
+    if (HEAD_ING.test(l) || HEAD_STEP.test(l) || HEAD_SKIP.test(l)) continue;
+    if (looksLikeIngredient(l)) break;          // straight into the list, no title
+    title = l.replace(/^#+\s*/, '').slice(0, 120);
+    break;
+  }
+
+  var whole = lines.join('\n');
+  var timeM = whole.match(TIME_RE);
+  var servesM = whole.match(SERVES_RE);
+
+  var ing = [], steps = [], mode = 'auto', started = false;
+
+  lines.forEach(function (l, n) {
+    if (!l) return;
+    if (l === title) return;
+    if (/^https?:\/\//.test(l)) return;
+    if (HEAD_ING.test(l)) { mode = 'ing'; started = true; return; }
+    if (HEAD_STEP.test(l)) { mode = 'step'; started = true; return; }
+    if (HEAD_SKIP.test(l)) { mode = 'skip'; return; }
+    if (mode === 'skip') {
+      /* a skip section ends at the next thing that looks like content */
+      if (looksLikeIngredient(l) || l.length > 80) mode = 'auto'; else return;
+    }
+
+    var numbered = /^\s*\d+[.)]\s+/.test(l);
+    var clean = l.replace(/^\s*[-•*–]\s*/, '').replace(/^\s*\d+[.)]\s+/, '').trim();
+    if (!clean) return;
+
+    if (mode === 'ing') { ing.push(clean); return; }
+    if (mode === 'step') { steps.push(clean); return; }
+
+    /* no headings to go on — decide per line. The reliable signal is
+       that ingredients carry a quantity and method lines are sentences,
+       so once the list has started, anything that isn't one is a step. */
+    if (numbered && clean.length > 25) { steps.push(clean); return; }
+    if (looksLikeIngredient(l)) { ing.push(clean); return; }
+    if (steps.length || ing.length >= 2 || clean.length > 55) steps.push(clean);
+    else ing.push(clean);
+  });
+
+  /* split an ingredient into quantity and name where it's obvious,
+     so the shopping list and the serving scaler both work */
+  var parsed = ing.map(function (line) {
+    var m = line.match(/^((?:[\d¼½¾⅓⅔⅛⅜⅝⅞][\d\/.,\s¼½¾⅓⅔⅛⅜⅝⅞]*)\s*[a-zA-Z]{0,12}\.?)\s+(.{2,})$/);
+    if (m && UNIT_WORD.test(m[1] + ' x') || (m && /^[\d¼½¾]/.test(m[1]))) {
+      return { name: m[2].replace(/^of\s+/i, '').trim(), qty: m[1].trim() };
+    }
+    return { name: line, qty: '' };
+  });
+
+  return {
+    title: title || 'Untitled recipe',
+    time: timeM ? timeM[0] : '',
+    serves: servesM ? Number(servesM[1]) : (OPT.serves || 6),
+    ing: parsed,
+    steps: steps
+  };
+}
+
+/* ── the add / edit sheet ─────────────────────────────────── */
+var mineDraft = null;
+
+function openAddRecipe(existingId) {
+  sheetState = null;
+  var ex = existingId ? MINE.filter(function (r) { return r.id === existingId; })[0] : null;
+  mineDraft = ex ? JSON.parse(JSON.stringify(ex)) : null;
+  document.getElementById('sheetBg').classList.add('on');
+  drawAddRecipe(ex ? 'preview' : 'paste');
+}
+
+function drawAddRecipe(stage) {
+  var s = document.getElementById('sheet');
+  var head = '<div class="sheet-head"><div class="grab"></div><button class="x-btn" data-close="1">✕</button></div>';
+
+  if (stage === 'paste') {
+    s.innerHTML = head + '<div class="sheet-body">' +
+      '<h2 style="font-family:var(--serif);font-size:30px;font-weight:400;letter-spacing:-.015em;margin-bottom:6px">Add a recipe</h2>' +
+      '<p class="est" style="text-align:left;margin:0 0 18px">Paste it in however it comes — a website, an email, a photo you typed up. You get to check it before it saves.</p>' +
+      '<textarea class="field" id="pasteBox" rows="12" style="resize:vertical;line-height:1.5;font-size:15px" ' +
+      'placeholder="Grandma\'s onion tart&#10;&#10;Ingredients&#10;500 g onions&#10;200 ml cream&#10;3 eggs&#10;&#10;Method&#10;Slice the onions thin and sweat them slowly in butter.&#10;Beat the eggs into the cream, season well.&#10;Bake 35 minutes at 180C."></textarea>' +
+      '<button class="btn" id="pasteGo" style="margin-top:14px">Read it</button>' +
+      '<p class="est" style="text-align:left">Recipes you add live alongside the built-in ones, scale to your servings, and appear on the other phone too.</p>' +
+      (MINE.length ? '<div class="section-title" style="margin-top:26px">Yours so far</div>' +
+        MINE.map(function (r) {
+          return '<div class="item" style="cursor:default"><div class="item-body"><div class="item-name">' + esc(r.title) + '</div>' +
+            '<div class="item-meta">' + r.ing.length + ' ingredients · ' + r.steps.length + ' steps</div></div>' +
+            '<button class="stap-edit" data-mineedit="' + esc(r.id) + '">Edit</button>' +
+            '<button class="item-x" data-minedel="' + esc(r.id) + '">✕</button></div>';
+        }).join('') : '');
+    setTimeout(function () { var b = document.getElementById('pasteBox'); if (b) b.focus(); }, 100);
+    return;
+  }
+
+  var d = mineDraft;
+  s.innerHTML = head + '<div class="sheet-body">' +
+    '<h2 style="font-family:var(--serif);font-size:30px;font-weight:400;letter-spacing:-.015em;margin-bottom:16px">Check it over</h2>' +
+
+    '<label class="label">Name</label>' +
+    '<input class="field" id="mTitle" value="' + esc(d.title) + '" />' +
+
+    '<div class="grid-2" style="margin-top:14px">' +
+      '<div><label class="label">Time</label><input class="field" id="mTime" value="' + esc(d.time || '') + '" placeholder="45 min" /></div>' +
+      '<div><label class="label">Serves</label><input class="field" id="mServes" type="number" min="1" max="30" value="' + (d.serves || 6) + '" /></div>' +
+    '</div>' +
+
+    '<div class="grid-2" style="margin-top:14px">' +
+      '<div><label class="label">Cuisine</label><input class="field" id="mOrigin" value="' + esc(d.origin || 'Family') + '" /></div>' +
+      '<div><label class="label">Effort</label><select class="field" id="mEffort">' +
+        '<option value="easy"' + (d.effort !== 'special' ? ' selected' : '') + '>Weeknight</option>' +
+        '<option value="special"' + (d.effort === 'special' ? ' selected' : '') + '>Something special</option>' +
+      '</select></div>' +
+    '</div>' +
+
+    '<label class="label" style="margin-top:16px">Photo</label>' +
+    (d.img
+      ? '<div class="photo-set"><img src="' + esc(d.img) + '" alt="" />' +
+        '<button class="photo-x" id="mImgClear">Remove photo</button></div>'
+      : '<button class="photo-drop" id="mImgPick"><span>◱</span>' +
+        '<b>Take a photo, or choose one</b>' +
+        '<i>Shrunk on the phone before it saves, so the app stays quick</i></button>') +
+    '<input type="file" id="mImgFile" accept="image/*" style="display:none" />' +
+    '<div id="mImgWarn"></div>' +
+    '<input type="hidden" id="mImg" value="' + esc(d.img || '') + '" />' +
+
+    '<label class="label" style="margin-top:18px">Ingredients — one per line</label>' +
+    '<textarea class="field" id="mIng" rows="' + Math.min(16, Math.max(4, d.ing.length + 1)) + '" style="resize:vertical;line-height:1.6">' +
+      esc(d.ing.map(function (g) { return (g.qty ? g.qty + ' ' : '') + g.name; }).join('\n')) + '</textarea>' +
+
+    '<label class="label" style="margin-top:18px">Method — one step per line</label>' +
+    '<textarea class="field" id="mSteps" rows="' + Math.min(18, Math.max(4, d.steps.length + 1)) + '" style="resize:vertical;line-height:1.6">' +
+      esc(d.steps.join('\n')) + '</textarea>' +
+
+    '<div id="mWarn"></div>' +
+    '<button class="btn" id="mSave" style="margin-top:18px">Save to the library</button>' +
+    '<button class="btn-ghost" id="mBack" style="margin-top:8px">Back to the paste box</button>' +
+    '</div>';
+}
+
+
+/* ══ PHOTOS ═══════════════════════════════════════
+   A phone camera shot is 3-5 MB. Stored raw that fills the browser's
+   storage in about a dozen recipes and is far too big to push to the
+   other phone. So every photo is redrawn at 760px on the long edge
+   and re-encoded as JPEG before it is ever saved — typically 40-80 KB,
+   which still looks sharp on a recipe card.                          */
+var PHOTO_EDGE = 760, PHOTO_Q = 0.62, PHOTO_BUDGET = 380 * 1024;
+
+function readPhoto(file, cb) {
+  if (!file) return cb(null, 'No file');
+  if (!/^image\//.test(file.type)) return cb(null, "That doesn't look like a photo");
+  var rd = new FileReader();
+  rd.onerror = function () { cb(null, "Couldn't read that file"); };
+  rd.onload = function () {
+    var im = new Image();
+    im.onerror = function () { cb(null, "Couldn't open that image"); };
+    im.onload = function () {
+      try {
+        var w = im.width, h = im.height, sc = Math.min(1, PHOTO_EDGE / Math.max(w, h));
+        var cv = document.createElement('canvas');
+        cv.width = Math.round(w * sc); cv.height = Math.round(h * sc);
+        var cx = cv.getContext('2d');
+        cx.fillStyle = '#fff'; cx.fillRect(0, 0, cv.width, cv.height);
+        cx.drawImage(im, 0, 0, cv.width, cv.height);
+        var out = cv.toDataURL('image/jpeg', PHOTO_Q);
+        /* one more pass if it is still heavy (very detailed photos) */
+        if (out.length > 260000) out = cv.toDataURL('image/jpeg', 0.48);
+        cb(out, null);
+      } catch (e) { cb(null, "Couldn't resize that image"); }
+    };
+    im.src = rd.result;
+  };
+  rd.readAsDataURL(file);
+}
+
+function pickPhoto() {
+  var f = document.getElementById('mImgFile');
+  if (!f) return;
+  f.onchange = function () {
+    var file = f.files && f.files[0];
+    if (!file) return;
+    var warn = document.getElementById('mImgWarn');
+    if (warn) warn.innerHTML = '<div class="loading">Shrinking the photo</div>';
+    readPhoto(file, function (data, err) {
+      if (err) {
+        if (warn) warn.innerHTML = '<div class="banner err" style="margin-top:12px">' + esc(err) + '</div>';
+        return;
+      }
+      mineDraft = collectDraft();
+      mineDraft.img = data;
+      drawAddRecipe('preview');
+    });
+  };
+  f.click();
+}
+
+function clearPhoto() {
+  mineDraft = collectDraft();
+  mineDraft.img = '';
+  drawAddRecipe('preview');
+}
+
+/* Photos live on this phone for certain. They also go to the other
+   phone when there is room — the sync endpoint accepts 512 KB, so
+   past a budget the text syncs and the pictures stay put rather than
+   the whole push failing. */
+function mineForSync() {
+  var total = 0, over = false;
+  var out = MINE.map(function (r) {
+    if (!r.img || r.img.indexOf('data:') !== 0) return r;
+    total += r.img.length;
+    if (total > PHOTO_BUDGET) { over = true; var c = {}; for (var k in r) c[k] = r[k]; c.img = ''; c.imgHere = 1; return c; }
+    return r;
+  });
+  SYNC.photosHeld = over;
+  return out;
+}
+
+function collectDraft() {
+  var g = function (id) { var e = document.getElementById(id); return e ? e.value : ''; };
+  var ing = g('mIng').split(/\n/).map(function (l) { return l.trim(); }).filter(Boolean)
+    .map(function (line) {
+      var m = line.match(/^((?:[\d¼½¾⅓⅔⅛⅜⅝⅞][\d\/.,\s¼½¾⅓⅔⅛⅜⅝⅞]*)\s*[a-zA-Z]{0,12}\.?)\s+(.{2,})$/);
+      if (m && /^[\d¼½¾⅓⅔⅛⅜⅝⅞]/.test(m[1])) return { name: m[2].replace(/^of\s+/i, '').trim(), qty: m[1].trim() };
+      return { name: line, qty: '' };
+    });
+  return {
+    id: (mineDraft && mineDraft.id) || 'mine-' + uid(),
+    title: g('mTitle').trim() || 'Untitled recipe',
+    origin: g('mOrigin').trim() || 'Family',
+    effort: g('mEffort') === 'special' ? 'special' : 'easy',
+    time: g('mTime').trim(),
+    serves: Number(g('mServes')) || 6,
+    img: g('mImg').trim(),
+    coll: 'mine',
+    source: 'mine',
+    added: (mineDraft && mineDraft.added) || Date.now(),
+    ing: ing.map(function (x) { x.aisle = guessAisle(x.name); return x; }),
+    steps: g('mSteps').split(/\n/).map(function (l) { return l.trim(); }).filter(Boolean)
+  };
+}
+
+function saveDraft() {
+  var r = collectDraft();
+  if (r.ing.length < 1 || r.steps.length < 1) {
+    document.getElementById('mWarn').innerHTML =
+      '<div class="banner err" style="margin-top:14px">It needs at least one ingredient and one step. Add them above, or go back and paste more.</div>';
+    return;
+  }
+  /* the house rules apply to your own recipes too — but as a warning,
+     not a block. It is your kitchen; you might have a reason. */
+  var bad = r.ing.filter(function (g) { return dietBreach(g.name); });
+  if (bad.length && !r.exempt) {
+    r.exempt = true;
+    document.getElementById('mWarn').innerHTML =
+      '<div class="banner hot" style="margin-top:14px"><b>Heads up:</b> ' +
+      esc(bad.map(function (g) { return g.name; }).slice(0, 3).join(', ')) +
+      ' breaks the no-pork, no-seafood rule. Tap save again to keep it anyway.</div>';
+    mineDraft = r;
+    return;
+  }
+  MINE = MINE.filter(function (x) { return x.id !== r.id; });
+  MINE.unshift(r);
+  saveMine();
+  renderCuisines(); renderRecipes();
+  closeSheet();
+  toast('"' + r.title.slice(0, 28) + '" added');
+}
+
+function deleteMine(id) {
+  MINE = MINE.filter(function (x) { return x.id !== id; });
+  saveMine(); renderRecipes(); drawAddRecipe('paste');
+  toast('Removed');
+}
+
+
+/* ── the week, as an agenda ────────────────────────────────
+   Not a second copy of Google Calendar. This is the two things
+   the kitchen actually cares about, side by side: what is on,
+   and what is for dinner. Fourteen days, today first.        */
+function renderCal() {
+  var el = document.getElementById('calBody');
+  if (!el) return;
+
+  if (!CAL.url) {
+    el.innerHTML = '<div class="empty"><span class="ei">\ud83d\uddd3\ufe0f</span>' +
+      '<p>No calendar connected yet. Add the address in Options and your week shows up here, ' +
+      'next to what you are cooking.</p>' +
+      '<button class="btn-ghost" id="optBtn2" style="margin-top:18px;max-width:240px;display:inline-block">Open options</button></div>';
+    return;
+  }
+
+  var start = new Date(); start.setHours(0, 0, 0, 0);
+  var html = '<div class="cal-head">' +
+    '<div><b>' + (OPT.fam ? 'The ' + esc(OPT.fam) + 's' : 'The next fortnight') + '</b>' +
+    '<i>' + (CAL.state === 'error' ? esc(CAL.err)
+      : CAL.at ? 'Updated ' + new Date(CAL.at).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })
+      : 'Not loaded yet') + '</i></div>' +
+    '<button class="stap-edit" data-calrefresh2="1">Refresh</button></div>';
+
+  var shown = 0;
+  for (var i = 0; i < 14; i++) {
+    var day = new Date(start.getTime() + i * DAY);
+    var key = dkey(day);
+    var evs = eventsOn(key);
+    var pe = planEntry(PLAN[key]);
+    if (!evs.length && !pe) continue;
+    shown++;
+
+    var label = i === 0 ? 'Today' : i === 1 ? 'Tomorrow'
+      : day.toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'short' });
+
+    html += '<div class="cal-day' + (i === 0 ? ' now' : '') + '">' +
+      '<div class="cal-date">' + esc(label) + '</div>' +
+      (pe ? '<button class="cal-dinner" data-plan="' + key + '">' +
+        (pe.kind === 'recipe' && (pe.recipe.img || pe.recipe.thumb)
+          ? '<img src="' + esc(pe.recipe.img || pe.recipe.thumb) + '" alt="" loading="lazy" />'
+          : '<span>' + (pe.icon || '\ud83c\udf7d\ufe0f') + '</span>') +
+        '<div><i>Dinner</i><b>' + esc(pe.label) + '</b></div></button>' : '') +
+      (evs.length ? '<div class="agenda">' + evs.map(function (e) {
+        return '<div class="agenda-row"><span>' + esc(evTime(e)) + '</span><b>' + esc(e.title) + '</b></div>';
+      }).join('') + '</div>' : '') +
+      (!pe ? '<button class="cal-plan" data-plan="' + key + '">+ Plan dinner</button>' : '') +
+      '</div>';
+  }
+
+  if (!shown) {
+    html += '<div class="empty"><span class="ei">\u2014</span><p>Nothing on and nothing planned for the next two weeks. ' +
+      'A clear fortnight is its own kind of luxury.</p></div>';
+  }
+  el.innerHTML = html;
+}
+
 /* ── wiring ─────────────────────────────────────────────── */
 function setTab(t) {
   S.tab = t;
@@ -4023,6 +4850,7 @@ function setTab(t) {
                  staples: ['Staples', 'What your receipts say you rebuy'],
                  list: ['The list', 'Shared between the two of you'],
                  cook: ['Tonight', "Cook what's already in the kitchen"],
+                 cal: ['The week', 'What\'s on, and what\'s for dinner'],
                  fresh: ['Still good?', 'Before you cook it or bin it'],
                  recipes: ['Recipes', libraryLine()] };
   var head = document.querySelector('.header');
@@ -4035,6 +4863,7 @@ function setTab(t) {
   if (t === 'home') renderHome();
   if (t === 'list') renderList();
   if (t === 'staples') renderStaples();
+  if (t === 'cal') renderCal();
   if (t !== 'fresh' && S.scanning) stopScanner();
   window.scrollTo(0, 0);
 }
@@ -4058,7 +4887,9 @@ function boot() {
   loadPlan();
   loadStaples();
   loadSync();
+  loadMine();
   loadPackMeta();
+  rebuildLibrary();
   maybeRestoreBackup();
   fetchWeather(function () { if (S.tab === 'home') renderHome(); });
   var ok = load();
@@ -4067,6 +4898,7 @@ function boot() {
     : SYNC.on
       ? '<span class="sync-dot live"></span>Shared with the other phone · code ' + esc(SYNC.code)
       : '<span class="sync-dot"></span>Saved on this phone. Turn on sharing in ⚙️ to see it on both.';
+  if (CAL.url && (!CAL.events.length || Date.now() - CAL.at > 30 * 60 * 1000)) fetchCal();
   if (SYNC.on) {
     syncPull();
     document.addEventListener('visibilitychange', function () {
@@ -4112,6 +4944,13 @@ function boot() {
       delete PLAN[c('[data-planclear]').dataset.planclear];
       savePlan(); closeSheet(); renderHome();
       return;
+    }
+    if (c('[data-plannote]')) {
+      var nk = c('[data-plannote]').dataset.plannote;
+      var nv = (document.getElementById('planNote').value || '').trim();
+      if (!nv) { delete PLAN[nk]; } else { PLAN[nk] = '!' + nv; }
+      savePlan(); closeSheet(); renderHome(); renderCal();
+      return toast(nv ? nv.slice(0, 30) + ' — set' : 'Day cleared');
     }
     if (c('[data-autoplan]')) return autoPlanWeek();
     if (c('[data-printweek]')) return printWeek();
@@ -4275,10 +5114,17 @@ function boot() {
       OPT.fam = document.getElementById('famName').value.trim();
       saveOpts(); setTab(S.tab); return toast(OPT.fam ? 'Welcome, ' + OPT.fam + 's' : 'Name cleared');
     }
+    if (t.id === 'mImgPick' || c('#mImgPick')) return pickPhoto();
+    if (t.id === 'mImgClear' || c('#mImgClear')) return clearPhoto();
     if (c('[data-syncon]')) return syncConnect(
       document.getElementById('syncUrl').value, document.getElementById('syncCode').value);
     if (c('[data-syncoff]')) return syncDisconnect();
     if (c('[data-syncnow]')) return syncPull(function (ok) { toast(ok ? 'Up to date' : "Couldn't reach it"); openOptions(); });
+    if (c('[data-calon]')) return connectCal(document.getElementById('calUrl').value);
+    if (c('[data-caloff]')) return connectCal('');
+    if (t.id === 'optBtn2') return openOptions();
+    if (c('[data-calrefresh2]')) return fetchCal(function () { renderCal(); });
+    if (c('[data-calrefresh]')) return fetchCal(function (ok) { toast(ok ? 'Calendar up to date' : CAL.err); openOptions(); });
     if (c('[data-packload]')) return fetchPack(document.getElementById('packUrl').value);
     if (c('[data-packoff]')) return dropPack();
     if (c('[data-bakout]')) return exportBackup();
@@ -4287,6 +5133,18 @@ function boot() {
       bf.onchange = function () { if (bf.files[0]) importBackup(bf.files[0]); };
       return bf.click();
     }
+    if (t.id === 'addRecipeBtn') return openAddRecipe();
+    if (t.id === 'pasteGo') {
+      var txt = document.getElementById('pasteBox').value;
+      if (txt.trim().length < 12) return toast('Paste a bit more than that');
+      mineDraft = parseRecipeText(txt);
+      mineDraft.origin = 'Family';
+      return drawAddRecipe('preview');
+    }
+    if (t.id === 'mSave') return saveDraft();
+    if (t.id === 'mBack') { mineDraft = null; return drawAddRecipe('paste'); }
+    if (c('[data-mineedit]')) return openAddRecipe(c('[data-mineedit]').dataset.mineedit);
+    if (c('[data-minedel]')) return deleteMine(c('[data-minedel]').dataset.minedel);
     if (t.id === 'optBtn') return openOptions();
     if (c('[data-opt]')) {
       var kv = c('[data-opt]').dataset.opt.split(':');
