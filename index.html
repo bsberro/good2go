@@ -3951,11 +3951,13 @@ function openOptions() {
         ? '<div class="stap-new" style="margin-top:10px">' +
           '<button class="btn-ghost" style="flex:1" data-calrefresh="1">Refresh now</button>' +
           '<button class="btn-ghost" style="flex:1" data-caloff="1">Disconnect</button></div>'
-        : '<input class="field" id="calUrl" style="margin-top:10px" placeholder="https://calendar.google.com/calendar/ical/…" />' +
+        : '<input class="field" id="calUrl" style="margin-top:10px" placeholder="webcal://… or https://…" />' +
           '<button class="btn-ghost" data-calon="1" style="margin-top:8px">Connect the calendar</button>' +
-          '<p class="est" style="text-align:left">In Google Calendar: Settings → pick the calendar → <b>Secret address in iCal format</b>. Paste it here once and it works on every phone in the household.</p>') +
+          '<p class="est" style="text-align:left"><b>iCloud:</b> Calendar on a Mac → right-click the calendar → Share Calendar → tick <b>Public Calendar</b> → copy the link.<br><br>' +
+          '<b>Google:</b> Settings → pick the calendar → <b>Secret address in iCal format</b>.<br><br>' +
+          'Either way, paste it here once and it works on every phone in the household.</p>') +
       (CAL.url ? '<p class="est" style="text-align:left">Read only — the app never writes to your calendar.' +
-        (CAL.url === CAL_DEFAULT_URL ? ' This address is built into the app, so anyone who opens the site can read this calendar. Reset it in Google if that ever stops being fine.' : '') +
+        ' Treat the link like a password — anyone holding it can read the calendar.' +
         '</p>' : '') +
 
       '<div class="section-title" style="margin-top:26px">Recipe library</div>' +
@@ -4059,7 +4061,7 @@ function mergeRemote(remote) {
     if (remote.plan) PLAN = remote.plan;
     if (remote.staples) STAP = remote.staples;
     if (remote.pantry) S.pantry = remote.pantry;
-    if (remote.cal && remote.cal !== CAL.url) { CAL.url = remote.cal; saveCal(); fetchCal(); }
+    if (remote.cal && normaliseCalURL(remote.cal) !== CAL.url) { CAL.url = normaliseCalURL(remote.cal); saveCal(); fetchCal(); }
     if (remote.mine) {
       var localImg = {};
       MINE.forEach(function (r) { if (r.img) localImg[r.id] = r.img; });
@@ -4152,15 +4154,16 @@ function newHouseCode() {
    piece — it stops the app proposing a three-hour braise on a
    night nobody is home to cook it.
    ══════════════════════════════════════════════════════════ */
-/* Ben's family calendar, set here so neither phone has to be told.
-   Note this address ships inside the page — see the note in Options. */
-var CAL_DEFAULT_URL = 'https://calendar.google.com/calendar/ical/family07135201501336604300%40group.calendar.google.com/private-a9c47c0f92662110c640feacdc24c76e/basic.ics';
+/* No calendar baked in: the family shares theirs on iCloud, and the
+   Google one they had was dormant after June 2026. Paste the link in
+   Options once and it travels to the other phones through sync. */
+var CAL_DEFAULT_URL = '';
 var CAL = { url: CAL_DEFAULT_URL, events: [], at: 0, state: 'off', err: '' };
 
 function loadCal() {
   try {
     var o = JSON.parse(localStorage.getItem('kitchen.cal') || '{}');
-    CAL.url = o.off ? '' : (o.url || CAL_DEFAULT_URL);
+    CAL.url = o.off ? '' : normaliseCalURL(o.url || CAL_DEFAULT_URL);
     CAL.at = o.at || 0;
     CAL.events = (o.events || []).map(reviveEvent).filter(Boolean);
   } catch (e) {}
@@ -4326,11 +4329,18 @@ function fetchCal(cb) {
     });
 }
 
+function normaliseCalURL(u) {
+  return String(u || '').trim().replace(/^webcal:\/\//i, 'https://');
+}
+function calLooksRight(u) {
+  return /^https:\/\/calendar\.google\.com\/calendar\/ical\//.test(u)
+      || /^https:\/\/[a-z0-9-]+\.icloud\.com\/published\//i.test(u);
+}
 function connectCal(u) {
-  u = (u || '').trim();
+  u = normaliseCalURL(u);
   if (!u) { CAL.url = ''; CAL.events = []; saveCal(); syncPush(); openOptions(); return toast('Calendar removed'); }
-  if (!/^https:\/\/calendar\.google\.com\/calendar\/ical\//.test(u))
-    return toast("That should be the secret iCal address from Google Calendar");
+  if (!calLooksRight(u))
+    return toast('That should be a Google secret iCal address or an iCloud public calendar link');
   CAL.url = u; saveCal();
   toast('Reading the calendar…');
   fetchCal(function (ok) {
